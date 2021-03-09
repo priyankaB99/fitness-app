@@ -1,24 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
-import fire from './fire';
+import "./App.css";
+import fire from "./fire";
+import Home from "./Components/Home";
+import CreateWorkout from "./Components/CreateWorkout";
+import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1> Main Page </h1>
+      <BrowserRouter>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/home"> Home </Link>
+            </li>
+            <li>
+              <Link to="/createworkout"> Create Workout </Link>
+            </li>
+          </ul>
+        </nav>
+        <Switch>
+          <Route path="/home">
+            <Home />
+          </Route>
+          <Route path="/createworkout">
+            <CreateWorkout />
+          </Route>
+        </Switch>
+      </BrowserRouter>
     </div>
   );
 }
