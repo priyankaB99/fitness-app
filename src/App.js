@@ -1,5 +1,5 @@
 import "./App.css";
-import fire from "./fire";
+import fire from "./Firebase/fire";
 import Home from "./Components/Home";
 import CreateWorkout from "./Components/CreateWorkout";
 import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
