@@ -9,7 +9,7 @@ function App() {
     <div className="App">
       <h1> Main Page </h1>
       <BrowserRouter>
-        <nav>
+        <nav id="sidebar">
           <ul>
             <li>
               <Link to="/home"> Home </Link>

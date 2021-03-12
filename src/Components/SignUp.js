@@ -1,7 +1,8 @@
-import React from "react";
+import React, { Component } from 'react';
 import fire from "../Firebase/fire";
 import 'firebase/auth';
 import 'firebase/database';
+import { Link, withRouter } from 'react-router-dom';
 
 // Code Resources
 // - https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial#react-router-for-firebase-auth
@@ -26,7 +27,7 @@ class SignUp extends React.Component {
         this.setState({ [event.target.name]: event.target.value });
     };
 
-    submitForm = event => {
+    submitForm(event) {
 
         const regexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (this.state.password1.length < 6) {
@@ -42,42 +43,32 @@ class SignUp extends React.Component {
             return;
         }
 
-        var thiss = this;
         fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password1)
             .then((authUser) => {
-
+                // User has been logged in
                 console.log(authUser);
+                // Update profile with display name
                 authUser.user.updateProfile({
                     displayName: this.state.username
-                }).then(function() {
-                // Update successful.
+                }).then(() => {
+                // Update successful. Go home.
+                this.props.history.push('/home');
                 console.log('success adding user');
-                thiss.props.history.push('/home');
-                }).catch(error => {
+                }).catch((error) => {
                 // An error happened.
                 console.log("Sign up error:" + error); 
-                // this.setState({ error : error});
+                this.setState({ error : error});
+                }).then(() => {
+                    var userRef = fire.database().ref('Users/'+authUser.user.uid);
+                    userRef.set({
+                        UserId: authUser.user.uid,
+                        Username: this.state.username
+                    });
+                  }).catch(error => {
+                    // An error happened.
+                    console.log(error);
+                    this.setState({ error : error });
                 });
-
-
-                // TODO: Might add the stuff below later
-                //   }).then(function() {
-                   
-                    // let database = firebase.database();
-                    // var userRef = database.ref('Users/'+user.user.uid);
-                    // userRef.set({
-                    //     UserId: this.user.uid,
-                    //     Hobbies: this.state.hobbies,
-                    //     Username: this.state.username,
-                    // }, (error) => {
-                    //     if (error)
-                    //         console.log(error)
-                    //     else
-                    //         this.props.history.push('/');
-                    // });
-                //   }).catch(error => {
-                //     console.log(error);
-                //   });
             })
             .catch((error) => {
                  // An error happened.
@@ -142,4 +133,4 @@ class SignUp extends React.Component {
     }
 }
 
-export default SignUp;
+export default withRouter(SignUp);
