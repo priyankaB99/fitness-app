@@ -1,7 +1,7 @@
 import "./App.css";
-import fire from "./Firebase/fire";
 import Home from "./Components/Home";
 import CreateWorkout from "./Components/CreateWorkout";
+import SignUp from "./Components/SignUp";
 import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 
 function App() {
@@ -17,6 +17,9 @@ function App() {
             <li>
               <Link to="/createworkout"> Create Workout </Link>
             </li>
+            <li>
+              <Link to="/signup"> Sign Up </Link>
+            </li>
           </ul>
         </nav>
         <Switch>
@@ -25,6 +28,9 @@ function App() {
           </Route>
           <Route path="/createworkout">
             <CreateWorkout />
+          </Route>
+          <Route path="/signup">
+            <SignUp />
           </Route>
         </Switch>
       </BrowserRouter>
