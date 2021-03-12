@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import fire from "../Firebase/fire";
 import 'firebase/auth';
 import 'firebase/database';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 // Code Resources
 // - https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial#react-router-for-firebase-auth
@@ -52,8 +52,8 @@ class SignUp extends React.Component {
                     displayName: this.state.username
                 }).then(() => {
                 // Update successful. Go home.
-                this.props.history.push('/home');
                 console.log('success adding user');
+                this.props.history.push('/home');
                 }).catch((error) => {
                 // An error happened.
                 console.log("Sign up error:" + error); 
