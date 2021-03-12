@@ -6,6 +6,7 @@ import 'firebase/database';
 // Code Resources
 // - https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial#react-router-for-firebase-auth
 // - https://firebase.google.com/docs/auth/web/password-auth?authuser=0
+// - https://firebase.google.com/docs/auth/web/manage-users?authuser=0
 
 class SignUp extends React.Component {
     constructor(props) {
