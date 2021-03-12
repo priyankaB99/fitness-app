@@ -3,6 +3,10 @@ import fire from "../Firebase/fire";
 import 'firebase/auth';
 import 'firebase/database';
 
+// Code Resources
+// - https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial#react-router-for-firebase-auth
+// - https://firebase.google.com/docs/auth/web/password-auth?authuser=0
+
 class SignUp extends React.Component {
     constructor(props) {
         super(props);
@@ -14,7 +18,6 @@ class SignUp extends React.Component {
             warning: '',
             error: null
         };
-
         this.submitForm = this.submitForm.bind(this);
     }
 
@@ -40,11 +43,24 @@ class SignUp extends React.Component {
 
         fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password1)
             .then((authUser) => {
+
                     console.log(authUser);
-                // newUser.user.updateProfile({
-                //     displayName: this.state.username,
+                    authUser.user.updateProfile({
+                    displayName: this.state.username
+
+                }).then(function() {
+                // Update successful.
+                console.log('success adding user');
+                }).catch(function(error) {
+                // An error happened.
+                console.log("Sign up error:", error); 
+                this.setState({ error });
+                });
+
+
+                // TODO: Might add the stuff below later
                 //   }).then(function() {
-                    console.log('success adding user')
+                   
                     // let database = firebase.database();
                     // var userRef = database.ref('Users/'+user.user.uid);
                     // userRef.set({
@@ -60,9 +76,12 @@ class SignUp extends React.Component {
                 //   }).catch(error => {
                 //     console.log(error);
                 //   });
-                  
             })
-            .catch((error => this.setState({ error })));
+            .catch((error) => {
+                 // An error happened.
+                console.log("Sign up error:", error); 
+                this.setState({ error });
+            });
     };
 
     render() {
@@ -87,7 +106,7 @@ class SignUp extends React.Component {
                 value={username}
                 onChange={this.onChange}
                 type="text"
-                placeholder="Full Name"
+                placeholder="Username"
               />
               <input
                 name="email"
@@ -119,7 +138,6 @@ class SignUp extends React.Component {
             </div>
           );
     }
-
 }
 
 export default SignUp;
