@@ -42,20 +42,21 @@ class SignUp extends React.Component {
             return;
         }
 
+        var thiss = this;
         fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password1)
             .then((authUser) => {
 
-                    console.log(authUser);
-                    authUser.user.updateProfile({
+                console.log(authUser);
+                authUser.user.updateProfile({
                     displayName: this.state.username
-
                 }).then(function() {
                 // Update successful.
                 console.log('success adding user');
-                }).catch(function(error) {
+                thiss.props.history.push('/home');
+                }).catch(error => {
                 // An error happened.
-                console.log("Sign up error:", error); 
-                this.setState({ error });
+                console.log("Sign up error:" + error); 
+                // this.setState({ error : error});
                 });
 
 
@@ -81,7 +82,7 @@ class SignUp extends React.Component {
             .catch((error) => {
                  // An error happened.
                 console.log("Sign up error:", error); 
-                this.setState({ error });
+                this.setState({ error : error });
             });
     };
 
