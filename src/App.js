@@ -3,6 +3,7 @@ import Home from "./Components/Home";
 import CreateWorkout from "./Components/CreateWorkout";
 import SignUp from "./Components/SignUp";
 import Login from "./Components/Login";
+import DisplayWorkouts from "./Components/DisplayWorkouts";
 import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 
 function App() {
@@ -14,6 +15,9 @@ function App() {
           <ul>
             <li>
               <Link to="/createworkout"> Create Workout </Link>
+            </li>
+            <li>
+              <Link to="/displayworkouts"> My Saved Workouts </Link>
             </li>
             <li>
               <Link to="/signup"> Sign Up </Link>
@@ -29,6 +33,9 @@ function App() {
           </Route>
           <Route path="/createworkout">
             <CreateWorkout />
+          </Route>
+          <Route path="/displayworkouts">
+            <DisplayWorkouts />
           </Route>
           <Route path="/signup">
             <SignUp />
