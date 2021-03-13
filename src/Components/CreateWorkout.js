@@ -1,4 +1,8 @@
 import React from "react";
+import fire from "../Firebase/fire";
+import "firebase/auth";
+import "firebase/database";
+import { withRouter } from "react-router-dom";
 
 //code pulled from https://itnext.io/building-a-dynamic-controlled-form-in-react-together-794a44ee552c
 
@@ -15,7 +19,8 @@ class CreateWorkout extends React.Component {
     this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
-  addExercise() {
+  addExercise(event) {
+    event.preventDefault();
     this.setState((prevState) => ({
       exercises: [...prevState.exercises, { exerciseName: "", reps: "" }],
     }));
@@ -23,6 +28,25 @@ class CreateWorkout extends React.Component {
 
   submitHandler(event) {
     event.preventDefault();
+    let currentUserId = fire.auth().currentUser.uid;
+    let workoutRef = fire.database().ref("Workouts/");
+    let newWorkoutRef = workoutRef.push();
+    newWorkoutRef.set({
+      name: this.state.name,
+      creatorId: currentUserId,
+      users: currentUserId,
+      timeLength: this.state.timeLength,
+      notes: this.state.notes,
+      exercises: this.state.exercises,
+    });
+    console.log("successfully added workout to database");
+    //refresh form
+    this.setState({
+      name: "",
+      timeLength: "",
+      exercises: [{ exerciseName: "", reps: "" }],
+      notes: "",
+    });
   }
 
   changeHandler(event) {
@@ -79,4 +103,4 @@ class CreateWorkout extends React.Component {
   }
 }
 
-export default CreateWorkout;
+export default withRouter(CreateWorkout);
