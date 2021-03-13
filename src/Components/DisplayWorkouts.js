@@ -8,24 +8,54 @@ class DisplayWorkouts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      workouts: [
-        { name: "", timeLength: "", exercises: [], workoutId: "", notes: "" },
-      ],
+      workouts: [],
     };
   }
 
   componentDidMount() {
     let currentUserId = fire.auth().currentUser.uid;
     let workoutsRef = fire.database().ref("Workouts");
+    let workoutsData = [];
     workoutsRef
       .orderByChild("creatorId")
       .equalTo(currentUserId)
       .on("child_added", function (data) {
-        console.log(data.val());
+        let workout = {
+          name: data.val().name,
+          workoutId: data.key,
+          exercises: data.val().exercises,
+          timeLength: data.val().timeLength,
+          notes: data.val().notes,
+        };
+        workoutsData.push(workout);
       });
+    this.setState({ workouts: workoutsData });
   }
   render() {
-    return <h1> My Workouts </h1>;
+    return (
+      <div>
+        <h2> My Saved Workouts</h2>
+        <div>
+          {this.state.workouts.map((data, index) => (
+            <div key={data.workoutId} id={data.workoutId}>
+              <h3>
+                Workout #{index + 1}: {data.name}
+              </h3>
+              <p> Length of Workout: {data.timeLength}</p>
+              <ul>
+                {data.exercises.map((exercise, index) => (
+                  <li key={index}>
+                    Exercise #{index + 1}: {exercise.exerciseName} Reps:{" "}
+                    {exercise.reps}
+                  </li>
+                ))}
+              </ul>
+              <p> Notes/Links: {data.notes}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 }
 
