@@ -62,7 +62,8 @@ class SignUp extends React.Component {
                     var userRef = fire.database().ref('Users/'+authUser.user.uid);
                     userRef.set({
                         UserId: authUser.user.uid,
-                        Username: this.state.username
+                        Username: this.state.username,
+                        Email: this.state.email
                     });
                   }).catch(error => {
                     // An error happened.
