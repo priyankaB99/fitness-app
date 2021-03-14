@@ -1,15 +1,18 @@
 import "./App.css";
+import React from "react";
 import Home from "./Components/Home";
 import CreateWorkout from "./Components/CreateWorkout";
 import SignUp from "./Components/SignUp";
 import Login from "./Components/Login";
+import Sidebar from "./Components/Sidebar";
 import DisplayWorkouts from "./Components/DisplayWorkouts";
 import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">    
+    <React.Fragment>    
       <BrowserRouter>
+        <Sidebar />
         <Switch>
           <Route path="/" exact>
             <Home />
@@ -28,7 +31,7 @@ function App() {
           </Route>
         </Switch>
       </BrowserRouter>
-    </div>
+    </React.Fragment>
   );
 }
 
