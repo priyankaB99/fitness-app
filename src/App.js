@@ -8,6 +8,9 @@ import Sidebar from "./Components/Sidebar";
 import DisplayWorkouts from "./Components/DisplayWorkouts";
 import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 
+// Code Resources
+// - https://codeburst.io/how-to-create-a-navigation-bar-and-sidebar-using-react-348243ccd93
+
 function App() {
   return (
     <React.Fragment>    

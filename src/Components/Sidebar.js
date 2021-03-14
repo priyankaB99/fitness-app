@@ -7,7 +7,7 @@ import styled from 'styled-components';
 // import './sidebar.css';
 
 // Code Resources
-// -
+// - https://codeburst.io/how-to-create-a-navigation-bar-and-sidebar-using-react-348243ccd93
 
 const StyledNavItem = styled.div`
     height: 70px;
