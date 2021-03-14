@@ -8,39 +8,22 @@ import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">
-      <h1> Main Page </h1>
+    <div className="App">    
       <BrowserRouter>
-        <nav id="sidebar">
-          <ul>
-            <li>
-              <Link to="/createworkout"> Create Workout </Link>
-            </li>
-            <li>
-              <Link to="/displayworkouts"> My Saved Workouts </Link>
-            </li>
-            <li>
-              <Link to="/signup"> Sign Up </Link>
-            </li>
-            <li>
-              <Link to="/login"> Log In </Link>
-            </li>
-          </ul>
-        </nav>
         <Switch>
-          <Route path="/home">
+          <Route path="/" exact>
             <Home />
           </Route>
-          <Route path="/createworkout">
+          <Route path="/createworkout" exact>
             <CreateWorkout />
           </Route>
-          <Route path="/displayworkouts">
+          <Route path="/displayworkouts" exact>
             <DisplayWorkouts />
           </Route>
-          <Route path="/signup">
+          <Route path="/signup" exact>
             <SignUp />
           </Route>
-          <Route path="/login">
+          <Route path="/login" exact>
             <Login />
           </Route>
         </Switch>

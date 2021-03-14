@@ -2,7 +2,7 @@ import React from "react";
 import fire from "../Firebase/fire";
 import 'firebase/auth';
 import 'firebase/database';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 
 // Code Resources
 // - https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial#react-router-for-firebase-auth
@@ -33,7 +33,7 @@ class Login extends React.Component {
         console.log(authUser);
         // login successful. Go home.
         console.log('success logging in user');
-        this.props.history.push('/home');
+        this.props.history.push('/');
     })
     .catch((error) => {
          // An error happened.
@@ -51,22 +51,28 @@ class Login extends React.Component {
 
     return (
       <div>
-        <input
-          name="email"
-          value={email}
-          onChange={this.changeHandler}
-          type="email"
-          placeholder="Email"
-        />
-        <input
-          name="password"
-          value={password}
-          onChange={this.changeHandler}
-          type="password"
-          placeholder="Password"
-        />
-        <button disabled={isInvalid} onClick={() => this.submitForm()}>Log In</button>
-        {error && <p>{error.message}</p>}
+        <div>
+          <input
+            name="email"
+            value={email}
+            onChange={this.changeHandler}
+            type="email"
+            placeholder="Email"
+          />
+          <input
+            name="password"
+            value={password}
+            onChange={this.changeHandler}
+            type="password"
+            placeholder="Password"
+          />
+          <button disabled={isInvalid} onClick={() => this.submitForm()}>Log In</button>
+          {error && <p>{error.message}</p>}
+        </div>
+        <div>
+          Don't have an account yet?<br></br>
+          <Link to="/signup"> Sign Up </Link>
+        </div>
       </div>
     );
   }
