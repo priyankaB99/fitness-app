@@ -3,7 +3,8 @@ import fire from "../Firebase/fire";
 import 'firebase/auth';
 import 'firebase/database';
 import { withRouter, Link, Redirect } from 'react-router-dom';
-import { format, subMonths, addMonths, startOfWeek, addDays, subWeeks, addWeeks } from 'date-fns';
+import './Home.css';
+import { format, subMonths, addMonths, startOfWeek, addDays, subWeeks, addWeeks, isSameDay, isSameWeek, isSameYear } from 'date-fns';
 
 // Code Resources
 // -https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
@@ -22,6 +23,7 @@ class Home extends React.Component {
     this.nextMonth = this.nextMonth.bind(this);
     this.previousWeek = this.previousWeek.bind(this);
     this.nextWeek = this.nextWeek.bind(this);
+    this.createWeekArray = this.createWeekArray.bind(this);
   }
 
   componentDidMount() {
@@ -45,19 +47,18 @@ class Home extends React.Component {
 
   //Inspiration: https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
   renderMonth(){
-    let month = this.state.date;
     return (
       <div class="monthBox">
-        <div onClick={this.previousMonth}> {/**previous month */}
-          BACK
+        <div onClick={this.previousMonth} class="monthNav nav"> {/**previous month */}
+          Previous
         </div>
 
         <div class="month">
-          {format(month,"MMMM")}
+          <h2>{format(this.state.date,"MMMM") + " " + format(this.state.date,"yyyy")}</h2>
         </div>
 
-        <div onClick={this.nextMonth}>
-          NEXT
+        <div onClick={this.nextMonth} class="monthNav nav">
+          Next
         </div>
         
       </div>
@@ -65,58 +66,70 @@ class Home extends React.Component {
   }
 
   previousMonth(){
-    let month = this.state.date;
-    let newMonth = subMonths(month, 1);
+    let newMonth = subMonths(this.state.date, 1);
     this.setState({
       date: newMonth
     });
   }
 
   nextMonth(){
-    let month = this.state.date;
-    let newMonth = addMonths(month, 1);
+    let newMonth = addMonths(this.state.date, 1);
     this.setState({
       date: newMonth
     });
   }
 
 
-  //shows current days, can CHANGE current days
-  //need to mark CURRENT day
   //from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
   renderWeekdays(){
-    let day = this.state.date; //current day
-    let sunday = startOfWeek(day);
 
-    let week = []; //
+    let week = this.createWeekArray(); 
+    
+    return (
+      <div class="weekBox">
+        <div onClick={this.previousWeek} class="weekNav nav">
+          Previous
+        </div>
+        
+        <div class="week">
+          {week}
+        </div>
 
+        <div onClick={this.nextWeek} class="weekNav nav">
+          Next
+        </div>
+      </div>
+    );
+  }
+
+  //Returns array of the week, starting from Sunday
+  createWeekArray(){ 
+    let sunday = startOfWeek(this.state.date);
+    let array = [];
     for(let i = 0; i < 7; i++){
-      let dayCalculator = addDays(sunday, i); //what day are you currently adding into array
-      let dayNumber = format(dayCalculator,"d");
-      let weekday = format(dayCalculator,"EEEE")
-      week.push(
+      let dayToAdd = addDays(sunday, i);
+      let weekday = format(dayToAdd,"EEEE"); //needed to convert to English name to add the * if date matches, otherwise syntax error
+      let today = new Date(); 
+
+      console.log(dayToAdd);
+
+      if(isSameDay(today, dayToAdd) 
+         && isSameWeek(today, dayToAdd) 
+         && isSameYear(today, dayToAdd)){ //identifies current day: make into CSS later!!!
+        weekday = "**" + weekday + "**";
+      }
+      array.push(
         <div key={i}> 
           <div class="dayNumber">
-            {dayNumber}
+            <b>{format(dayToAdd,"d")}</b>
           </div>
           <div class="weekday">
-            {weekday}
+            <u>{weekday}</u>
           </div>
         </div>
       );
     }
-
-    return (
-      <div class="dayBox">
-        <div onClick={this.previousWeek}>
-          BACK
-        </div>
-        {week}
-        <div onClick={this.nextWeek}>
-          NEXT
-        </div>
-      </div>
-    );
+    return array;
   }
 
   previousWeek(){
@@ -137,7 +150,9 @@ class Home extends React.Component {
 
   renderTimes(){
     return(
-      <p>Times</p>
+      <div class="timeBox">
+
+      </div>
     );
   }
 
@@ -150,14 +165,10 @@ class Home extends React.Component {
         </div>
 
         {/**Inspiration from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728 */}
-        <div>
+        <div class="calendar">
           {this.renderMonth()}
 
-          <br></br>
-
           {this.renderWeekdays()}
-
-          <br></br>
 
           {this.renderTimes()}
         </div>

@@ -1,0 +1,34 @@
+.calendar{
+    
+}
+
+.monthBox{
+    display: flex;
+}
+    .monthNav{
+        flex: 1;
+    }
+    .month{
+        flex: 7;
+        text-align: center;
+    }
+
+.weekBox{
+    margin-top: 3%;
+    display: flex;
+}
+    .weekNav{
+        flex: 1;
+    }
+    .week{
+        flex: 7;
+        column-count: 7;
+    }
+
+.timeBox{
+
+}
+
+/* div{
+    background-color: black;
+} */
