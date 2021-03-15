@@ -41,7 +41,7 @@ class Home extends React.Component {
   render() {
       return (
       <div>
-        <div id="main-content">
+        <div>
           <h1>Welcome Home</h1>
         </div>
       </div>

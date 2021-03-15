@@ -3,6 +3,7 @@ import fire from "../Firebase/fire";
 import 'firebase/auth';
 import 'firebase/database';
 import { withRouter, Link } from 'react-router-dom';
+import './general.css';
 
 // Code Resources
 // - https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial#react-router-for-firebase-auth
@@ -51,6 +52,8 @@ class Login extends React.Component {
 
     return (
       <div>
+        <h1>Log In</h1>
+        <div class="center">
         <div>
           <input
             name="email"
@@ -72,6 +75,7 @@ class Login extends React.Component {
         <div>
           Don't have an account yet?<br></br>
           <Link to="/signup"> Sign Up </Link>
+        </div>
         </div>
       </div>
     );

@@ -1,12 +1,12 @@
-#sidebar {
-    background-color: rgb(41, 41, 41);
-    height: 400px;
-    width: 200px;
-    text-align: center;
-    color: white;
+.sidebar {
+    width: 225px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transition: all 0.3s;
+    padding: 35px 20px;
+    z-index: 1;      /* Stay on top of everything */
+    background-color: #0e0066; /* Black */
+    overflow-x: hidden;     /* Disable horizontal scroll */
 }
-
-/* a {
-    
-    color: white;
-} */

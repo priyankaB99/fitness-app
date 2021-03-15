@@ -4,19 +4,17 @@ import 'firebase/auth';
 import 'firebase/database';
 import { withRouter, useHistory, Link } from 'react-router-dom';
 import styled from 'styled-components';
-// import './sidebar.css';
+import './sidebar.css';
 
 // Code Resources
 // - https://codeburst.io/how-to-create-a-navigation-bar-and-sidebar-using-react-348243ccd93
 
 const StyledNavItem = styled.div`
-    height: 70px;
-    width: 75px; /* width must be same size as NavBar to center */
-    text-align: center; /* Aligns <a> inside of NavIcon div */
-    margin-bottom: 0;   /* Puts space between NavItems */
+    background: #0e0066;
+    transition: all 0.3s;
     a {
-        font-size: 15px;
-        color: ${(props) => props.active ? "white" : "#9FFFCB"};
+        font-size: 20px;
+        color: ${(props) => props.active ? "white" : "#b0a8ba"};
         :hover {
             opacity: 0.7;
             text-decoration: none; /* Gets rid of underlining of icons */
@@ -41,17 +39,6 @@ class NavItem extends React.Component {
         );
     }
 }
-
-const StyledSideNav = styled.div`   
-    position: fixed;     /* Fixed Sidebar (stay in place on scroll and position relative to viewport) */
-    height: 100%;
-    width: 200px;     /* Set the width of the sidebar */
-    z-index: 1;      /* Stay on top of everything */
-    top: 3.4em;      /* Stay at the top */
-    background-color: #222; /* Black */
-    overflow-x: hidden;     /* Disable horizontal scroll */
-    padding-top: 0px;
-`;
 
 class Sidebar extends React.Component {
   constructor(props) {
@@ -118,7 +105,7 @@ class Sidebar extends React.Component {
   render() {
     const { items, activePath } = this.state;
     return(
-        <StyledSideNav>
+        <div class="sidebar">
             {this.state.loggedIn ? 
             <div>
                 <p>Welcome {this.state.username}!</p>
@@ -140,7 +127,7 @@ class Sidebar extends React.Component {
                     );
                 })
             }
-        </StyledSideNav>
+        </div>
     );
     // return (
     //   <div id="sidebar">
