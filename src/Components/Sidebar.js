@@ -106,6 +106,7 @@ class Sidebar extends React.Component {
     const { items, activePath } = this.state;
     return(
         <div class="sidebar">
+            <h3>Fitness App</h3>
             {this.state.loggedIn ? 
             <div>
             <div class="sidebar-box">
