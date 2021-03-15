@@ -151,7 +151,98 @@ class Home extends React.Component {
   renderTimes(){
     return(
       <div class="timeBox">
+        <div class="timeLabels">
+          <table class="times">
+            <tr>
+              <td>12:00AM</td>
+            </tr>
+            <tr>
+              <td>1:00AM</td>
+            </tr>
+            <tr>
+              <td>2:00AM</td>
+            </tr>
+            <tr>
+              <td>3:00AM</td>
+            </tr>
+            <tr>
+              <td>4:00AM</td>
+            </tr>
+            <tr>
+              <td>5:00AM</td>
+            </tr>
+            <tr>
+              <td>6:00AM</td>
+            </tr>
+            <tr>
+              <td>7:00AM</td>
+            </tr>
+            <tr>
+              <td>8:00AM</td>
+            </tr>
+            <tr>
+              <td>9:00AM</td>
+            </tr>
+            <tr>
+              <td>10:00AM</td>
+            </tr>
+            <tr>
+              <td>11:00AM</td>
+            </tr>
+            <tr>
+              <td>12:00PM</td>
+            </tr>
+            <tr>
+              <td>1:00PM</td>
+            </tr>
+            <tr>
+              <td>2:00PM</td>
+            </tr>
+            <tr>
+              <td>3:00PM</td>
+            </tr>
+            <tr>
+              <td>4:00PM</td>
+            </tr>
+            <tr>
+              <td>5:00PM</td>
+            </tr>
+            <tr>
+              <td>6:00PM</td>
+            </tr>
+            <tr>
+              <td>7:00PM</td>
+            </tr>
+            <tr>
+              <td>8:00PM</td>
+            </tr>
+            <tr>
+              <td>9:00PM</td>
+            </tr>
+            <tr>
+              <td>12:00AM</td>
+            </tr>
+            <tr>
+              <td>10:00PM</td>
+            </tr>
+            <tr>
+              <td>11:00PM</td>
+            </tr>
+          </table>
+        </div>
 
+        <div class="timesUnderDates">
+            <div class="sunday"></div>
+            <div class="monday"></div>
+            <div class="tuesday"></div>
+            <div class="wednesday"></div>
+            <div class="thursday"></div>
+            <div class="friday"></div>
+            <div class="saturday"></div>
+
+        </div>
+
+        <div class="spacer"></div>
       </div>
     );
   }

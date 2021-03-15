@@ -26,8 +26,29 @@
     }
 
 .timeBox{
-
+    display: flex;
+    height: 1500px;
 }
+    .timeLabels{
+        flex: 1;
+    }
+        .times{
+            height: 1500px;
+            border-right: 1px solid black;
+        }
+    .timesUnderDates{
+        flex: 7;
+        column-count: 7;
+    }
+        .timesUnderDates>div{
+            height: 1500px;
+            border: 1px solid red;
+        }
+
+    .spacer{
+        flex: 1;
+        border: 1px solid blue;
+    }
 
 /* div{
     background-color: black;
