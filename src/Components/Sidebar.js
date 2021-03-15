@@ -8,9 +8,9 @@ import './sidebar.css';
 
 // Code Resources
 // - https://codeburst.io/how-to-create-a-navigation-bar-and-sidebar-using-react-348243ccd93
+// - https://bootstrapious.com/p/bootstrap-sidebar
 
 const StyledNavItem = styled.div`
-    background: #0e0066;
     transition: all 0.3s;
     a {
         font-size: 20px;
@@ -108,11 +108,10 @@ class Sidebar extends React.Component {
         <div class="sidebar">
             {this.state.loggedIn ? 
             <div>
+            <div class="sidebar-box">
                 <p>Welcome {this.state.username}!</p>
-                <button onClick={this.logout}> Sign Out </button>
+                <button type="button" class="btn btn-light btn-sm" onClick={this.logout}> Sign Out </button>
             </div>
-            :
-            <div></div>}
             {
                 items.map((item) => {
                     return (
@@ -126,6 +125,10 @@ class Sidebar extends React.Component {
                         />
                     );
                 })
+            }
+            </div>
+            :
+            <div></div>
             }
         </div>
     );

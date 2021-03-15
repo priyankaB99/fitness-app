@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 
 // Code Resources
 // - https://codeburst.io/how-to-create-a-navigation-bar-and-sidebar-using-react-348243ccd93
+// - https://bootstrapious.com/p/bootstrap-sidebar
 
 function App() {
   return (

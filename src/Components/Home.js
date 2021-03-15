@@ -42,7 +42,7 @@ class Home extends React.Component {
       return (
       <div>
         <div>
-          <h1>Welcome Home</h1>
+          <h1 class="mb-4">Welcome Home</h1>
         </div>
       </div>
     );

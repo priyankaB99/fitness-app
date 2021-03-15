@@ -9,4 +9,10 @@
     z-index: 1;      /* Stay on top of everything */
     background-color: #0e0066; /* Black */
     overflow-x: hidden;     /* Disable horizontal scroll */
+
+    font-size: 20px;
+    color: white;
+}
+.sidebar-box {
+    margin-bottom: 20px;
 }

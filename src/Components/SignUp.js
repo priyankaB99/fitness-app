@@ -95,6 +95,7 @@ class SignUp extends React.Component {
 
           return (
             <div>
+              <h1 class="mb-4">Sign Up</h1>
               <input
                 name="username"
                 value={username}

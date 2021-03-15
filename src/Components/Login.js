@@ -52,8 +52,8 @@ class Login extends React.Component {
 
     return (
       <div>
-        <h1>Log In</h1>
-        <div class="center">
+        <h1 class="mb-4">Log In</h1>
+        <div class="">
         <div>
           <input
             name="email"
