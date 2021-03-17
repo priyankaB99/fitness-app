@@ -13,24 +13,34 @@ class DisplayWorkouts extends React.Component {
   }
 
   componentDidMount() {
-    let currentUserId = fire.auth().currentUser.uid;
-    let workoutsRef = fire.database().ref("Workouts");
-    let workoutsData = [];
-    workoutsRef
-      .orderByChild("creatorId")
-      .equalTo(currentUserId)
-      .on("child_added", function (data) {
-        let workout = {
-          name: data.val().name,
-          workoutId: data.key,
-          exercises: data.val().exercises,
-          timeLength: data.val().timeLength,
-          notes: data.val().notes,
-        };
-        workoutsData.push(workout);
-      });
-    this.setState({ workouts: workoutsData });
+    let currentComponent = this;
+    fire.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        let currentUser = fire.auth().currentUser.uid;
+        let workoutsRef = fire.database().ref("Workouts");
+        let workoutsData = [];
+        console.log(currentUser);
+        workoutsRef
+          .orderByChild("creatorId")
+          .equalTo(currentUser)
+          .on("child_added", function (data) {
+            let workout = {
+              name: data.val().name,
+              workoutId: data.key,
+              exercises: data.val().exercises,
+              timeLength: data.val().timeLength,
+              notes: data.val().notes,
+            };
+            workoutsData.push(workout);
+            console.log(workoutsData);
+          });
+        currentComponent.setState({ workouts: workoutsData });
+      } else {
+        // No user is signed in.
+      }
+    });
   }
+
   render() {
     return (
       <div>
