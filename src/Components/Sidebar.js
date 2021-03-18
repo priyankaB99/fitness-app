@@ -1,137 +1,151 @@
 import React from "react";
 import fire from "../Firebase/fire";
-import 'firebase/auth';
-import 'firebase/database';
-import { withRouter, useHistory, Link } from 'react-router-dom';
-import styled from 'styled-components';
-import './sidebar.css';
+import "firebase/auth";
+import "firebase/database";
+import { withRouter, useHistory, Link } from "react-router-dom";
+import styled from "styled-components";
+import "./sidebar.css";
 
 // Code Resources
 // - https://codeburst.io/how-to-create-a-navigation-bar-and-sidebar-using-react-348243ccd93
 // - https://bootstrapious.com/p/bootstrap-sidebar
 
 const StyledNavItem = styled.div`
-    transition: all 0.3s;
-    a {
-        font-size: 20px;
-        color: ${(props) => props.active ? "white" : "#b0a8ba"};
-        :hover {
-            opacity: 0.7;
-            text-decoration: none; /* Gets rid of underlining of icons */
-        }  
+  transition: all 0.3s;
+  a {
+    font-size: 20px;
+    color: ${(props) => (props.active ? "white" : "#b0a8ba")};
+    :hover {
+      opacity: 0.7;
+      text-decoration: none; /* Gets rid of underlining of icons */
     }
+  }
 `;
 
 class NavItem extends React.Component {
-    handleClick = () => {
-        const { path, onItemClick } = this.props;
-        onItemClick(path);
-    }
+  handleClick = () => {
+    const { path, onItemClick } = this.props;
+    onItemClick(path);
+  };
 
-    render() {
-        const { active } = this.props;
-        return(
-            <StyledNavItem active={active}>
-                <Link to={this.props.path} className={this.props.css} onClick={this.handleClick}>
-                    <div>{this.props.name}</div>
-                </Link>
-            </StyledNavItem>
-        );
-    }
+  render() {
+    const { active } = this.props;
+    return (
+      <StyledNavItem active={active}>
+        <Link
+          to={this.props.path}
+          className={this.props.css}
+          onClick={this.handleClick}
+        >
+          <div>{this.props.name}</div>
+        </Link>
+      </StyledNavItem>
+    );
+  }
 }
 
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        activePath: props.location.pathname,
-            items: [
-                {
-                  path: '/', /* path is used as id to check which NavItem is active basically */
-                  name: 'Home',
-                  css: 'fa fa-fw fa-home',
-                  key: 1 /* Key is required, else console throws error. Does this please you Mr. Browser?! */
-                },
-                {
-                  path: '/createworkout',
-                  name: 'createworkout',
-                  css: 'fa fa-fw fa-clock',
-                  key: 2
-                },
-                {
-                  path: '/displayworkouts',
-                  name: 'displayworkouts',
-                  css: 'fas fa-hashtag',
-                  key: 3
-                },
-              ]
+      activePath: props.location.pathname,
+      items: [
+        {
+          path:
+            "/" /* path is used as id to check which NavItem is active basically */,
+          name: "Home",
+          css: "fa fa-fw fa-home",
+          key: 1 /* Key is required, else console throws error. Does this please you Mr. Browser?! */,
+        },
+        {
+          path: "/createworkout",
+          name: "Create Workout",
+          css: "fa fa-fw fa-clock",
+          key: 2,
+        },
+        {
+          path: "/displayworkouts",
+          name: "My Workouts",
+          css: "fas fa-hashtag",
+          key: 3,
+        },
+      ],
     };
     this.logout = this.logout.bind(this);
   }
 
   onItemClick = (path) => {
     this.setState({ activePath: path });
-}
+  };
 
   componentDidMount() {
     fire.auth().onAuthStateChanged((user) => {
-        if (user) {
-          // User is signed in
-          console.log(user.email);
-          console.log(user.displayName);
-          this.setState({
-              loggedIn: true, 
-              uid: user.uid,
-              email: user.email,
-              username: user.displayName
-            });
-        } else {
-          // No user is signed in
-          this.setState({loggedIn: false});
-        }
-      });      
+      if (user) {
+        // User is signed in
+        console.log(user.email);
+        console.log(user.displayName);
+        this.setState({
+          loggedIn: true,
+          uid: user.uid,
+          email: user.email,
+          username: user.displayName,
+        });
+      } else {
+        // No user is signed in
+        this.setState({ loggedIn: false });
+      }
+    });
   }
 
   logout() {
-        fire.auth().signOut().then(() => {
+    fire
+      .auth()
+      .signOut()
+      .then(() => {
         // Sign-out successful.
         console.log("signout");
-        useHistory().push('/login');
-      }).catch((error) => {
+        useHistory().push("/login");
+      })
+      .catch((error) => {
         // An error happened.
       });
   }
 
   render() {
     const { items, activePath } = this.state;
-    return(
-        <div class="sidebar">
-            <h3>Fitness App</h3>
-            {this.state.loggedIn ? 
-            <div>
+    return (
+      <div class="sidebar">
+        <h3>Fitness App</h3>
+        {this.state.loggedIn ? (
+          <div>
             <div class="sidebar-box">
-                <p>Welcome {this.state.username}!</p>
-                <button type="button" class="btn btn-light btn-sm" onClick={this.logout}> Sign Out </button>
+              <p>Welcome {this.state.username}!</p>
+              <button
+                type="button"
+                class="btn btn-light btn-sm"
+                onClick={this.logout}
+              >
+                {" "}
+                Sign Out{" "}
+              </button>
             </div>
-            {
-                items.map((item) => {
-                    return (
-                        <NavItem 
-                            path={item.path}
-                            name={item.name}
-                            css={item.css}
-                            onItemClick={this.onItemClick}
-                            active={item.path === activePath}
-                            key={item.key}
-                        />
-                    );
-                })
-            }
-            </div>
-            :
-            <div></div>
-            }
-        </div>
+            {items.map((item) => {
+              return (
+                <NavItem
+                  path={item.path}
+                  name={item.name}
+                  css={item.css}
+                  onItemClick={this.onItemClick}
+                  active={item.path === activePath}
+                  key={item.key}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          <div></div>
+        )}
+      </div>
     );
     // return (
     //   <div id="sidebar">
@@ -140,7 +154,7 @@ class Sidebar extends React.Component {
     //           <div>
     //               <h3>Welcome, {this.state.username}</h3>
     //               <button onClick={this.logout}>Logout</button>
-    //         </div>              
+    //         </div>
     //           <div>
     //             <Link to="/createworkout"> Create Workout </Link>
     //           </div>
