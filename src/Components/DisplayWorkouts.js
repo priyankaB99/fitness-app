@@ -76,7 +76,7 @@ class DisplayWorkouts extends React.Component {
         <h2> My Saved Workouts</h2>
         <div>
           {this.state.workouts.map((data, index) => (
-            <div key={data.workoutId} id={data.workoutId}>
+            <div key={data.workoutId} id={data.workoutId} className="workout">
               <h3>
                 Workout #{index + 1}: {data.name}
               </h3>
