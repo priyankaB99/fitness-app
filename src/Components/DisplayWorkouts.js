@@ -15,28 +15,57 @@ class DisplayWorkouts extends React.Component {
   componentDidMount() {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
+      console.log("check 17");
       if (user) {
         let currentUser = fire.auth().currentUser.uid;
         let workoutsRef = fire.database().ref("Workouts");
         let workoutsData = [];
         console.log(currentUser);
         workoutsRef
-          .orderByChild("creatorId")
-          .equalTo(currentUser)
-          .on("child_added", function (data) {
-            let workout = {
-              name: data.val().name,
-              workoutId: data.key,
-              exercises: data.val().exercises,
-              timeLength: data.val().timeLength,
-              notes: data.val().notes,
-            };
-            workoutsData.push(workout);
-            console.log(workoutsData);
+          // .orderByChild("creatorId")
+          // .equalTo(currentUser)
+          .on("value", function (data) {
+            // if (data.val().creatorId == currentUser) {
+            //   let workout = {
+            //     name: data.val().name,
+            //     workoutId: data.key,
+            //     exercises: data.val().exercises,
+            //     timeLength: data.val().timeLength,
+            //     notes: data.val().notes,
+            //   };
+            //   workoutsData.push(workout);
+            //   console.log(workoutsData);
+            // }
+            // let workout = {
+            //   name: data.val().name,
+            //   workoutId: data.key,
+            //   exercises: data.val().exercises,
+            //   timeLength: data.val().timeLength,
+            //   notes: data.val().notes,
+            // };
+            // workoutsData.push(workout);
+            // console.log(workoutsData);
+            let workoutsFromDatabase = data.val();
+            for (const key in workoutsFromDatabase) {
+              if (workoutsFromDatabase[key].creatorId == currentUser) {
+                let workout = {
+                  name: workoutsFromDatabase[key].name,
+                  workoutId: key,
+                  exercises: workoutsFromDatabase[key].exercises,
+                  timeLength: workoutsFromDatabase[key].timeLength,
+                  notes: workoutsFromDatabase[key].notes,
+                };
+                workoutsData.push(workout);
+              }
+            }
+            currentComponent.setState({ workouts: workoutsData });
           });
-        currentComponent.setState({ workouts: workoutsData });
+
+        //console.log(afterOnCall);
+
+        //currentComponent.setState({ workouts: workoutsData });
       } else {
-        // No user is signed in.
+        console.log("signed out");
       }
     });
   }
