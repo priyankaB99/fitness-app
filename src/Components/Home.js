@@ -9,6 +9,9 @@ import {
   subMonths,
   addMonths,
   startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
   addDays,
   subWeeks,
   addWeeks,
@@ -17,6 +20,7 @@ import {
   isSameYear,
 } from "date-fns";
 import CreateEvent from "./CreateEvent";
+
 // Code Resources
 // -https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
 
@@ -32,9 +36,10 @@ class Home extends React.Component {
     };
     this.previousMonth = this.previousMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
-    this.previousWeek = this.previousWeek.bind(this);
-    this.nextWeek = this.nextWeek.bind(this);
+    // this.previousWeek = this.previousWeek.bind(this);
+    // this.nextWeek = this.nextWeek.bind(this);
     this.createWeekArray = this.createWeekArray.bind(this);
+    this.createMonthCells = this.createMonthCells.bind(this);
   }
 
   componentDidMount() {
@@ -60,11 +65,11 @@ class Home extends React.Component {
   renderMonth() {
     return (
       <div class="monthBox">
-        <div onClick={this.previousMonth} class="monthNav nav">
+        <button onClick={this.previousMonth} class="monthNav nav">
           {" "}
           {/**previous month */}
           Previous
-        </div>
+        </button>
 
         <div class="month">
           <h2>
@@ -74,9 +79,9 @@ class Home extends React.Component {
           </h2>
         </div>
 
-        <div onClick={this.nextMonth} class="monthNav nav">
+        <button onClick={this.nextMonth} class="monthNav nav">
           Next
-        </div>
+        </button>
       </div>
     );
   }
@@ -101,26 +106,28 @@ class Home extends React.Component {
 
     return (
       <div class="weekBox">
-        <div onClick={this.previousWeek} class="weekNav nav">
-          Previous
-        </div>
+        {/* <div onClick={this.previousWeek} class="weekNav nav">
+          Previous Week
+        </div> */}
 
         <div class="week">{week}</div>
 
-        <div onClick={this.nextWeek} class="weekNav nav">
-          Next
-        </div>
+        {/* <div onClick={this.nextWeek} class="weekNav nav">
+          Next Week
+        </div> */}
       </div>
     );
   }
 
   //Returns array of the week, starting from Sunday
-  createWeekArray() {
-    let sunday = startOfWeek(this.state.date);
-    let array = [];
+  createWeekArray(currentDay, firstWeek) {
+    let start = startOfWeek(currentDay);
+    console.log(start);
+    let days = [];
     for (let i = 0; i < 7; i++) {
-      let dayToAdd = addDays(sunday, i);
+      let dayToAdd = addDays(start, i);
       let weekday = format(dayToAdd, "EEEE"); //needed to convert to English name to add the * if date matches, otherwise syntax error
+      let daynumber = format(dayToAdd, "d");
       let today = new Date();
 
       console.log(dayToAdd);
@@ -133,149 +140,175 @@ class Home extends React.Component {
         //identifies current day: make into CSS later!!!
         weekday = "**" + weekday + "**";
       }
-      array.push(
-        <div key={i}>
-          <div class="dayNumber">
-            <b>{format(dayToAdd, "d")}</b>
-          </div>
+      days.push(
+        <div className="col" key={dayToAdd}>
+          {firstWeek ? 
           <div class="weekday">
-            <u>{weekday}</u>
+            <strong>{weekday}</strong>
+          </div> 
+          : <div></div>}
+          <div class="dayNumber">
+            <b>{daynumber}</b>
           </div>
         </div>
       );
     }
-    return array;
+    return <div className="weekdayRow row">{days}</div>;
   }
 
-  previousWeek() {
-    let week = this.state.date;
-    let newWeek = subWeeks(week, 1);
-    this.setState({
-      date: newWeek,
-    });
+  //Returns whole month, made up of week arrays
+  createMonthCells() {
+    let monthStart = startOfMonth(this.state.date);
+    let monthEnd = endOfMonth(monthStart);
+    let startDate = startOfWeek(monthStart);
+    let endDate = endOfWeek(monthEnd);
+
+    console.log(monthStart);
+    console.log(startDate);
+
+    let weekRows = [];
+    let currentDay = startDate;
+    console.log(currentDay);
+    let firstWeek = true;
+    while (currentDay < endDate) {
+      weekRows.push(
+        this.createWeekArray(currentDay, firstWeek)
+      );
+      currentDay = addDays(currentDay, 7);
+      firstWeek = false;
+    }
+    return <div className="cells">{weekRows}</div>;
   }
 
-  nextWeek() {
-    let week = this.state.date;
-    let newWeek = addWeeks(week, 1);
-    this.setState({
-      date: newWeek,
-    });
-  }
+  // previousWeek() {
+  //   let week = this.state.date;
+  //   let newWeek = subWeeks(week, 1);
+  //   this.setState({
+  //     date: newWeek,
+  //   });
+  // }
 
-  renderTimes() {
-    return (
-      <div class="timeBox">
-        <div class="timeLabels">
-          <table class="times">
-            <tr>
-              <td>12:00AM</td>
-            </tr>
-            <tr>
-              <td>1:00AM</td>
-            </tr>
-            <tr>
-              <td>2:00AM</td>
-            </tr>
-            <tr>
-              <td>3:00AM</td>
-            </tr>
-            <tr>
-              <td>4:00AM</td>
-            </tr>
-            <tr>
-              <td>5:00AM</td>
-            </tr>
-            <tr>
-              <td>6:00AM</td>
-            </tr>
-            <tr>
-              <td>7:00AM</td>
-            </tr>
-            <tr>
-              <td>8:00AM</td>
-            </tr>
-            <tr>
-              <td>9:00AM</td>
-            </tr>
-            <tr>
-              <td>10:00AM</td>
-            </tr>
-            <tr>
-              <td>11:00AM</td>
-            </tr>
-            <tr>
-              <td>12:00PM</td>
-            </tr>
-            <tr>
-              <td>1:00PM</td>
-            </tr>
-            <tr>
-              <td>2:00PM</td>
-            </tr>
-            <tr>
-              <td>3:00PM</td>
-            </tr>
-            <tr>
-              <td>4:00PM</td>
-            </tr>
-            <tr>
-              <td>5:00PM</td>
-            </tr>
-            <tr>
-              <td>6:00PM</td>
-            </tr>
-            <tr>
-              <td>7:00PM</td>
-            </tr>
-            <tr>
-              <td>8:00PM</td>
-            </tr>
-            <tr>
-              <td>9:00PM</td>
-            </tr>
-            <tr>
-              <td>12:00AM</td>
-            </tr>
-            <tr>
-              <td>10:00PM</td>
-            </tr>
-            <tr>
-              <td>11:00PM</td>
-            </tr>
-          </table>
-        </div>
+  // nextWeek() {
+  //   let week = this.state.date;
+  //   let newWeek = addWeeks(week, 1);
+  //   this.setState({
+  //     date: newWeek,
+  //   });
+  // }
 
-        <div class="timesUnderDates">
-          <div class="sunday"></div>
-          <div class="monday"></div>
-          <div class="tuesday"></div>
-          <div class="wednesday"></div>
-          <div class="thursday"></div>
-          <div class="friday"></div>
-          <div class="saturday"></div>
-        </div>
+  // renderTimes() {
+  //   return (
+  //     <div class="timeBox">
+  //       <div class="timeLabels">
+  //         <table class="times">
+  //           <tr>
+  //             <td>12:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>1:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>2:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>3:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>4:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>5:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>6:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>7:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>8:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>9:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>10:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>11:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>12:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>1:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>2:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>3:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>4:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>5:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>6:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>7:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>8:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>9:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>12:00AM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>10:00PM</td>
+  //           </tr>
+  //           <tr>
+  //             <td>11:00PM</td>
+  //           </tr>
+  //         </table>
+  //       </div>
 
-        <div class="spacer"></div>
-      </div>
-    );
-  }
+  //       <div class="timesUnderDates">
+  //         <div class="sunday"></div>
+  //         <div class="monday"></div>
+  //         <div class="tuesday"></div>
+  //         <div class="wednesday"></div>
+  //         <div class="thursday"></div>
+  //         <div class="friday"></div>
+  //         <div class="saturday"></div>
+  //       </div>
+
+  //       <div class="spacer"></div>
+  //     </div>
+  //   );
+  // }
 
   render() {
     return (
       <div>
-        <CreateEvent />
         <div>
           <h1 className="mb-4">Welcome Home</h1>
         </div>
 
+        <CreateEvent />
+
         {/**Inspiration from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728 */}
         <div className="calendar">
           {this.renderMonth()}
-
-          {this.renderWeekdays()}
-
-          {this.renderTimes()}
+          {/* {this.renderWeekdays()} */}
+          {/* {this.renderTimes()} */}
+          {this.createMonthCells()}
         </div>
       </div>
     );
