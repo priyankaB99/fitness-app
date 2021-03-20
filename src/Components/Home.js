@@ -137,7 +137,7 @@ class Home extends React.Component {
           console.log(event);
           todayEvents.push(
             <div className="workoutEvent" key={event.eventKey}>
-              <div><strong>{event.workoutId}</strong></div>
+              <div><strong>{event.workoutName}</strong></div>
               <div>{event.start} - {event.end}</div>
             </div>
           );
@@ -195,6 +195,7 @@ class Home extends React.Component {
             if (isSameMonth(formattedDate, thisMonth) && isSameYear(formattedDate, thisMonth)) {
               eventsData.push({
                 eventKey: key,
+                workoutName: eventsFromDatabase[key].workoutName,
                 workoutId: eventsFromDatabase[key].workoutId,
                 date: eventsFromDatabase[key].date,
                 start: eventsFromDatabase[key].startTime,
