@@ -15,7 +15,7 @@ class CreateEvent extends React.Component {
       workout: "",
       workoutName: "",
       workoutNames: [],
-      reloadCal: this.props.reloadCal
+      reloadCal: this.props.reloadCal,
     };
     this.changeHandler = this.changeHandler.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
@@ -75,7 +75,6 @@ class CreateEvent extends React.Component {
   submitHandler(event) {
     event.preventDefault();
     let currentUserId = fire.auth().currentUser.uid;
-
     //first pushes the event to the database
     let eventRef = fire.database().ref("Schedules/" + currentUserId);
     let newEventRef = eventRef.push();
@@ -104,7 +103,6 @@ class CreateEvent extends React.Component {
       endTime: "",
       workout: "",
       workoutName: "",
-      workoutNames: [],
     });
     this.state.reloadCal();
   }

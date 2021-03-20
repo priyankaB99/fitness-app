@@ -4,6 +4,7 @@ import "firebase/auth";
 import "firebase/database";
 import { withRouter, Link, Redirect } from "react-router-dom";
 import "../CSS/Home.css";
+import EventModal from "./DisplayEachEvent";
 
 import {
   format,
@@ -34,6 +35,7 @@ class Home extends React.Component {
       uid: "",
       month: new Date(),
       workoutEvents: [],
+      // isOpen: false,
     };
     this.previousMonth = this.previousMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
@@ -150,10 +152,20 @@ class Home extends React.Component {
         ) {
           console.log(event);
           todayEvents.push(
-            <div className="workoutEvent" id={event.eventKey} key={event.eventKey}>
-              <div><strong>{event.workoutName}</strong></div>
-              <div>{event.start} - {event.end}</div>
-              <button type="button" onClick={this.deleteWorkoutEvent}>Delete</button>
+            <div
+              className="workoutEvent"
+              id={event.eventKey}
+              key={event.eventKey}
+            >
+              <div>
+                <strong>{event.workoutName}</strong>
+              </div>
+              <div>
+                {event.start} - {event.end}
+              </div>
+              <button type="button" onClick={this.deleteWorkoutEvent}>
+                Delete
+              </button>
             </div>
           );
         }
@@ -236,7 +248,9 @@ class Home extends React.Component {
   deleteWorkoutEvent(event) {
     let eventId = event.target.parentNode.id;
     console.log(eventId);
-    let deleteEventRef = fire.database().ref("Schedules/"+this.state.uid+"/"+eventId);
+    let deleteEventRef = fire
+      .database()
+      .ref("Schedules/" + this.state.uid + "/" + eventId);
     deleteEventRef.remove();
     this.findThisMonthEvents();
   }
@@ -363,8 +377,7 @@ class Home extends React.Component {
           <h1 className="mb-4">Welcome Home</h1>
         </div>
 
-        <CreateEvent reloadCal={this.findThisMonthEvents}/>
-
+        <CreateEvent reloadCal={this.findThisMonthEvents} />
         {/**Inspiration from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728 */}
         <div className="calendar">
           {this.renderMonth()}
