@@ -15,6 +15,7 @@ class CreateEvent extends React.Component {
       workout: "",
       workoutName: "",
       workoutNames: [],
+      reloadCal: this.props.reloadCal
     };
     this.changeHandler = this.changeHandler.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
@@ -88,8 +89,9 @@ class CreateEvent extends React.Component {
       startTime: "",
       endTime: "",
       workout: "",
-      workoutNames: [],
+      workoutNames: []
     });
+    this.state.reloadCal();
   }
 
   render() {

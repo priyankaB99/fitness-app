@@ -42,6 +42,7 @@ class Home extends React.Component {
     this.createWeekArray = this.createWeekArray.bind(this);
     this.createMonthCells = this.createMonthCells.bind(this);
     this.findThisMonthEvents = this.findThisMonthEvents.bind(this);
+    this.deleteWorkoutEvent = this.deleteWorkoutEvent.bind(this);
   }
 
   componentDidMount() {
@@ -136,9 +137,10 @@ class Home extends React.Component {
         if (isSameDay(formattedDate, dayToAdd) && isSameWeek(formattedDate, dayToAdd)) {
           console.log(event);
           todayEvents.push(
-            <div className="workoutEvent" key={event.eventKey}>
+            <div className="workoutEvent" id={event.eventKey} key={event.eventKey}>
               <div><strong>{event.workoutName}</strong></div>
               <div>{event.start} - {event.end}</div>
+              <button type="button" onClick={this.deleteWorkoutEvent}>Delete</button>
             </div>
           );
         }
@@ -186,12 +188,10 @@ class Home extends React.Component {
           thisMonth = currentMonth;
         }
         console.log(thisMonth);
-        schedulesRef.on("value", function (data) {
+        schedulesRef.once("value", function (data) {
           let eventsFromDatabase = data.val();
           for (const key in eventsFromDatabase) {
             let formattedDate = new Date(format(parseISO(eventsFromDatabase[key].date), 'MM/dd/yyyy'));
-            console.log(formattedDate);
-            console.log(eventsFromDatabase[key]);
             if (isSameMonth(formattedDate, thisMonth) && isSameYear(formattedDate, thisMonth)) {
               eventsData.push({
                 eventKey: key,
@@ -210,6 +210,14 @@ class Home extends React.Component {
         currentComponent.props.history.push("/login");
       }
     });
+  }
+
+  deleteWorkoutEvent(event) {
+    let eventId = event.target.parentNode.id;
+    console.log(eventId);
+    let deleteEventRef = fire.database().ref("Schedules/"+this.state.uid+"/"+eventId);
+    deleteEventRef.remove();
+    this.findThisMonthEvents();
   }
 
   // previousWeek() {
@@ -334,7 +342,7 @@ class Home extends React.Component {
           <h1 className="mb-4">Welcome Home</h1>
         </div>
 
-        <CreateEvent />
+        <CreateEvent reloadCal={this.findThisMonthEvents}/>
 
         {/**Inspiration from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728 */}
         <div className="calendar">
