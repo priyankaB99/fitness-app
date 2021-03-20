@@ -62,11 +62,21 @@ class CreateWorkout extends React.Component {
   render() {
     let { name, timeLength, exercises, notes } = this.state;
     return (
-      <form onSubmit={this.submitHandler} onChange={this.changeHandler}>
+      <form onSubmit={this.submitHandler}>
         <label htmlFor="name"> Workout Name: </label>
-        <input type="text" name="name" value={name} />
+        <input
+          type="text"
+          name="name"
+          value={name}
+          onChange={this.changeHandler}
+        />
         <label htmlFor="timeLength"> Time Length: </label>
-        <input type="number" name="timeLength" value={timeLength} />
+        <input
+          type="number"
+          name="timeLength"
+          value={timeLength}
+          onChange={this.changeHandler}
+        />
         {exercises.map((val, idx) => {
           let exerciseId = `exerciseName-${idx}`;
           let repsId = `reps-${idx}`;
@@ -80,6 +90,7 @@ class CreateWorkout extends React.Component {
                 id={exerciseId}
                 value={exercises[idx].exerciseName}
                 className="exerciseName"
+                onChange={this.changeHandler}
               />
               <label htmlFor={repsId}> Reps: </label>
               <input
@@ -89,6 +100,7 @@ class CreateWorkout extends React.Component {
                 id={repsId}
                 value={exercises[idx].reps}
                 className="reps"
+                onChange={this.changeHandler}
               />
             </div>
           );
@@ -96,7 +108,12 @@ class CreateWorkout extends React.Component {
         <button onClick={this.addExercise}> Add Exercise </button>
 
         <label htmlFor="notes"> Notes/Links: </label>
-        <input type="text" name="notes" value={notes} />
+        <input
+          type="text"
+          name="notes"
+          value={notes}
+          onChange={this.changeHandler}
+        />
         <input type="submit" value="Create Workout" />
       </form>
     );

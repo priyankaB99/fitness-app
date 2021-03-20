@@ -114,8 +114,8 @@ class CreateEvent extends React.Component {
             <option value="" disabled hidden>
               Select a workout:
             </option>
-            {this.state.workoutNames.map((workout) => (
-              <option key={workout.workoutId} value={workout.workoutId}>
+            {this.state.workoutNames.map((workout, idx) => (
+              <option key={idx} value={workout.workoutId}>
                 {workout.name}
               </option>
             ))}
