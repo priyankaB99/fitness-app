@@ -24,6 +24,7 @@ class DisplayWorkouts extends React.Component {
         let workoutsData = [];
         workoutsRef.on("value", function (data) {
           let workoutsFromDatabase = data.val();
+          //iterates through the returned json object
           for (const key in workoutsFromDatabase) {
             if (workoutsFromDatabase[key].creatorId == currentUser) {
               let workout = {
