@@ -58,29 +58,43 @@ class CreateEvent extends React.Component {
   changeHandler(event) {
     event.preventDefault();
     this.setState({ [event.target.name]: event.target.value });
+    if ([event.target.name] == "workout") {
+      getEvent(event.target.value).then((value) => {
+        this.setState({ workoutName: value });
+      });
+    }
+    async function getEvent(workoutId) {
+      let workoutRef = await fire
+        .database()
+        .ref("Workouts/" + workoutId)
+        .once("value");
+      return workoutRef.val().name;
+    }
   }
 
   submitHandler(event) {
     event.preventDefault();
     let currentUserId = fire.auth().currentUser.uid;
-    //first finds the name of workout based on the ID
-    let workoutRef = fire.database().ref("Workouts/" + this.state.workout);
-    let workoutName = "";
-    workoutRef.once("value", function (data) {
-      workoutName = data.val().name;
-    });
 
-    //then pushes the event to the database
+    //first pushes the event to the database
     let eventRef = fire.database().ref("Schedules/" + currentUserId);
     let newEventRef = eventRef.push();
-    newEventRef.set({
-      date: this.state.date,
-      startTime: this.state.startTime,
-      endtime: this.state.endTime,
-      workoutId: this.state.workout,
-      workoutName: workoutName,
-    });
-    console.log("successfully added event to database");
+    newEventRef.set(
+      {
+        date: this.state.date,
+        startTime: this.state.startTime,
+        endtime: this.state.endTime,
+        workoutId: this.state.workout,
+        workoutName: this.state.workoutName,
+      },
+      (error) => {
+        if (error) {
+          console.log("error");
+        } else {
+          console.log("successfully added event to database");
+        }
+      }
+    );
 
     //refresh form
     this.setState({
@@ -89,7 +103,8 @@ class CreateEvent extends React.Component {
       startTime: "",
       endTime: "",
       workout: "",
-      workoutNames: []
+      workoutName: "",
+      workoutNames: [],
     });
     this.state.reloadCal();
   }
