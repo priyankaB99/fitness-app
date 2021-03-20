@@ -20,6 +20,8 @@ class CreateEvent extends React.Component {
     this.submitHandler = this.submitHandler.bind(this);
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
   }
+
+  //query workotus database for names of all the workouts to display
   retrieveWorkouts() {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
@@ -28,7 +30,7 @@ class CreateEvent extends React.Component {
         let currentUser = fire.auth().currentUser.uid;
         let workoutsRef = fire.database().ref("Workouts");
         let workoutsData = [];
-        workoutsRef.on("value", function (data) {
+        workoutsRef.once("value", function (data) {
           let workoutsFromDatabase = data.val();
           for (const key in workoutsFromDatabase) {
             if (workoutsFromDatabase[key].creatorId == currentUser) {
@@ -41,15 +43,13 @@ class CreateEvent extends React.Component {
           }
           currentComponent.setState({ workoutNames: workoutsData });
         });
-
-        //console.log(afterOnCall);
-
-        //currentComponent.setState({ workouts: workoutsData });
       } else {
         console.log("signed out");
       }
     });
   }
+
+  //calls that function when page loads
   componentDidMount() {
     this.retrieveWorkouts();
   }
@@ -62,6 +62,14 @@ class CreateEvent extends React.Component {
   submitHandler(event) {
     event.preventDefault();
     let currentUserId = fire.auth().currentUser.uid;
+    //first finds the name of workout based on the ID
+    let workoutRef = fire.database().ref("Workouts/" + this.state.workout);
+    let workoutName = "";
+    workoutRef.once("value", function (data) {
+      workoutName = data.val().name;
+    });
+
+    //then pushes the event to the database
     let eventRef = fire.database().ref("Schedules/" + currentUserId);
     let newEventRef = eventRef.push();
     console.log("event", event);
@@ -69,15 +77,19 @@ class CreateEvent extends React.Component {
       date: this.state.date,
       startTime: this.state.startTime,
       endtime: this.state.endTime,
-      workoutKey: this.state.workout,
+      workoutId: this.state.workout,
+      workoutName: workoutName,
     });
     console.log("successfully added event to database");
+
     //refresh form
     this.setState({
-      name: "",
-      timeLength: "",
-      exercises: [{ exerciseName: "", reps: "" }],
-      notes: "",
+      currentUserId: "",
+      date: "",
+      startTime: "",
+      endTime: "",
+      workout: "",
+      workoutNames: [],
     });
   }
 
@@ -110,15 +122,15 @@ class CreateEvent extends React.Component {
           <label htmlFor="workout"> Choose from your workouts: </label>
           <select
             name="workout"
-            value={this.state.workOut}
+            value={this.state.workout}
             onChange={this.changeHandler}
           >
             <option value="" disabled hidden>
               Select a workout:
             </option>
-            {this.state.workoutNames.map((workout, idx) => (
-              <option key={idx} value={workout.workoutId}>
-                {workout.name}
+            {this.state.workoutNames.map((data, idx) => (
+              <option key={idx} value={data.workoutId}>
+                {data.name}
               </option>
             ))}
           </select>

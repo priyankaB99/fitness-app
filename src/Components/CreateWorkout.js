@@ -19,6 +19,8 @@ class CreateWorkout extends React.Component {
     this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
+
+  //function to produce dynamic form input for each exercise
   addExercise(event) {
     event.preventDefault();
     this.setState((prevState) => ({
@@ -29,6 +31,7 @@ class CreateWorkout extends React.Component {
   submitHandler(event) {
     event.preventDefault();
     let currentUserId = fire.auth().currentUser.uid;
+    //add to workouts table
     let workoutRef = fire.database().ref("Workouts/");
     let newWorkoutRef = workoutRef.push();
     newWorkoutRef.set({
@@ -116,12 +119,7 @@ class CreateWorkout extends React.Component {
           value={notes}
           onChange={this.changeHandler}
         ></textarea>
-        {/* <input
-          type="textarea"
-          name="notes"
-          value={notes}
-          onChange={this.changeHandler}
-        /> */}
+
         <input
           id="createBtn"
           className="button"
