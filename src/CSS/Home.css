@@ -1,18 +1,34 @@
-.calendar{
-    
-}
-
 .monthBox{
     display: flex;
+    margin: 15px 0;
 }
-    .monthNav{
-        flex: 1;
-    }
-    .month{
-        flex: 7;
-        text-align: center;
-    }
+.monthNav{
+    flex: 1;
+}
+.month{
+    flex: 7;
+    text-align: center;
+}
+.calHeader {
+    padding: 10px 0;
+    text-align: center;
+}
 
+.all-cells{
+    border: 1px solid #4a4453;
+}
+.cell {
+    min-height: 125px;
+    border: 1px solid #4a4453;
+    padding: 10px;
+}
+.row {
+    margin-left: unset !important;
+    margin-right: unset !important;
+}
+
+
+/* Not in use currently */
 .weekBox{
     margin-top: 3%;
     display: flex;
@@ -49,7 +65,3 @@
         flex: 1;
         border: 1px solid blue;
     }
-
-/* div{
-    background-color: black;
-} */

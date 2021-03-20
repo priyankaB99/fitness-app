@@ -3,7 +3,8 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter, Link, Redirect } from "react-router-dom";
-import "./Home.css";
+import "../CSS/Home.css";
+
 import {
   format,
   subMonths,
@@ -54,6 +55,26 @@ class Home extends React.Component {
           email: user.email,
           username: user.displayName,
         });
+
+
+        // let currentUser = fire.auth().currentUser.uid;
+        // let workoutsRef = fire.database().ref("Workouts");
+        // let workoutsData = [];
+        // workoutsRef.on("value", function (data) {
+        //   let workoutsFromDatabase = data.val();
+        //   for (const key in workoutsFromDatabase) {
+        //     if (workoutsFromDatabase[key].creatorId == currentUser) {
+        //       let workout = {
+        //         name: workoutsFromDatabase[key].name,
+        //         workoutId: key,
+        //         exercises: workoutsFromDatabase[key].exercises,
+        //         timeLength: workoutsFromDatabase[key].timeLength,
+        //         notes: workoutsFromDatabase[key].notes,
+        //       };
+        //       workoutsData.push(workout);
+        //     }
+        //   }
+        //   currentComponent.setState({ workouts: workoutsData });
       } else {
         // No user is signed in
         this.props.history.push("/login");
@@ -65,9 +86,7 @@ class Home extends React.Component {
   renderMonth() {
     return (
       <div class="monthBox">
-        <button onClick={this.previousMonth} class="monthNav nav">
-          {" "}
-          {/**previous month */}
+        <button type="button" onClick={this.previousMonth} class="monthNav btn btn-secondary btn-sm">
           Previous
         </button>
 
@@ -79,7 +98,7 @@ class Home extends React.Component {
           </h2>
         </div>
 
-        <button onClick={this.nextMonth} class="monthNav nav">
+        <button type="button" onClick={this.nextMonth} class="monthNav btn btn-secondary btn-sm">
           Next
         </button>
       </div>
@@ -101,26 +120,26 @@ class Home extends React.Component {
   }
 
   //from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
-  renderWeekdays() {
-    let week = this.createWeekArray();
+  // renderWeekdays() {
+  //   let week = this.createWeekArray();
 
-    return (
-      <div class="weekBox">
-        {/* <div onClick={this.previousWeek} class="weekNav nav">
-          Previous Week
-        </div> */}
+  //   return (
+  //     <div class="weekBox">
+  //       <div onClick={this.previousWeek} class="weekNav nav">
+  //         Previous Week
+  //       </div>
 
-        <div class="week">{week}</div>
+  //       <div class="week">{week}</div>
 
-        {/* <div onClick={this.nextWeek} class="weekNav nav">
-          Next Week
-        </div> */}
-      </div>
-    );
-  }
+  //       <div onClick={this.nextWeek} class="weekNav nav">
+  //         Next Week
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   //Returns array of the week, starting from Sunday
-  createWeekArray(currentDay, firstWeek) {
+  createWeekArray(currentDay) {
     let start = startOfWeek(currentDay);
     console.log(start);
     let days = [];
@@ -141,12 +160,7 @@ class Home extends React.Component {
         weekday = "**" + weekday + "**";
       }
       days.push(
-        <div className="col" key={dayToAdd}>
-          {firstWeek ? 
-          <div class="weekday">
-            <strong>{weekday}</strong>
-          </div> 
-          : <div></div>}
+        <div className="col cell" key={dayToAdd}>
           <div class="dayNumber">
             <b>{daynumber}</b>
           </div>
@@ -169,15 +183,13 @@ class Home extends React.Component {
     let weekRows = [];
     let currentDay = startDate;
     console.log(currentDay);
-    let firstWeek = true;
     while (currentDay < endDate) {
       weekRows.push(
-        this.createWeekArray(currentDay, firstWeek)
+        this.createWeekArray(currentDay)
       );
       currentDay = addDays(currentDay, 7);
-      firstWeek = false;
     }
-    return <div className="cells">{weekRows}</div>;
+    return <div className="all-cells">{weekRows}</div>;
   }
 
   // previousWeek() {
@@ -308,6 +320,15 @@ class Home extends React.Component {
           {this.renderMonth()}
           {/* {this.renderWeekdays()} */}
           {/* {this.renderTimes()} */}
+          <div className="row calHeader">
+            <div className="col"><strong>Sunday</strong></div>
+            <div className="col"><strong>Monday</strong></div>
+            <div className="col"><strong>Tuesday</strong></div>
+            <div className="col"><strong>Wednesday</strong></div>
+            <div className="col"><strong>Thursday</strong></div>
+            <div className="col"><strong>Friday</strong></div>
+            <div className="col"><strong>Saturday</strong></div>
+          </div>
           {this.createMonthCells()}
         </div>
       </div>
