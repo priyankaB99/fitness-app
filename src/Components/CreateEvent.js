@@ -72,7 +72,6 @@ class CreateEvent extends React.Component {
     //then pushes the event to the database
     let eventRef = fire.database().ref("Schedules/" + currentUserId);
     let newEventRef = eventRef.push();
-    console.log("event", event);
     newEventRef.set({
       date: this.state.date,
       startTime: this.state.startTime,
