@@ -13,6 +13,7 @@ class CreateEvent extends React.Component {
       startTime: "",
       endTime: "",
       workout: "",
+      workoutName: "",
       workoutNames: [],
     };
     this.changeHandler = this.changeHandler.bind(this);
@@ -63,11 +64,12 @@ class CreateEvent extends React.Component {
     let currentUserId = fire.auth().currentUser.uid;
     let eventRef = fire.database().ref("Schedules/" + currentUserId);
     let newEventRef = eventRef.push();
+    console.log("event", event);
     newEventRef.set({
       date: this.state.date,
       startTime: this.state.startTime,
       endtime: this.state.endTime,
-      workout: this.state.workout,
+      workoutKey: this.state.workout,
     });
     console.log("successfully added event to database");
     //refresh form

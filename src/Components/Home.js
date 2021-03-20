@@ -19,6 +19,8 @@ import {
   isSameDay,
   isSameWeek,
   isSameYear,
+  isSameMonth,
+  parseISO
 } from "date-fns";
 import CreateEvent from "./CreateEvent";
 
@@ -29,11 +31,9 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loggedIn: false,
       uid: "",
-      email: "",
-      username: "",
-      date: new Date(),
+      month: new Date(),
+      workoutEvents: []
     };
     this.previousMonth = this.previousMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
@@ -41,6 +41,7 @@ class Home extends React.Component {
     // this.nextWeek = this.nextWeek.bind(this);
     this.createWeekArray = this.createWeekArray.bind(this);
     this.createMonthCells = this.createMonthCells.bind(this);
+    this.findThisMonthEvents = this.findThisMonthEvents.bind(this);
   }
 
   componentDidMount() {
@@ -49,32 +50,7 @@ class Home extends React.Component {
         // User is signed in
         console.log(user.email);
         console.log(user.displayName);
-        this.setState({
-          loggedIn: true,
-          uid: user.uid,
-          email: user.email,
-          username: user.displayName,
-        });
-
-
-        // let currentUser = fire.auth().currentUser.uid;
-        // let workoutsRef = fire.database().ref("Workouts");
-        // let workoutsData = [];
-        // workoutsRef.on("value", function (data) {
-        //   let workoutsFromDatabase = data.val();
-        //   for (const key in workoutsFromDatabase) {
-        //     if (workoutsFromDatabase[key].creatorId == currentUser) {
-        //       let workout = {
-        //         name: workoutsFromDatabase[key].name,
-        //         workoutId: key,
-        //         exercises: workoutsFromDatabase[key].exercises,
-        //         timeLength: workoutsFromDatabase[key].timeLength,
-        //         notes: workoutsFromDatabase[key].notes,
-        //       };
-        //       workoutsData.push(workout);
-        //     }
-        //   }
-        //   currentComponent.setState({ workouts: workoutsData });
+        this.findThisMonthEvents();
       } else {
         // No user is signed in
         this.props.history.push("/login");
@@ -85,20 +61,20 @@ class Home extends React.Component {
   //Inspiration: https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
   renderMonth() {
     return (
-      <div class="monthBox">
-        <button type="button" onClick={this.previousMonth} class="monthNav btn btn-secondary btn-sm">
+      <div className="monthBox">
+        <button type="button" onClick={this.previousMonth} className="monthNav btn btn-secondary btn-sm">
           Previous
         </button>
 
-        <div class="month">
+        <div className="month">
           <h2>
-            {format(this.state.date, "MMMM") +
+            {format(this.state.month, "MMMM") +
               " " +
-              format(this.state.date, "yyyy")}
+              format(this.state.month, "yyyy")}
           </h2>
         </div>
 
-        <button type="button" onClick={this.nextMonth} class="monthNav btn btn-secondary btn-sm">
+        <button type="button" onClick={this.nextMonth} className="monthNav btn btn-secondary btn-sm">
           Next
         </button>
       </div>
@@ -106,17 +82,13 @@ class Home extends React.Component {
   }
 
   previousMonth() {
-    let newMonth = subMonths(this.state.date, 1);
-    this.setState({
-      date: newMonth,
-    });
+    let newMonth = subMonths(this.state.month, 1);
+    this.findThisMonthEvents(newMonth);
   }
 
   nextMonth() {
-    let newMonth = addMonths(this.state.date, 1);
-    this.setState({
-      date: newMonth,
-    });
+    let newMonth = addMonths(this.state.month, 1);
+    this.findThisMonthEvents(newMonth);
   }
 
   //from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
@@ -141,15 +113,12 @@ class Home extends React.Component {
   //Returns array of the week, starting from Sunday
   createWeekArray(currentDay) {
     let start = startOfWeek(currentDay);
-    console.log(start);
     let days = [];
     for (let i = 0; i < 7; i++) {
       let dayToAdd = addDays(start, i);
       let weekday = format(dayToAdd, "EEEE"); //needed to convert to English name to add the * if date matches, otherwise syntax error
       let daynumber = format(dayToAdd, "d");
       let today = new Date();
-
-      console.log(dayToAdd);
 
       if (
         isSameDay(today, dayToAdd) &&
@@ -159,10 +128,27 @@ class Home extends React.Component {
         //identifies current day: make into CSS later!!!
         weekday = "**" + weekday + "**";
       }
+
+      let todayEvents = [];
+      for (let i=0; i< this.state.workoutEvents.length; i++) {
+        let event = this.state.workoutEvents[i];
+        let formattedDate = new Date(format(parseISO(event.date), 'MM/dd/yyyy'));
+        if (isSameDay(formattedDate, dayToAdd) && isSameWeek(formattedDate, dayToAdd)) {
+          console.log(event);
+          todayEvents.push(
+            <div className="workoutEvent" key={event.eventKey}>
+              <div><strong>{event.workoutId}</strong></div>
+              <div>{event.start} - {event.end}</div>
+            </div>
+          );
+        }
+      }
+
       days.push(
         <div className="col cell" key={dayToAdd}>
-          <div class="dayNumber">
-            <b>{daynumber}</b>
+          <div className="dayNumber">
+            <strong>{daynumber}</strong>
+            {todayEvents}
           </div>
         </div>
       );
@@ -172,17 +158,13 @@ class Home extends React.Component {
 
   //Returns whole month, made up of week arrays
   createMonthCells() {
-    let monthStart = startOfMonth(this.state.date);
+    let monthStart = startOfMonth(this.state.month);
     let monthEnd = endOfMonth(monthStart);
     let startDate = startOfWeek(monthStart);
     let endDate = endOfWeek(monthEnd);
 
-    console.log(monthStart);
-    console.log(startDate);
-
     let weekRows = [];
     let currentDay = startDate;
-    console.log(currentDay);
     while (currentDay < endDate) {
       weekRows.push(
         this.createWeekArray(currentDay)
@@ -190,6 +172,43 @@ class Home extends React.Component {
       currentDay = addDays(currentDay, 7);
     }
     return <div className="all-cells">{weekRows}</div>;
+  }
+
+  findThisMonthEvents(currentMonth) {
+    let currentComponent = this;
+    //get user's workout events
+    fire.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        let schedulesRef = fire.database().ref("Schedules/" + user.uid);
+        let eventsData = [];
+        let thisMonth = currentComponent.state.month;
+        if (currentMonth) {
+          thisMonth = currentMonth;
+        }
+        console.log(thisMonth);
+        schedulesRef.on("value", function (data) {
+          let eventsFromDatabase = data.val();
+          for (const key in eventsFromDatabase) {
+            let formattedDate = new Date(format(parseISO(eventsFromDatabase[key].date), 'MM/dd/yyyy'));
+            console.log(formattedDate);
+            console.log(eventsFromDatabase[key]);
+            if (isSameMonth(formattedDate, thisMonth) && isSameYear(formattedDate, thisMonth)) {
+              eventsData.push({
+                eventKey: key,
+                workoutId: eventsFromDatabase[key].workoutKey,
+                date: eventsFromDatabase[key].date,
+                start: eventsFromDatabase[key].startTime,
+                end: eventsFromDatabase[key].endtime
+              });
+            }
+          }
+          currentComponent.setState({ month: thisMonth, workoutEvents: eventsData, uid: user.uid});
+        });
+      }
+      else {
+        currentComponent.props.history.push("/login");
+      }
+    });
   }
 
   // previousWeek() {
@@ -307,6 +326,7 @@ class Home extends React.Component {
   // }
 
   render() {
+    console.log("render");
     return (
       <div>
         <div>

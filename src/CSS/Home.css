@@ -27,6 +27,12 @@
     margin-right: unset !important;
 }
 
+.workoutEvent {
+    background-color: #b0a8ba;
+    padding: 5px;
+    border-radius: 3px;
+}
+
 
 /* Not in use currently */
 .weekBox{
