@@ -3,7 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
-
+import "./workouts.css";
 class DisplayWorkouts extends React.Component {
   constructor(props) {
     super(props);
@@ -11,6 +11,7 @@ class DisplayWorkouts extends React.Component {
       workouts: [],
     };
     this.deleteWorkout = this.deleteWorkout.bind(this);
+    this.editWorkout = this.editWorkout.bind(this);
   }
 
   componentDidMount() {
@@ -61,6 +62,10 @@ class DisplayWorkouts extends React.Component {
     this.setState({ workouts: changedWorkouts });
   }
 
+  editWorkout(event) {
+    let workoutId = event.target.parentNode.id;
+    console.log(workoutId);
+  }
   render() {
     return (
       <div>
@@ -68,11 +73,11 @@ class DisplayWorkouts extends React.Component {
         <div>
           {this.state.workouts.map((data, index) => (
             <div key={data.workoutId} id={data.workoutId} className="workout">
-              <h3>
+              <h3 id="workoutName">
                 Workout #{index + 1}: {data.name}
               </h3>
-              <p> Length of Workout: {data.timeLength}</p>
-              <ul>
+              <p id="workoutLength">Length of Workout: {data.timeLength} min</p>
+              <ul id="exercises">
                 {data.exercises.map((exercise, index) => (
                   <li key={index}>
                     Exercise #{index + 1}: {exercise.exerciseName} Reps:{" "}
@@ -80,9 +85,12 @@ class DisplayWorkouts extends React.Component {
                   </li>
                 ))}
               </ul>
-              <p> Notes/Links: {data.notes}</p>
+              <p id="workoutNotes"> Notes/Links: {data.notes}</p>
               <button type="button" id="deleteBtn" onClick={this.deleteWorkout}>
-                Delete Workout
+                Delete
+              </button>
+              <button type="button" id="editBtn" onClick={this.editWorkout}>
+                Edit
               </button>
             </div>
           ))}

@@ -3,7 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
-
+import "./workouts.css";
 //code pulled from https://itnext.io/building-a-dynamic-controlled-form-in-react-together-794a44ee552c
 
 class CreateWorkout extends React.Component {
@@ -62,7 +62,7 @@ class CreateWorkout extends React.Component {
   render() {
     let { name, timeLength, exercises, notes } = this.state;
     return (
-      <form onSubmit={this.submitHandler}>
+      <form id="createForm" onSubmit={this.submitHandler}>
         <label htmlFor="name"> Workout Name: </label>
         <input
           type="text"
@@ -70,7 +70,7 @@ class CreateWorkout extends React.Component {
           value={name}
           onChange={this.changeHandler}
         />
-        <label htmlFor="timeLength"> Time Length: </label>
+        <label htmlFor="timeLength"> Time Length (min): </label>
         <input
           type="number"
           name="timeLength"
@@ -81,7 +81,7 @@ class CreateWorkout extends React.Component {
           let exerciseId = `exerciseName-${idx}`;
           let repsId = `reps-${idx}`;
           return (
-            <div key={idx}>
+            <div key={idx} class="eachExercise">
               <label htmlFor={exerciseId}>{`Exercise #${idx + 1} Name`}:</label>
               <input
                 type="text"
@@ -105,16 +105,29 @@ class CreateWorkout extends React.Component {
             </div>
           );
         })}
-        <button onClick={this.addExercise}> Add Exercise </button>
+        <button className="button" onClick={this.addExercise}>
+          Add Exercise
+        </button>
 
         <label htmlFor="notes"> Notes/Links: </label>
-        <input
-          type="text"
+        <textarea
+          type="textarea"
           name="notes"
           value={notes}
           onChange={this.changeHandler}
+        ></textarea>
+        {/* <input
+          type="textarea"
+          name="notes"
+          value={notes}
+          onChange={this.changeHandler}
+        /> */}
+        <input
+          id="createBtn"
+          className="button"
+          type="submit"
+          value="Create Workout"
         />
-        <input type="submit" value="Create Workout" />
       </form>
     );
   }
