@@ -10,6 +10,7 @@ class DisplayWorkouts extends React.Component {
     this.state = {
       workouts: [],
     };
+    this.deleteWorkout = this.deleteWorkout.bind(this);
   }
 
   componentDidMount() {
@@ -20,54 +21,44 @@ class DisplayWorkouts extends React.Component {
         let currentUser = fire.auth().currentUser.uid;
         let workoutsRef = fire.database().ref("Workouts");
         let workoutsData = [];
-        console.log(currentUser);
-        workoutsRef
-          // .orderByChild("creatorId")
-          // .equalTo(currentUser)
-          .on("value", function (data) {
-            // if (data.val().creatorId == currentUser) {
-            //   let workout = {
-            //     name: data.val().name,
-            //     workoutId: data.key,
-            //     exercises: data.val().exercises,
-            //     timeLength: data.val().timeLength,
-            //     notes: data.val().notes,
-            //   };
-            //   workoutsData.push(workout);
-            //   console.log(workoutsData);
-            // }
-            // let workout = {
-            //   name: data.val().name,
-            //   workoutId: data.key,
-            //   exercises: data.val().exercises,
-            //   timeLength: data.val().timeLength,
-            //   notes: data.val().notes,
-            // };
-            // workoutsData.push(workout);
-            // console.log(workoutsData);
-            let workoutsFromDatabase = data.val();
-            for (const key in workoutsFromDatabase) {
-              if (workoutsFromDatabase[key].creatorId == currentUser) {
-                let workout = {
-                  name: workoutsFromDatabase[key].name,
-                  workoutId: key,
-                  exercises: workoutsFromDatabase[key].exercises,
-                  timeLength: workoutsFromDatabase[key].timeLength,
-                  notes: workoutsFromDatabase[key].notes,
-                };
-                workoutsData.push(workout);
-              }
+        workoutsRef.on("value", function (data) {
+          let workoutsFromDatabase = data.val();
+          for (const key in workoutsFromDatabase) {
+            if (workoutsFromDatabase[key].creatorId == currentUser) {
+              let workout = {
+                name: workoutsFromDatabase[key].name,
+                workoutId: key,
+                exercises: workoutsFromDatabase[key].exercises,
+                timeLength: workoutsFromDatabase[key].timeLength,
+                notes: workoutsFromDatabase[key].notes,
+              };
+              workoutsData.push(workout);
             }
-            currentComponent.setState({ workouts: workoutsData });
-          });
-
-        //console.log(afterOnCall);
-
-        //currentComponent.setState({ workouts: workoutsData });
+          }
+          currentComponent.setState({ workouts: workoutsData });
+        });
       } else {
         console.log("signed out");
       }
     });
+  }
+
+  deleteWorkout(event) {
+    let workoutsRef = fire.database().ref("Workouts/");
+    workoutsRef.off("value");
+    let workoutId = event.target.parentNode.id;
+    console.log(workoutId);
+    let deleteWorkoutRef = fire.database().ref("Workouts/" + workoutId);
+    deleteWorkoutRef.remove();
+    let changedWorkouts = this.state.workouts;
+    let deletedWorkoutIndex = "";
+    for (const key in changedWorkouts) {
+      if (changedWorkouts[key].workoutId == workoutId) {
+        deletedWorkoutIndex = key;
+      }
+    }
+    changedWorkouts.splice(deletedWorkoutIndex, 1);
+    this.setState({ workouts: changedWorkouts });
   }
 
   render() {
@@ -90,6 +81,9 @@ class DisplayWorkouts extends React.Component {
                 ))}
               </ul>
               <p> Notes/Links: {data.notes}</p>
+              <button type="button" id="deleteBtn" onClick={this.deleteWorkout}>
+                Delete Workout
+              </button>
             </div>
           ))}
         </div>
