@@ -1,0 +1,53 @@
+/* .workout {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+#workoutName {
+  grid-row-start: 1;
+  grid-row-end: 2;
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+#workoutLength {
+  grid-row-start: 2;
+  grid-row-end: 3;
+  grid-column-start: 1;
+  grid-column-start: 3;
+} */
+
+.workout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#deleteBtn,
+#editBtn {
+  width: 10%;
+}
+
+.button {
+  width: 40%;
+}
+
+#createForm {
+  display: flex;
+  flex-direction: column;
+}
+
+#createForm > * {
+  margin: 10px;
+}
+
+.eachExercise > * {
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+input[type="number"] {
+  width: 10%;
+}
