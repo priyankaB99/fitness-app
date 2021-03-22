@@ -15,8 +15,6 @@ import {
   startOfMonth,
   endOfMonth,
   addDays,
-  subWeeks,
-  addWeeks,
   isSameDay,
   isSameWeek,
   isSameYear,
@@ -24,9 +22,12 @@ import {
   parseISO,
 } from "date-fns";
 import CreateEvent from "./CreateEvent";
+import ViewEditEvent from './ViewEditEvent';
 
 // Code Resources
 // -https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
+// -https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
+// -https://dev.to/skptricks/create-simple-popup-example-in-react-application-5g7f
 
 class Home extends React.Component {
   constructor(props) {
@@ -35,6 +36,8 @@ class Home extends React.Component {
       uid: "",
       month: new Date(),
       workoutEvents: [],
+      showPopup: false,
+      selectedWorkout: "",
       // isOpen: false,
     };
     this.previousMonth = this.previousMonth.bind(this);
@@ -45,6 +48,7 @@ class Home extends React.Component {
     this.createMonthCells = this.createMonthCells.bind(this);
     this.findThisMonthEvents = this.findThisMonthEvents.bind(this);
     this.deleteWorkoutEvent = this.deleteWorkoutEvent.bind(this);
+    this.toggleViewEditEvent = this.toggleViewEditEvent.bind(this);
   }
 
   componentDidMount() {
@@ -102,24 +106,26 @@ class Home extends React.Component {
     this.findThisMonthEvents(newMonth);
   }
 
-  //from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
-  // renderWeekdays() {
-  //   let week = this.createWeekArray();
+  deleteWorkoutEvent(event) {
+    let eventId = event.target.parentNode.id;
+    console.log(eventId);
+    let deleteEventRef = fire
+      .database()
+      .ref("Schedules/" + this.state.uid + "/" + eventId);
+    deleteEventRef.remove();
+    this.findThisMonthEvents();
+  }
 
-  //   return (
-  //     <div class="weekBox">
-  //       <div onClick={this.previousWeek} class="weekNav nav">
-  //         Previous Week
-  //       </div>
-
-  //       <div class="week">{week}</div>
-
-  //       <div onClick={this.nextWeek} class="weekNav nav">
-  //         Next Week
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  //Create pop-up of event details
+  //Should be able to edit times, workout, etc.
+  //https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
+  toggleViewEditEvent(event){    
+    this.setState({
+      showPopup: !this.state.showPopup,
+      selectedWorkout: event
+    });
+    
+  }
 
   //Returns array of the week, starting from Sunday
   createWeekArray(currentDay) {
@@ -127,7 +133,6 @@ class Home extends React.Component {
     let days = [];
     for (let i = 0; i < 7; i++) {
       let dayToAdd = addDays(start, i);
-      let weekday = format(dayToAdd, "EEEE"); //needed to convert to English name to add the * if date matches, otherwise syntax error
       let daynumber = format(dayToAdd, "d");
       let today = new Date();
 
@@ -137,7 +142,7 @@ class Home extends React.Component {
         isSameYear(today, dayToAdd)
       ) {
         //identifies current day: make into CSS later!!!
-        weekday = "**" + weekday + "**";
+        daynumber = "*" + daynumber + "*";
       }
 
       let todayEvents = [];
@@ -149,28 +154,29 @@ class Home extends React.Component {
         if (
           isSameDay(formattedDate, dayToAdd) &&
           isSameWeek(formattedDate, dayToAdd)
+
         ) {
-          console.log(event);
           todayEvents.push(
-            <div
-              className="workoutEvent"
-              id={event.eventKey}
-              key={event.eventKey}
-            >
-              <div>
-                <strong>{event.workoutName}</strong>
+            <div className = "workoutBox">
+              <div
+                className="workoutEvent"
+                id={event.eventKey}
+                key={event.eventKey} onClick={() => this.toggleViewEditEvent(event)}
+              >
+                <div>
+                  <strong>{event.workoutName}</strong>
+                </div>
+                <div>
+                  {event.start} - {event.end}
+                </div>
+                <button type="button" onClick={this.deleteWorkoutEvent}>
+                  Delete
+                </button>
               </div>
-              <div>
-                {event.start} - {event.end}
-              </div>
-              <button type="button" onClick={this.deleteWorkoutEvent}>
-                Delete
-              </button>
             </div>
           );
         }
       }
-
       days.push(
         <div className="col cell" key={dayToAdd}>
           <div className="dayNumber">
@@ -210,7 +216,6 @@ class Home extends React.Component {
         if (currentMonth) {
           thisMonth = currentMonth;
         }
-        console.log(thisMonth);
         schedulesRef.once("value", function (data) {
           let eventsFromDatabase = data.val();
           for (const key in eventsFromDatabase) {
@@ -226,7 +231,7 @@ class Home extends React.Component {
               eventsData.push({
                 eventKey: key,
                 workoutName: eventsFromDatabase[key].workoutName,
-                workoutId: eventsFromDatabase[key].workoutId,
+                workoutId: eventsFromDatabase[key].workoutId, //this is the ID in firebase corresponding to exercise
                 date: eventsFromDatabase[key].date,
                 start: eventsFromDatabase[key].startTime,
                 end: eventsFromDatabase[key].endtime,
@@ -245,144 +250,23 @@ class Home extends React.Component {
     });
   }
 
-  deleteWorkoutEvent(event) {
-    let eventId = event.target.parentNode.id;
-    console.log(eventId);
-    let deleteEventRef = fire
-      .database()
-      .ref("Schedules/" + this.state.uid + "/" + eventId);
-    deleteEventRef.remove();
-    this.findThisMonthEvents();
-  }
-
-  // previousWeek() {
-  //   let week = this.state.date;
-  //   let newWeek = subWeeks(week, 1);
-  //   this.setState({
-  //     date: newWeek,
-  //   });
-  // }
-
-  // nextWeek() {
-  //   let week = this.state.date;
-  //   let newWeek = addWeeks(week, 1);
-  //   this.setState({
-  //     date: newWeek,
-  //   });
-  // }
-
-  // renderTimes() {
-  //   return (
-  //     <div class="timeBox">
-  //       <div class="timeLabels">
-  //         <table class="times">
-  //           <tr>
-  //             <td>12:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>1:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>2:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>3:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>4:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>5:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>6:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>7:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>8:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>9:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>10:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>11:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>12:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>1:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>2:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>3:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>4:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>5:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>6:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>7:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>8:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>9:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>12:00AM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>10:00PM</td>
-  //           </tr>
-  //           <tr>
-  //             <td>11:00PM</td>
-  //           </tr>
-  //         </table>
-  //       </div>
-
-  //       <div class="timesUnderDates">
-  //         <div class="sunday"></div>
-  //         <div class="monday"></div>
-  //         <div class="tuesday"></div>
-  //         <div class="wednesday"></div>
-  //         <div class="thursday"></div>
-  //         <div class="friday"></div>
-  //         <div class="saturday"></div>
-  //       </div>
-
-  //       <div class="spacer"></div>
-  //     </div>
-  //   );
-  // }
-
   render() {
-    console.log("render");
     return (
       <div>
         <div>
           <h1 className="mb-4">Welcome Home</h1>
         </div>
 
+        {/**https://medium.com/@daniela.sandoval/creating-a-popup-window-using-js-and-react-4c4bd125da57 */}
+        {this.state.showPopup ? <ViewEditEvent closePopup={this.toggleViewEditEvent}
+                                               selectedWorkout={this.state.selectedWorkout}
+        /> : null}
+
         <CreateEvent reloadCal={this.findThisMonthEvents} />
         {/**Inspiration from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728 */}
         <div className="calendar">
           {this.renderMonth()}
-          {/* {this.renderWeekdays()} */}
-          {/* {this.renderTimes()} */}
+
           <div className="row calHeader">
             <div className="col">
               <strong>Sunday</strong>
@@ -408,6 +292,7 @@ class Home extends React.Component {
           </div>
           {this.createMonthCells()}
         </div>
+
       </div>
     );
   }

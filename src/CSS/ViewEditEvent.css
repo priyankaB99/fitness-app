@@ -1,0 +1,17 @@
+.popup{
+    position: fixed;
+    border: 1px solid blue;
+    margin-top: 100px;
+    margin-left: 43%;
+    width: 400px;
+    height: 400px;
+    background-color: white;
+}
+
+.functionBox{
+    border: 1px solid red;
+}
+
+p{
+    font-size: 20px;
+}

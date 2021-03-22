@@ -19,29 +19,29 @@ function App() {
       <div class="wrapper">
         <Sidebar />
         <div class="main-content bg-light">
-        <div class=""> 
-        <div class="">
-        <Switch>
-          <Route path="/" exact>
-            <Home />
-          </Route>
-          <Route path="/createworkout" exact>
-            <CreateWorkout />
-          </Route>
-          <Route path="/displayworkouts" exact>
-            <DisplayWorkouts />
-          </Route>
-          <Route path="/signup" exact>
-            <SignUp />
-          </Route>
-          <Route path="/login" exact>
-            <Login />
-          </Route>
-        </Switch>
+          <div class=""> 
+            <div class="">
+            <Switch>
+              <Route path="/" exact>
+                <Home />
+              </Route>
+              <Route path="/createworkout" exact>
+                <CreateWorkout />
+              </Route>
+              <Route path="/displayworkouts" exact>
+                <DisplayWorkouts />
+              </Route>
+              <Route path="/signup" exact>
+                <SignUp />
+              </Route>
+              <Route path="/login" exact>
+                <Login />
+              </Route>
+            </Switch>
+            </div>
+          </div>
         </div>
-        </div>
-        </div>
-        </div>
+      </div>
       </BrowserRouter>
     </React.Fragment>
   );
