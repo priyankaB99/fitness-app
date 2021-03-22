@@ -2,7 +2,7 @@
     margin: 0 auto;
     width: max-content;
 }
-#loginBox > * {
+.loginBox > * {
     margin: 10px 0;
     width: 250px;
 }

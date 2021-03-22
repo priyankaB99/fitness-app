@@ -53,7 +53,7 @@ class Login extends React.Component {
     return (
       <div>
         <h1 class="mb-4">Log In</h1>
-        <div id="loginBox" className="login">
+        <div className="loginBox login">
           <input
             name="email"
             value={email}
