@@ -68,7 +68,7 @@ class Home extends React.Component {
         <button
           type="button"
           onClick={this.previousMonth}
-          className="monthNav btn btn-secondary btn-sm"
+          className="monthNav btn btn-secondary"
         >
           Previous
         </button>
@@ -84,7 +84,7 @@ class Home extends React.Component {
         <button
           type="button"
           onClick={this.nextMonth}
-          className="monthNav btn btn-secondary btn-sm"
+          className="monthNav btn btn-secondary"
         >
           Next
         </button>
@@ -158,12 +158,12 @@ class Home extends React.Component {
               key={event.eventKey}
             >
               <div>
-                <strong>{event.workoutName}</strong>
+                <i>{event.workoutName}</i>
               </div>
               <div>
                 {event.start} - {event.end}
               </div>
-              <button type="button" onClick={this.deleteWorkoutEvent}>
+              <button type="button" className="btn btn-secondary btn-sm" onClick={this.deleteWorkoutEvent}>
                 Delete
               </button>
             </div>

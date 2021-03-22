@@ -2,3 +2,12 @@
     margin: 0 auto;
     width: max-content;
 }
+#loginBox > * {
+    margin: 10px 0;
+    width: 250px;
+}
+.login {
+    width: max-content;
+    margin: 0 auto;
+    text-align: center;
+}

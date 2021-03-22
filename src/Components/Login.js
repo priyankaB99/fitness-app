@@ -53,29 +53,27 @@ class Login extends React.Component {
     return (
       <div>
         <h1 class="mb-4">Log In</h1>
-        <div class="">
-        <div>
+        <div id="loginBox" className="login">
           <input
             name="email"
             value={email}
             onChange={this.changeHandler}
             type="email"
             placeholder="Email"
-          />
+          /> <br></br>
           <input
             name="password"
             value={password}
             onChange={this.changeHandler}
             type="password"
             placeholder="Password"
-          />
-          <button disabled={isInvalid} onClick={() => this.submitForm()}>Log In</button>
+          /> <br></br>
+          <button className="btn btn-secondary" disabled={isInvalid} onClick={() => this.submitForm()}>Log In</button>
           {error && <p>{error.message}</p>}
         </div>
-        <div>
+        <div className="login">
           Don't have an account yet?<br></br>
           <Link to="/signup"> Sign Up </Link>
-        </div>
         </div>
       </div>
     );

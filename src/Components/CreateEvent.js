@@ -3,6 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
+import "./workouts.css";
 
 class CreateEvent extends React.Component {
   constructor(props) {
@@ -16,10 +17,12 @@ class CreateEvent extends React.Component {
       workoutName: "",
       workoutNames: [],
       reloadCal: this.props.reloadCal,
+      showComponent: false
     };
     this.changeHandler = this.changeHandler.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
+    this.showComponent = this.showComponent.bind(this);
   }
 
   //query workotus database for names of all the workouts to display
@@ -107,11 +110,22 @@ class CreateEvent extends React.Component {
     this.state.reloadCal();
   }
 
+  showComponent() {
+    if (this.state.showComponent) {
+      this.setState({showComponent: false});
+    }
+    else {
+      this.setState({showComponent: true});
+    }
+  }
+
   render() {
     return (
-      <div>
-        <h2> Add to Your Workout Schedule</h2>
-        <form onSubmit={this.submitHandler}>
+      <div id="createWorkoutEvent">
+        <h5 onClick={this.showComponent}> Add to Your Workout Schedule</h5>
+        {this.state.showComponent 
+        ?
+        <form className="createEventForm" onSubmit={this.submitHandler}>
           <label htmlFor="date"> Date: </label>
           <input
             type="date"
@@ -133,6 +147,7 @@ class CreateEvent extends React.Component {
             value={this.state.endTime}
             onChange={this.changeHandler}
           />
+          <br></br>
           <label htmlFor="workout"> Choose from your workouts: </label>
           <select
             name="workout"
@@ -148,8 +163,11 @@ class CreateEvent extends React.Component {
               </option>
             ))}
           </select>
-          <input type="submit" value="Create Workout Event" />
+          <br></br>
+          <input type="submit" className="btn btn-secondary" value="Create Workout Event" />
         </form>
+        :
+        <div></div>}
       </div>
     );
   }

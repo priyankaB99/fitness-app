@@ -19,8 +19,6 @@ function App() {
       <div class="wrapper">
         <Sidebar />
         <div class="main-content bg-light">
-        <div class=""> 
-        <div class="">
         <Switch>
           <Route path="/" exact>
             <Home />
@@ -39,9 +37,7 @@ function App() {
           </Route>
         </Switch>
         </div>
-        </div>
-        </div>
-        </div>
+      </div>
       </BrowserRouter>
     </React.Fragment>
   );
