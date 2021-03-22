@@ -8,10 +8,13 @@
     background-color: white;
 }
 
-.functionBox{
+.editClose{
     border: 1px solid red;
+    text-align: right;
 }
 
 p{
     font-size: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
 }

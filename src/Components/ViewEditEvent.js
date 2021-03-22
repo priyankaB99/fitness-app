@@ -3,6 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import "../CSS/ViewEditEvent.css";
+import {format, parse} from "date-fns";
 
 //Code Resources
 // -https://codepen.io/bastianalbers/pen/PWBYvz?editors=0110
@@ -15,11 +16,16 @@ class ViewEditEvent extends React.Component {
         workoutId: "",
         workoutName: "",
         workoutExercises: [],
+        workoutNotes: "",
         workoutDate: this.props.selectedWorkout.date,
         workoutStart: this.props.selectedWorkout.start,
         workoutEnd: this.props.selectedWorkout.end
     };
     this.parseWorkoutData = this.parseWorkoutData.bind(this);
+    this.editEvent = this.editEvent.bind(this);
+    this.formatDate = this.formatDate.bind(this);
+    this.formatTime = this.formatTime.bind(this);
+    this.formatExercises = this.formatExercises.bind(this);
   }
 
   componentDidMount() {
@@ -39,29 +45,84 @@ class ViewEditEvent extends React.Component {
     let workoutId = this.state.workout.workoutId;
     let workoutRef = fire.database().ref("Workouts/" + workoutId);
     
-    workoutRef.on("value", (data) => { //using arrow function => instead of function (data) preserves use of 'this' inside function
+    workoutRef.once("value", (data) => { //using arrow function => instead of function (data) preserves use of 'this' inside function
         let workoutData = data.val();      
         this.setState({
             workoutId: workoutId,
             workoutName: workoutData.name,
-            workoutExercises: workoutData.exercises
+            workoutExercises: workoutData.exercises,
+            workoutNotes: workoutData.notes
         })
     });
+    console.log(this.state);
   }
 
+  editEvent(){
+    console.log("edit");
+  }
+
+  formatDate(){
+    let date = parse(this.state.workoutDate,'yyyy-MM-dd', new Date());
+    let weekday = format(date, 'EEEE');
+    let monthDay = format(date, 'MMMM d')
+    return weekday + ", " + monthDay;
+  }
+
+  formatTime(){
+    let start = parse(this.state.workoutStart, 'HH:mm', new Date());
+    let end = parse(this.state.workoutEnd, 'HH:mm', new Date());
+    let formattedStart = format(start, 'h:mm b');
+    let formattedEnd = format(end, 'h:mm b');
+    return formattedStart + " - " + formattedEnd;
+  }
+
+  formatExercises(){
+    let exercises = this.state.workoutExercises;
+    console.log(exercises);
+    let formattedExercises = [];
+
+    formattedExercises = exercises.map((exercise, index) => (
+        <div className='exercise'> 
+            <div className='exerciseName'>
+                <b>{(index + 1) + ". " + exercise.exerciseName}</b>
+            </div>
+            <div className='reps'>
+                {exercise.reps + " reps"}
+            </div>
+        </div>)
+    );
+    return formattedExercises;
+  }
   
 
   render() {
     return (
       <div className='popup'>
-          <div className='functionBox'>
-              <p className='close' onClick={this.props.closePopup}>x</p>
-              <p className='edit'>Edit</p>
-          </div>
-          
-          <div className='workoutInfo'>
+            <div className='editClose'>
+                <p className='close' onClick={this.props.closePopup}>x</p>
+                <p className='edit' onClick={this.editEvent}>Edit</p>
+            </div>
 
-          </div>
+            <div className='workoutInfo'>
+                <div className='name'>
+                    <h1>{this.state.workoutName}</h1>
+                </div>
+
+                <div className='dateTime'>
+                    {this.formatDate() + " | "}
+                    {this.formatTime()}
+                </div>
+
+                <div className='notes'>
+                    {this.state.workoutNotes}
+                </div>
+            </div>
+
+            <hr></hr>
+
+            <div className='exerciseBox'>
+                {this.formatExercises()}
+            </div>
       </div>
     );
   }
