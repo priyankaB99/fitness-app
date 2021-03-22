@@ -37,6 +37,12 @@
 .workoutEvent > button {
     margin: 5px;
 }
+.workoutBox{
+    background-color: #b0a8ba;
+}
+    .workoutBox :hover{
+        background-color: greenyellow;
+    }
 
 
 /* Not in use currently */
@@ -76,3 +82,4 @@
         flex: 1;
         border: 1px solid blue;
     }
+/*End of not in use code*/ 

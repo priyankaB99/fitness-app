@@ -1,0 +1,49 @@
+.popup{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+
+    top: 30%;
+    left: 42%;
+
+
+    width: 600px;
+    height: 500px;
+    background-color: white;
+    border-radius: 20px;
+    border: 2px solid black;
+    z-index: 100; /*Makes sure it's in front of everything*/
+    padding-left: 20px;
+    padding-right: 20px;
+    box-shadow: 0 0 0 100vmax rgba(0,0,0, .5);
+}
+
+.editClose{
+    margin-top: 10px;
+    text-align: right;
+}
+
+p{
+    font-size: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.workoutInfo{
+    border-bottom: 1px solid navy;
+}
+    .workoutInfo div{
+        margin-bottom: 15px;
+    }
+
+.exercise{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+    .exerciseName{
+        margin-left: 50px;
+    }
+    .reps{
+        margin-right: 50px;
+    }
