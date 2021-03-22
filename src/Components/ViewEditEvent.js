@@ -19,13 +19,15 @@ class ViewEditEvent extends React.Component {
         workoutNotes: "",
         workoutDate: this.props.selectedWorkout.date,
         workoutStart: this.props.selectedWorkout.start,
-        workoutEnd: this.props.selectedWorkout.end
+        workoutEnd: this.props.selectedWorkout.end,
+        eventKey: this.props.selectedWorkout.eventKey
     };
     this.parseWorkoutData = this.parseWorkoutData.bind(this);
     this.editEvent = this.editEvent.bind(this);
     this.formatDate = this.formatDate.bind(this);
     this.formatTime = this.formatTime.bind(this);
     this.formatExercises = this.formatExercises.bind(this);
+    this.deleteEvent = this.deleteEvent.bind(this);
   }
 
   componentDidMount() {
@@ -93,17 +95,21 @@ class ViewEditEvent extends React.Component {
     );
     return formattedExercises;
   }
+
+  deleteEvent(event) {
+    this.props.closePopup();
+    this.props.deleteEvent(event);
+  }
   
 
   render() {
     return (
       <div className='popup'>
-            <div className='editClose'>
+            <div>
                 <p className='close' onClick={this.props.closePopup}>x</p>
-                <p className='edit' onClick={this.editEvent}>Edit</p>
             </div>
 
-            <div className='workoutInfo'>
+            <div className='workoutInfo' id={this.state.eventKey}>
                 <div className='name'>
                     <h2>{this.state.workoutName}</h2>
                 </div>
@@ -116,6 +122,9 @@ class ViewEditEvent extends React.Component {
                 <div className='notes'>
                     {this.state.workoutNotes}
                 </div>
+
+                <button className="btn btn-secondary popup-buttons btn-sm" onClick={this.editEvent} disabled>Edit</button>
+                <button className="btn btn-secondary popup-buttons btn-sm" onClick={this.deleteEvent}>Delete</button>
             </div>
 
             <hr></hr>

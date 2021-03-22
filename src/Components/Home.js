@@ -107,8 +107,10 @@ class Home extends React.Component {
   }
 
   deleteWorkoutEvent(event) {
+    let workoutsRef = fire.database().ref("Schedules/");
+    workoutsRef.off("value");
     let eventId = event.target.parentNode.id;
-    console.log(eventId);
+    console.log(event.target.parentNode);
     let deleteEventRef = fire
       .database()
       .ref("Schedules/" + this.state.uid + "/" + eventId);
@@ -119,7 +121,7 @@ class Home extends React.Component {
   //Create pop-up of event details
   //Should be able to edit times, workout, etc.
   //https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
-  toggleViewEditEvent(event){    
+  toggleViewEditEvent(event){
     this.setState({
       showPopup: !this.state.showPopup,
       selectedWorkout: event
@@ -157,7 +159,7 @@ class Home extends React.Component {
 
         ) {
           todayEvents.push(
-            <div className = "workoutBox">
+            <div className = "workoutBox" id={event.eventKey}>
               <div
                 className="workoutEvent"
                 id={event.eventKey}
@@ -171,9 +173,9 @@ class Home extends React.Component {
                 </div>
  
               </div>
-              <button type="button" onClick={this.deleteWorkoutEvent}>
+              {/* <button type="button" onClick={this.deleteWorkoutEvent}>
                   Delete
-                </button>
+                </button> */}
             </div>
           );
         }
@@ -260,6 +262,7 @@ class Home extends React.Component {
 
         {/**https://medium.com/@daniela.sandoval/creating-a-popup-window-using-js-and-react-4c4bd125da57 */}
         {this.state.showPopup ? <ViewEditEvent closePopup={this.toggleViewEditEvent}
+                                               deleteEvent={this.deleteWorkoutEvent}
                                                selectedWorkout={this.state.selectedWorkout}
         /> : null}
 

@@ -28,20 +28,25 @@
 }
 
 .workoutEvent {
+    /* background-color: #e1edf2;
+    padding: 10px 5px;
+    border-radius: 3px;
+    text-align: center;
+    margin-top: 5px; */
+}
+.workoutEvent > button {
+    margin: 5px;
+}
+.workoutBox{
     background-color: #e1edf2;
     padding: 10px 5px;
     border-radius: 3px;
     text-align: center;
     margin-top: 5px;
 }
-.workoutEvent > button {
-    margin: 5px;
-}
-.workoutBox{
-    background-color: #b0a8ba;
-}
-    .workoutBox :hover{
-        background-color: greenyellow;
+    .workoutBox:hover{
+        background-color: #bbcdd4;
+        cursor: pointer;
     }
 
 
