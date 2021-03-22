@@ -169,10 +169,11 @@ class Home extends React.Component {
                 <div>
                   {event.start} - {event.end}
                 </div>
-                <button type="button" onClick={this.deleteWorkoutEvent}>
+ 
+              </div>
+              <button type="button" onClick={this.deleteWorkoutEvent}>
                   Delete
                 </button>
-              </div>
             </div>
           );
         }

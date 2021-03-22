@@ -105,7 +105,7 @@ class ViewEditEvent extends React.Component {
 
             <div className='workoutInfo'>
                 <div className='name'>
-                    <h1>{this.state.workoutName}</h1>
+                    <h2>{this.state.workoutName}</h2>
                 </div>
 
                 <div className='dateTime'>

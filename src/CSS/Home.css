@@ -28,13 +28,15 @@
 }
 
 .workoutEvent {
-    background-color: #b0a8ba;
     padding: 5px;
     border-radius: 3px;
 }
-.workoutBox :hover{
-    background-color: greenyellow;
+.workoutBox{
+    background-color: #b0a8ba;
 }
+    .workoutBox :hover{
+        background-color: greenyellow;
+    }
 
 
 /* Not in use currently */
