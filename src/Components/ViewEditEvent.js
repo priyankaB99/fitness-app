@@ -71,11 +71,13 @@ class ViewEditEvent extends React.Component {
   }
 
   formatTime(){
-    let start = parse(this.state.workoutStart, 'HH:mm', new Date());
-    let end = parse(this.state.workoutEnd, 'HH:mm', new Date());
-    let formattedStart = format(start, 'h:mm b');
-    let formattedEnd = format(end, 'h:mm b');
-    return formattedStart + " - " + formattedEnd;
+    if ((this.state.workoutStart !== "") && (this.state.workoutEnd !== "")) {
+      let start = parse(this.state.workoutStart, 'HH:mm', new Date());
+      let end = parse(this.state.workoutEnd, 'HH:mm', new Date());
+      let formattedStart = format(start, 'h:mm b');
+      let formattedEnd = format(end, 'h:mm b');
+      return formattedStart + " - " + formattedEnd;
+    }
   }
 
   formatExercises(){
