@@ -166,7 +166,7 @@ class Home extends React.Component {
                 key={event.eventKey} onClick={() => this.toggleViewEditEvent(event)}
               >
                 <div>
-                  <strong>{event.workoutName}</strong>
+                  <i>{event.workoutName}</i>
                 </div>
                 <div>
                   {event.start} - {event.end}
