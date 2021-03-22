@@ -43,6 +43,7 @@ class CreateWorkout extends React.Component {
       exercises: this.state.exercises,
     });
     console.log("successfully added workout to database");
+    alert("Workout added! Visit 'My Workouts' to see all your saved workouts.");
     //refresh form
     this.setState({
       name: "",
@@ -65,68 +66,73 @@ class CreateWorkout extends React.Component {
   render() {
     let { name, timeLength, exercises, notes } = this.state;
     return (
-      <form id="createForm" onSubmit={this.submitHandler}>
-        <label htmlFor="name"> Workout Name: </label>
-        <input
-          type="text"
-          name="name"
-          value={name}
-          onChange={this.changeHandler}
-        />
-        <label htmlFor="timeLength"> Time Length (min): </label>
-        <input
-          type="number"
-          name="timeLength"
-          value={timeLength}
-          onChange={this.changeHandler}
-        />
-        {exercises.map((val, idx) => {
-          let exerciseId = `exerciseName-${idx}`;
-          let repsId = `reps-${idx}`;
-          return (
-            <div key={idx} class="eachExercise">
-              <label htmlFor={exerciseId}>{`Exercise #${idx + 1} Name`}:</label>
-              <input
-                type="text"
-                name={exerciseId}
-                data-id={idx}
-                id={exerciseId}
-                value={exercises[idx].exerciseName}
-                className="exerciseName"
-                onChange={this.changeHandler}
-              />
-              <label htmlFor={repsId}> Reps: </label>
-              <input
-                type="number"
-                name={repsId}
-                data-id={idx}
-                id={repsId}
-                value={exercises[idx].reps}
-                className="reps"
-                onChange={this.changeHandler}
-              />
-            </div>
-          );
-        })}
-        <button className="button" onClick={this.addExercise}>
-          Add Exercise
-        </button>
+      <div>
+        <h2> Create a New Workout</h2>
+        <form id="createForm" onSubmit={this.submitHandler}>
+          <label htmlFor="name"> Workout Name: </label>
+          <input
+            type="text"
+            name="name"
+            value={name}
+            onChange={this.changeHandler}
+          />
+          <label htmlFor="timeLength"> Time Length (Minutes): </label>
+          <input
+            type="number"
+            name="timeLength"
+            value={timeLength}
+            onChange={this.changeHandler}
+          />
+          {exercises.map((val, idx) => {
+            let exerciseId = `exerciseName-${idx}`;
+            let repsId = `reps-${idx}`;
+            return (
+              <div key={idx} class="exercise-list">
+                <div className="eachExercise">
+                  <label htmlFor={exerciseId}>{`Exercise #${idx + 1} Name`}:</label>
+                  <input
+                    type="text"
+                    name={exerciseId}
+                    data-id={idx}
+                    id={exerciseId}
+                    value={exercises[idx].exerciseName}
+                    className="exerciseName"
+                    onChange={this.changeHandler}
+                  />
+                  <label htmlFor={repsId}> Reps: </label>
+                  <input
+                    type="number"
+                    name={repsId}
+                    data-id={idx}
+                    id={repsId}
+                    value={exercises[idx].reps}
+                    className="reps"
+                    onChange={this.changeHandler}
+                  />
+                </div>
+              </div>
+            );
+          })}
+          <button type="button" id="add-exercise" className="btn btn-secondary" onClick={this.addExercise}>
+            Add Exercise
+          </button>
 
-        <label htmlFor="notes"> Notes/Links: </label>
-        <textarea
-          type="textarea"
-          name="notes"
-          value={notes}
-          onChange={this.changeHandler}
-        ></textarea>
+          <label htmlFor="notes"> Notes/Links: </label>
+          <textarea
+            type="textarea"
+            name="notes"
+            value={notes}
+            onChange={this.changeHandler}
+          ></textarea>
 
-        <input
-          id="createBtn"
-          className="button"
-          type="submit"
-          value="Create Workout"
-        />
-      </form>
+          <input
+            id="createBtn"
+            className="btn btn-secondary"
+            type="submit"
+            value="Create Workout"
+          />
+        </form>
+      </div>
     );
   }
 }

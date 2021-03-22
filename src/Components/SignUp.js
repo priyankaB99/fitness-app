@@ -2,7 +2,8 @@ import React from 'react';
 import fire from "../Firebase/fire";
 import 'firebase/auth';
 import 'firebase/database';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
+import './general.css';
 
 // Code Resources
 // - https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial#react-router-for-firebase-auth
@@ -96,40 +97,43 @@ class SignUp extends React.Component {
           return (
             <div>
               <h1 class="mb-4">Sign Up</h1>
-              <input
-                name="username"
-                value={username}
-                onChange={this.onChange}
-                type="text"
-                placeholder="Username"
-              />
-              <input
-                name="email"
-                value={email}
-                onChange={this.onChange}
-                type="text"
-                placeholder="Email Address"
-              />
-              <input
-                name="password1"
-                value={password1}
-                onChange={this.onChange}
-                type="password"
-                placeholder="Password"
-              />
-              <input
-                name="password2"
-                value={password2}
-                onChange={this.onChange}
-                type="password"
-                placeholder="Confirm Password"
-              />
-              <button disabled={isInvalid} onClick={() => this.submitForm()}>
-                  Sign Up
-              </button>
-              {warning !== '' && <p>{warning}</p>}
-              <br></br>
-              {error && <p>{error.message}</p>}
+              <div className="loginBox login">
+                <input
+                  name="username"
+                  value={username}
+                  onChange={this.onChange}
+                  type="text"
+                  placeholder="Username"
+                /> <br></br>
+                <input
+                  name="email"
+                  value={email}
+                  onChange={this.onChange}
+                  type="text"
+                  placeholder="Email Address"
+                /> <br></br>
+                <input
+                  name="password1"
+                  value={password1}
+                  onChange={this.onChange}
+                  type="password"
+                  placeholder="Password"
+                /> <br></br>
+                <input
+                  name="password2"
+                  value={password2}
+                  onChange={this.onChange}
+                  type="password"
+                  placeholder="Confirm Password"
+                /> <br></br>
+                <button className="btn btn-secondary" disabled={isInvalid} onClick={() => this.submitForm()}>
+                    Sign Up
+                </button>
+                {warning !== '' && <p>{warning}</p>}
+                <br></br>
+                {error && <p>{error.message}</p>}
+                <Link to="/login"> Log In </Link>
+              </div>
             </div>
           );
     }

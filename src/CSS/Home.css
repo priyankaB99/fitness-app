@@ -28,8 +28,14 @@
 }
 
 .workoutEvent {
-    padding: 5px;
+    background-color: #e1edf2;
+    padding: 10px 5px;
     border-radius: 3px;
+    text-align: center;
+    margin-top: 5px;
+}
+.workoutEvent > button {
+    margin: 5px;
 }
 .workoutBox{
     background-color: #b0a8ba;

@@ -75,10 +75,12 @@ class DisplayWorkouts extends React.Component {
         <div>
           {this.state.workouts.map((data, index) => (
             <div key={data.workoutId} id={data.workoutId} className="workout">
-              <h3 id="workoutName">
-                Workout #{index + 1}: {data.name}
-              </h3>
-              <p id="workoutLength">Length of Workout: {data.timeLength} min</p>
+              <div class="workoutHeader">
+                <h3 id="workoutName">
+                  Workout #{index + 1}: {data.name}
+                </h3>
+                <p id="workoutLength">Length of Workout: {data.timeLength} min</p>
+              </div>
               <ul id="exercises">
                 {data.exercises.map((exercise, index) => (
                   <li key={index}>
@@ -88,10 +90,10 @@ class DisplayWorkouts extends React.Component {
                 ))}
               </ul>
               <p id="workoutNotes"> Notes/Links: {data.notes}</p>
-              <button type="button" id="deleteBtn" onClick={this.deleteWorkout}>
+              <button type="button" className="btn btn-secondary" id="deleteBtn" onClick={this.deleteWorkout}>
                 Delete
               </button>
-              <button type="button" id="editBtn" onClick={this.editWorkout}>
+              <button type="button" className="btn btn-secondary" id="editBtn" onClick={this.editWorkout}>
                 Edit
               </button>
             </div>

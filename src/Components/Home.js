@@ -72,7 +72,7 @@ class Home extends React.Component {
         <button
           type="button"
           onClick={this.previousMonth}
-          className="monthNav btn btn-secondary btn-sm"
+          className="monthNav btn btn-secondary"
         >
           Previous
         </button>
@@ -88,7 +88,7 @@ class Home extends React.Component {
         <button
           type="button"
           onClick={this.nextMonth}
-          className="monthNav btn btn-secondary btn-sm"
+          className="monthNav btn btn-secondary"
         >
           Next
         </button>

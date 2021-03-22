@@ -18,36 +18,61 @@
   grid-column-start: 3;
 } */
 
+/* display workout page */
 .workout {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  /* display: flex;
+  flex-direction: column; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  background-color: #e1edf2;
+  border-radius: 3px;
+  margin: 20px 0;
+  padding: 20px;
+
 }
 
 #deleteBtn,
 #editBtn {
-  width: 10%;
+  width: 75px;
+  margin-right: 20px;
 }
 
-.button {
-  width: 40%;
-}
-
+/* Create workout page */
 #createForm {
   display: flex;
   flex-direction: column;
+  max-width: 700px;
 }
 
 #createForm > * {
   margin: 10px;
+  margin-left: 0px;
 }
 
 .eachExercise > * {
-  margin-left: 10px;
-  margin-right: 5px;
+  margin-right: 15px;
+}
+
+#createBtn, #add-exercise {
+  width: max-content;
 }
 
 input[type="number"] {
-  width: 10%;
+  width: 100px;
+}
+
+/* create workout event component */
+#createWorkoutEvent {
+  background-color: #e1edf2;
+  border-radius: 3px;
+  margin: 20px 0;
+  padding: 20px;
+}
+#createWorkoutEvent > h5:hover {
+  cursor: pointer;
+  font-weight:600;
+}
+.createEventForm > * {
+  margin-right: 10px;
+  margin-top: 10px;
 }
