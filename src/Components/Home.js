@@ -19,6 +19,8 @@ import {
   isSameYear,
   isSameMonth,
   parseISO,
+  isAfter,
+  isBefore
 } from "date-fns";
 import CreateEvent from "./CreateEvent";
 import ViewEditEvent from "./ViewEditEvent";
@@ -165,12 +167,32 @@ class Home extends React.Component {
   //Returns array of the week, starting from Sunday
   createWeekArray(currentDay) {
     let start = startOfWeek(currentDay);
+    let endMonth = endOfMonth(startOfMonth(this.state.month));
+    let startMonth = startOfMonth(this.state.month);
+    let today = new Date();
     let days = [];
+
     for (let i = 0; i < 7; i++) {
       let dayToAdd = addDays(start, i);
       let daynumber = format(dayToAdd, "d");
-      let today = new Date();
 
+      //adjusts class if day is before or after current month
+      let cellDivClass = "col cell"
+      let dateDivClass = "dayNumber"
+      if (isAfter(dayToAdd, endMonth) || isBefore(dayToAdd, startMonth)) {
+        dateDivClass += " diffMonthDate"
+        cellDivClass += " noHover"
+      }
+      //adjusts class if date is today
+      if (
+        isSameDay(today, dayToAdd) &&
+        isSameWeek(today, dayToAdd) &&
+        isSameYear(today, dayToAdd)
+      ) {
+        cellDivClass += " today";
+      }
+
+      //add events
       let todayEvents = [];
       for (let i = 0; i < this.state.workoutEvents.length; i++) {
         let event = this.state.workoutEvents[i];
@@ -194,48 +216,25 @@ class Home extends React.Component {
                   {event.start} - {event.end}
                 </div>
               </div>
-              {/* <button type="button" onClick={this.deleteWorkoutEvent}>
-                  Delete
-                </button> */}
             </div>
           );
         }
       }
-      //if today
-      if (
-        isSameDay(today, dayToAdd) &&
-        isSameWeek(today, dayToAdd) &&
-        isSameYear(today, dayToAdd)
-      ) {
-        days.push(
-          <div
-            className="col cell today"
-            key={dayToAdd}
-            onClick={this.toggleAddEvent}
-            id={dayToAdd}
-          >
-            <div className="dayNumber">
-              <strong>{daynumber}</strong>
-            </div>
-            {todayEvents}
+
+      //Finish day cell with events
+      days.push(
+        <div
+          className={cellDivClass}
+          key={dayToAdd}
+          onClick={this.toggleAddEvent}
+          id={dayToAdd}
+        >
+          <div className={dateDivClass}>
+            <strong>{daynumber}</strong>
           </div>
-        );
-        //if not today
-      } else {
-        days.push(
-          <div
-            className="col cell"
-            key={dayToAdd}
-            onClick={this.toggleAddEvent}
-            id={dayToAdd}
-          >
-            <div className="dayNumber">
-              <strong>{daynumber}</strong>
-            </div>
-            {todayEvents}
-          </div>
-        );
-      }
+          {todayEvents}
+        </div>
+      );
     }
     return <div className="weekdayRow row">{days}</div>;
   }
@@ -306,14 +305,13 @@ class Home extends React.Component {
         <div>
           <h1 className="mb-4">Welcome Home</h1>
         </div>
-        <h4>
-          {" "}
-          Instructions: Create a workout event by clicking on a date in your
-          calendar or click
-          <button id="addEventBtn" onClick={this.toggleAddEvent}>
-            here
+        <h5 class="home-banner">
+          Create a workout event by clicking on a date in your
+          calendar or here
+          <button type="button" id="addEventBtn" className="btn btn-secondary" onClick={this.toggleAddEvent}>
+            Add Event
           </button>
-        </h4>
+        </h5>
         {/**https://medium.com/@daniela.sandoval/creating-a-popup-window-using-js-and-react-4c4bd125da57 */}
         {this.state.showPopup ? (
           <ViewEditEvent

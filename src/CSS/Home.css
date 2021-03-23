@@ -24,7 +24,11 @@
 }
 .cell:hover {
   cursor: pointer;
-  background-color: rgb(230, 230, 230);
+  background-color: rgb(236, 236, 236);
+}
+.noHover:hover {
+  cursor: unset !important;
+  background-color: unset !important;
 }
 
 .row {
@@ -53,16 +57,27 @@
   background-color: #bbcdd4;
   cursor: pointer;
 }
-
-#addEventBtn {
-  border: 1px solid white;
-  border-radius: 3px;
-  background-color: #e1edf2;
-}
-
 .today {
-  background-color: #bbcdd4;
+  background-color: #cae3ee;
 }
+.diffMonthDate {
+  color: grey;
+}
+
+.home-banner {
+  background-color: #e1edf2;
+  padding: 15px;
+  border-radius: 3px;
+  width: max-content;
+}
+#addEventBtn {
+  /* border: 1px solid white;
+  border-radius: 3px;
+  background-color: #e1edf2; */
+  margin-left: 10px;
+  vertical-align: baseline;
+}
+
 /* Not in use currently */
 .weekBox {
   margin-top: 3%;

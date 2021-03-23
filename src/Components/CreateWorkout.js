@@ -157,7 +157,7 @@ class CreateWorkout extends React.Component {
             className="btn btn-secondary"
             onClick={this.addExercise}
           >
-            Click here for another exercise field
+            Add Another Exercise
           </button>
 
           <label htmlFor="notes"> Notes/Links: </label>
@@ -172,7 +172,7 @@ class CreateWorkout extends React.Component {
             id="createBtn"
             className="btn btn-secondary"
             type="submit"
-            value="Create Workout"
+            value="Finish Creating Workout"
           />
         </form>
       </div>

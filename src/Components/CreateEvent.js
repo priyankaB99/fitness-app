@@ -86,6 +86,7 @@ class CreateEvent extends React.Component {
   submitHandler(event) {
     event.preventDefault();
     let currentUserId = fire.auth().currentUser.uid;
+    
     //first pushes the event to the database
     let eventRef = fire.database().ref("Schedules/" + currentUserId);
     let newEventRef = eventRef.push();
@@ -138,7 +139,6 @@ class CreateEvent extends React.Component {
             x
           </p>
         </div>
-
         {/* <h5 onClick={this.props.popUp}> Add to Your Workout Schedule</h5> */}
         {/* {this.state.showComponent ? ( */}
         <form id="createEventForm" onSubmit={this.submitHandler}>
@@ -168,10 +168,8 @@ class CreateEvent extends React.Component {
             onChange={this.changeHandler}
             required
           />
-          <br></br>
           <label htmlFor="workout">
-            {" "}
-            Choose one of your own custom workouts for this event:{" "}
+            Choose one of your own custom workouts for this event:
           </label>
           <select
             name="workout"
@@ -187,7 +185,7 @@ class CreateEvent extends React.Component {
                 {data.name}
               </option>
             ))}
-            <option value="create">Click here to create a new workout</option>
+            <option value="create">Click to Create a New Workout!</option>
           </select>
           <br></br>
           <input
