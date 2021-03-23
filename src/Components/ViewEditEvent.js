@@ -21,6 +21,7 @@ class ViewEditEvent extends React.Component {
       workoutStart: this.props.selectedWorkout.start,
       workoutEnd: this.props.selectedWorkout.end,
       eventKey: this.props.selectedWorkout.eventKey,
+      warning: ""
     };
     this.parseWorkoutData = this.parseWorkoutData.bind(this);
     this.editEvent = this.editEvent.bind(this);
@@ -50,12 +51,20 @@ class ViewEditEvent extends React.Component {
     workoutRef.once("value", (data) => {
       //using arrow function => instead of function (data) preserves use of 'this' inside function
       let workoutData = data.val();
-      this.setState({
-        workoutId: workoutId,
-        workoutName: workoutData.name,
-        workoutExercises: workoutData.exercises,
-        workoutNotes: workoutData.notes,
-      });
+      if (workoutData) {
+        this.setState({
+          workoutId: workoutId,
+          workoutName: workoutData.name,
+          workoutExercises: workoutData.exercises,
+          workoutNotes: workoutData.notes,
+          warning: ""
+        });
+      }
+      else {
+        this.setState({
+          warning: "This workout assigned to this event has been deleted. Edit and choose a different workout or delete this event."
+        });
+      }
     });
     console.log(this.state);
   }
@@ -113,6 +122,7 @@ class ViewEditEvent extends React.Component {
           </p>
         </div>
 
+        {(this.state.warning == "") ?
         <div className="workoutInfo" id={this.state.eventKey}>
           <div className="name">
             <h2>{this.state.workoutName}</h2>
@@ -130,15 +140,34 @@ class ViewEditEvent extends React.Component {
             onClick={this.editEvent}
             disabled
           >
-            Edit
+            Edit Event
           </button>
           <button
             className="btn btn-secondary popup-buttons btn-sm"
             onClick={this.deleteEvent}
           >
-            Delete
+            Delete Event
           </button>
         </div>
+        : 
+        <div class="warning">
+          <strong>{this.state.warning}</strong>
+          <br></br>
+          <button
+            className="btn btn-secondary popup-buttons btn-sm"
+            onClick={this.editEvent}
+            disabled
+          >
+            Edit Event
+          </button>
+          <button
+            className="btn btn-secondary popup-buttons btn-sm"
+            onClick={this.deleteEvent}
+          >
+            Delete Event
+          </button>
+        </div>
+        }
 
         <hr></hr>
 

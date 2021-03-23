@@ -22,6 +22,11 @@
   border: 1px solid #4a4453;
   padding: 10px;
 }
+.cell:hover {
+  cursor: pointer;
+  background-color: rgb(230, 230, 230);
+}
+
 .row {
   margin-left: unset !important;
   margin-right: unset !important;
