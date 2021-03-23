@@ -12,7 +12,7 @@ class CreateWorkout extends React.Component {
     this.state = {
       name: "",
       timeLength: "",
-      exercises: [{ exerciseName: "", reps: "" }],
+      exercises: [{ exerciseName: "", qty: "", unit: "reps" }],
       notes: "",
     };
     this.addExercise = this.addExercise.bind(this);
@@ -24,12 +24,16 @@ class CreateWorkout extends React.Component {
   addExercise(event) {
     event.preventDefault();
     this.setState((prevState) => ({
-      exercises: [...prevState.exercises, { exerciseName: "", reps: "" }],
+      exercises: [
+        ...prevState.exercises,
+        { exerciseName: "", qty: "", unit: "reps" },
+      ],
     }));
   }
 
   submitHandler(event) {
     event.preventDefault();
+
     let currentUserId = fire.auth().currentUser.uid;
     //add to workouts table
     let workoutRef = fire.database().ref("Workouts/");
@@ -48,13 +52,13 @@ class CreateWorkout extends React.Component {
     this.setState({
       name: "",
       timeLength: "",
-      exercises: [{ exerciseName: "", reps: "" }],
+      exercises: [{ exerciseName: "", qty: "", unit: "" }],
       notes: "",
     });
   }
 
   changeHandler(event) {
-    if (["exerciseName", "reps"].includes(event.target.className)) {
+    if (["exerciseName", "qty", "unit"].includes(event.target.className)) {
       let exercises = [...this.state.exercises];
       exercises[event.target.dataset.id][event.target.className] =
         event.target.value;
@@ -75,6 +79,7 @@ class CreateWorkout extends React.Component {
             name="name"
             value={name}
             onChange={this.changeHandler}
+            required
           />
           <label htmlFor="timeLength"> Time Length (Minutes): </label>
           <input
@@ -82,14 +87,19 @@ class CreateWorkout extends React.Component {
             name="timeLength"
             value={timeLength}
             onChange={this.changeHandler}
+            min="0"
+            required
           />
           {exercises.map((val, idx) => {
             let exerciseId = `exerciseName-${idx}`;
-            let repsId = `reps-${idx}`;
+            let qtyId = `qty-${idx}`;
+            let unitId = `unit-${idx}`;
             return (
               <div key={idx} class="exercise-list">
                 <div className="eachExercise">
-                  <label htmlFor={exerciseId}>{`Exercise #${idx + 1} Name`}:</label>
+                  <label htmlFor={exerciseId}>
+                    {`Exercise #${idx + 1} Name`}:
+                  </label>
                   <input
                     type="text"
                     name={exerciseId}
@@ -98,22 +108,42 @@ class CreateWorkout extends React.Component {
                     value={exercises[idx].exerciseName}
                     className="exerciseName"
                     onChange={this.changeHandler}
+                    required
                   />
-                  <label htmlFor={repsId}> Reps: </label>
+                  <label htmlFor={qtyId}> Quantity: </label>
                   <input
                     type="number"
-                    name={repsId}
+                    name={qtyId}
                     data-id={idx}
-                    id={repsId}
-                    value={exercises[idx].reps}
-                    className="reps"
+                    id={qtyId}
+                    value={exercises[idx].qty}
+                    className="qty"
                     onChange={this.changeHandler}
+                    min="0"
+                    required
                   />
+                  <select
+                    name={unitId}
+                    data-id={idx}
+                    id={unitId}
+                    className="unit"
+                    onChange={this.changeHandler}
+                    required
+                    value={exercises[idx].unit}
+                  >
+                    <option value="reps"> reps </option>
+                    <option value="secs"> seconds</option>
+                  </select>
                 </div>
               </div>
             );
           })}
-          <button type="button" id="add-exercise" className="btn btn-secondary" onClick={this.addExercise}>
+          <button
+            type="button"
+            id="add-exercise"
+            className="btn btn-secondary"
+            onClick={this.addExercise}
+          >
             Add Exercise
           </button>
 

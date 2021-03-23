@@ -2,34 +2,33 @@ import React from "react";
 import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
-import { withRouter } from "react-router-dom";
-import "./workouts.css";
+import { withRouter, Redirect } from "react-router-dom";
+import "../CSS/ViewEditEvent.css";
 
 class CreateEvent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       currentUserId: "",
-      date: "",
+      date: this.props.selectedDay,
       startTime: "",
       endTime: "",
       workout: "",
       workoutName: "",
       workoutNames: [],
       reloadCal: this.props.reloadCal,
-      showComponent: false
+      // showComponent: false,
     };
     this.changeHandler = this.changeHandler.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
-    this.showComponent = this.showComponent.bind(this);
+    // this.showComponent = this.showComponent.bind(this);
   }
 
   //query workotus database for names of all the workouts to display
   retrieveWorkouts() {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
-      console.log("check 17");
       if (user) {
         let currentUser = fire.auth().currentUser.uid;
         let workoutsRef = fire.database().ref("Workouts");
@@ -56,22 +55,28 @@ class CreateEvent extends React.Component {
   //calls that function when page loads
   componentDidMount() {
     this.retrieveWorkouts();
+    //convert date
+    const fullDate = new Date(this.state.date);
+    const formattedDate = fullDate.toISOString().substring(0, 10);
+    this.setState({ date: formattedDate });
   }
 
   changeHandler(event) {
     event.preventDefault();
     this.setState({ [event.target.name]: event.target.value });
-    if ([event.target.name] == "workout") {
+
+    if (event.target.name == "workout" && event.target.value != "create") {
       getEvent(event.target.value).then((value) => {
         this.setState({ workoutName: value });
       });
-    }
-    async function getEvent(workoutId) {
-      let workoutRef = await fire
-        .database()
-        .ref("Workouts/" + workoutId)
-        .once("value");
-      return workoutRef.val().name;
+
+      async function getEvent(workoutId) {
+        let workoutRef = await fire
+          .database()
+          .ref("Workouts/" + workoutId)
+          .once("value");
+        return workoutRef.val().name;
+      }
     }
   }
 
@@ -108,30 +113,41 @@ class CreateEvent extends React.Component {
       workoutName: "",
     });
     this.state.reloadCal();
+    this.props.closePopup();
   }
 
-  showComponent() {
-    if (this.state.showComponent) {
-      this.setState({showComponent: false});
-    }
-    else {
-      this.setState({showComponent: true});
-    }
-  }
+  // showComponent() {
+  //   if (this.state.showComponent) {
+  //     this.setState({ showComponent: false });
+  //   } else {
+  //     this.setState({ showComponent: true });
+  //   }
+  // }
 
   render() {
+    if (this.state.workout == "create") {
+      return <Redirect to="/createworkout" />;
+    }
     return (
-      <div id="createWorkoutEvent">
-        <h5 onClick={this.showComponent}> Add to Your Workout Schedule</h5>
-        {this.state.showComponent 
-        ?
-        <form className="createEventForm" onSubmit={this.submitHandler}>
+      <div className="popup">
+        <div>
+          <p className="close" onClick={this.props.closePopup}>
+            x
+          </p>
+        </div>
+
+        {/* <h5 onClick={this.props.popUp}> Add to Your Workout Schedule</h5> */}
+        {/* {this.state.showComponent ? ( */}
+        <form id="createEventForm" onSubmit={this.submitHandler}>
+          <h3> Add a Workout Event to Your Calendar </h3>
+
           <label htmlFor="date"> Date: </label>
           <input
             type="date"
             name="date"
             value={this.state.date}
             onChange={this.changeHandler}
+            required
           />
           <label htmlFor="startTime"> Start Time: </label>
           <input
@@ -139,6 +155,7 @@ class CreateEvent extends React.Component {
             name="startTime"
             value={this.state.startTime}
             onChange={this.changeHandler}
+            required
           />
           <label htmlFor="endTime"> End Time: </label>
           <input
@@ -146,6 +163,7 @@ class CreateEvent extends React.Component {
             name="endTime"
             value={this.state.endTime}
             onChange={this.changeHandler}
+            required
           />
           <br></br>
           <label htmlFor="workout"> Choose from your workouts: </label>
@@ -153,21 +171,28 @@ class CreateEvent extends React.Component {
             name="workout"
             value={this.state.workout}
             onChange={this.changeHandler}
+            required
           >
             <option value="" disabled hidden>
-              Select a workout:
+              Select a workout
             </option>
             {this.state.workoutNames.map((data, idx) => (
               <option key={idx} value={data.workoutId}>
                 {data.name}
               </option>
             ))}
+            <option value="create">Click here to create a new workout</option>
           </select>
           <br></br>
-          <input type="submit" className="btn btn-secondary" value="Create Workout Event" />
+          <input
+            type="submit"
+            className="btn btn-secondary"
+            value="Create Workout Event"
+          />
         </form>
-        :
-        <div></div>}
+        {/* ) : (
+          <div></div>
+        )} */}
       </div>
     );
   }
