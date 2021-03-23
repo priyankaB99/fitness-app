@@ -87,7 +87,7 @@ class DisplayWorkouts extends React.Component {
                 <tbody>
                   {data.exercises.map((exercise, index) => (
                     <tr key={index}>
-                      <td key>
+                      <td>
                         <strong>{index + 1}:</strong> {exercise.exerciseName}{" "}
                       </td>
                       <td>{exercise.qty}</td>
