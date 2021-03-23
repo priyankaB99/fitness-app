@@ -47,7 +47,9 @@ class CreateWorkout extends React.Component {
       exercises: this.state.exercises,
     });
     console.log("successfully added workout to database");
-    alert("Workout added! Visit 'My Workouts' to see all your saved workouts.");
+    alert(
+      "Workout added! Visit 'My Workouts' to see all your saved workouts or 'Home' to create an event with your new workout."
+    );
     //refresh form
     this.setState({
       name: "",
@@ -81,7 +83,7 @@ class CreateWorkout extends React.Component {
             onChange={this.changeHandler}
             required
           />
-          <label htmlFor="timeLength"> Time Length (Minutes): </label>
+          <label htmlFor="timeLength"> Total Workout Length (Minutes): </label>
           <input
             type="number"
             name="timeLength"
@@ -133,6 +135,7 @@ class CreateWorkout extends React.Component {
                   >
                     <option value="reps"> reps </option>
                     <option value="secs"> seconds</option>
+                    <option value="min"> minutes </option>
                   </select>
                 </div>
               </div>
@@ -144,7 +147,7 @@ class CreateWorkout extends React.Component {
             className="btn btn-secondary"
             onClick={this.addExercise}
           >
-            Add Exercise
+            Click here for another exercise field
           </button>
 
           <label htmlFor="notes"> Notes/Links: </label>

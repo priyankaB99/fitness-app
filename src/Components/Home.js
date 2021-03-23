@@ -131,10 +131,35 @@ class Home extends React.Component {
   }
 
   toggleAddEvent(event) {
+    //if false
     if (!this.state.showAddEvent) {
-      this.setState({ selectedDay: event.target.id });
+      //if clicking on the specific date element
+      if (event.target.id == "addEventBtn") {
+        this.setState({ selectedDay: "" });
+        this.setState({ showAddEvent: true });
+      } else if (
+        event.target.className == "workoutEvent" ||
+        event.target.className == "eventWorkoutName" ||
+        event.target.className == "eventWorkoutTime" ||
+        event.target.className == "workoutBox"
+      ) {
+        console.log(event.target.className);
+        this.setState({ showAddEvent: false });
+      } else if (event.target.tagName == "STRONG") {
+        this.setState({ selectedDay: event.target.parentNode.parentNode.id });
+        this.setState({ showAddEvent: true });
+
+        //if clicking on the div inside
+      } else if (event.target.className == "dayNumber") {
+        this.setState({ selectedDay: event.target.parentNode.id });
+        this.setState({ showAddEvent: true });
+      } else {
+        this.setState({ selectedDay: event.target.id });
+        this.setState({ showAddEvent: true });
+      }
+    } else {
+      this.setState({ showAddEvent: false });
     }
-    this.setState({ showAddEvent: !this.state.showAddEvent });
   }
 
   //Returns array of the week, starting from Sunday
@@ -166,17 +191,15 @@ class Home extends React.Component {
           isSameWeek(formattedDate, dayToAdd)
         ) {
           todayEvents.push(
-            <div className="workoutBox" id={event.eventKey}>
+            <div className="workoutBox">
               <div
                 className="workoutEvent"
                 id={event.eventKey}
                 key={event.eventKey}
                 onClick={() => this.toggleViewEditEvent(event)}
               >
-                <div>
-                  <i>{event.workoutName}</i>
-                </div>
-                <div>
+                <div className="eventWorkoutName">{event.workoutName}</div>
+                <div className="eventWorkoutTime">
                   {event.start} - {event.end}
                 </div>
               </div>
@@ -188,12 +211,13 @@ class Home extends React.Component {
         }
       }
       days.push(
-        <div className="col cell" key={dayToAdd}>
-          <div
-            className="dayNumber"
-            onClick={this.toggleAddEvent}
-            id={dayToAdd}
-          >
+        <div
+          className="col cell"
+          key={dayToAdd}
+          onClick={this.toggleAddEvent}
+          id={dayToAdd}
+        >
+          <div className="dayNumber">
             <strong>{daynumber}</strong>
           </div>
           {todayEvents}
@@ -269,7 +293,14 @@ class Home extends React.Component {
         <div>
           <h1 className="mb-4">Welcome Home</h1>
         </div>
-        <h4> Add a workout event by clicking on the calendar. </h4>
+        <h4>
+          {" "}
+          Instructions: Create a workout event by clicking on a date in your
+          calendar or click
+          <button id="addEventBtn" onClick={this.toggleAddEvent}>
+            here
+          </button>
+        </h4>
         {/**https://medium.com/@daniela.sandoval/creating-a-popup-window-using-js-and-react-4c4bd125da57 */}
         {this.state.showPopup ? (
           <ViewEditEvent

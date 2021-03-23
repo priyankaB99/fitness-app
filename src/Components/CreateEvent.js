@@ -10,7 +10,7 @@ class CreateEvent extends React.Component {
     super(props);
     this.state = {
       currentUserId: "",
-      date: this.props.selectedDay,
+      date: "",
       startTime: "",
       endTime: "",
       workout: "",
@@ -56,9 +56,12 @@ class CreateEvent extends React.Component {
   componentDidMount() {
     this.retrieveWorkouts();
     //convert date
-    const fullDate = new Date(this.state.date);
-    const formattedDate = fullDate.toISOString().substring(0, 10);
-    this.setState({ date: formattedDate });
+    console.log(this.props.selectedDay);
+    if (this.props.selectedDay != "") {
+      const fullDate = new Date(this.props.selectedDay);
+      const formattedDate = fullDate.toISOString().substring(0, 10);
+      this.setState({ date: formattedDate });
+    }
   }
 
   changeHandler(event) {

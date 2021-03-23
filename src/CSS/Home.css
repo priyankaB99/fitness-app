@@ -1,90 +1,94 @@
-.monthBox{
-    display: flex;
-    margin: 15px 0;
+.monthBox {
+  display: flex;
+  margin: 15px 0;
 }
-.monthNav{
-    flex: 1;
+.monthNav {
+  flex: 1;
 }
-.month{
-    flex: 7;
-    text-align: center;
+.month {
+  flex: 7;
+  text-align: center;
 }
 .calHeader {
-    padding: 10px 0;
-    text-align: center;
+  padding: 10px 0;
+  text-align: center;
 }
 
-.all-cells{
-    border: 1px solid #4a4453;
+.all-cells {
+  border: 1px solid #4a4453;
 }
 .cell {
-    min-height: 125px;
-    border: 1px solid #4a4453;
-    padding: 10px;
+  min-height: 125px;
+  border: 1px solid #4a4453;
+  padding: 10px;
 }
 .row {
-    margin-left: unset !important;
-    margin-right: unset !important;
+  margin-left: unset !important;
+  margin-right: unset !important;
 }
 
 .workoutEvent {
-    /* background-color: #e1edf2;
+  /* background-color: #e1edf2;
     padding: 10px 5px;
     border-radius: 3px;
     text-align: center;
     margin-top: 5px; */
 }
 .workoutEvent > button {
-    margin: 5px;
+  margin: 5px;
 }
-.workoutBox{
-    background-color: #e1edf2;
-    padding: 10px 5px;
-    border-radius: 3px;
-    text-align: center;
-    margin-top: 5px;
+.workoutBox {
+  background-color: #e1edf2;
+  padding: 10px 5px;
+  border-radius: 3px;
+  text-align: center;
+  margin-top: 5px;
 }
-    .workoutBox:hover{
-        background-color: #bbcdd4;
-        cursor: pointer;
-    }
+.workoutBox:hover {
+  background-color: #bbcdd4;
+  cursor: pointer;
+}
 
-
+#addEventBtn {
+  border: 1px solid white;
+  border-radius: 3px;
+  background-color: #e1edf2;
+}
 /* Not in use currently */
-.weekBox{
-    margin-top: 3%;
-    display: flex;
+.weekBox {
+  margin-top: 3%;
+  display: flex;
 }
-    .weekNav{
-        flex: 1;
-    }
-    .week{
-        flex: 7;
-        column-count: 7;
-    }
-
-.timeBox{
-    display: flex;
-    height: 1500px;
+.weekNav {
+  flex: 1;
 }
-    .timeLabels{
-        flex: 1;
-    }
-        .times{
-            height: 1500px;
-            border-right: 1px solid black;
-        }
-    .timesUnderDates{
-        flex: 7;
-        column-count: 7;
-    }
-        .timesUnderDates>div{
-            height: 1500px;
-            border: 1px solid red;
-        }
+.week {
+  flex: 7;
+  column-count: 7;
+}
 
-    .spacer{
-        flex: 1;
-        border: 1px solid blue;
-    }
-/*End of not in use code*/ 
+.timeBox {
+  display: flex;
+  height: 1500px;
+}
+.timeLabels {
+  flex: 1;
+}
+.times {
+  height: 1500px;
+  border-right: 1px solid black;
+}
+.timesUnderDates {
+  flex: 7;
+  column-count: 7;
+}
+.timesUnderDates > div {
+  height: 1500px;
+  border: 1px solid red;
+}
+
+.spacer {
+  flex: 1;
+  border: 1px solid blue;
+}
+/*End of not in use code*/
