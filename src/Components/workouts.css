@@ -31,6 +31,11 @@
   margin-left: 0px;
 }
 
+.eachExercise {
+  display: flex;
+  flex-direction: row;
+  height: 30px;
+}
 .eachExercise > * {
   margin-right: 15px;
 }
@@ -42,6 +47,13 @@
 
 input[type="number"] {
   width: 100px;
+}
+
+.deleteExercise {
+  border-radius: 50%;
+  background-color: #6c757d;
+  border: #6c757d;
+  color: white;
 }
 
 /* create workout event component */

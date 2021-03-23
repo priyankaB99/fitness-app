@@ -26,7 +26,7 @@ class DisplayWorkouts extends React.Component {
           let workoutsFromDatabase = data.val();
           //iterates through the returned json object
           for (const key in workoutsFromDatabase) {
-            if (workoutsFromDatabase[key].creatorId == currentUser) {
+            if (workoutsFromDatabase[key].creatorId === currentUser) {
               let workout = {
                 name: workoutsFromDatabase[key].name,
                 workoutId: key,
@@ -56,7 +56,7 @@ class DisplayWorkouts extends React.Component {
     let changedWorkouts = this.state.workouts;
     let deletedWorkoutIndex = "";
     for (const key in changedWorkouts) {
-      if (changedWorkouts[key].workoutId == workoutId) {
+      if (changedWorkouts[key].workoutId === workoutId) {
         deletedWorkoutIndex = key;
       }
     }

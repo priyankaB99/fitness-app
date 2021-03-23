@@ -88,7 +88,7 @@ class ViewEditEvent extends React.Component {
 
     formattedExercises = exercises.map((exercise, index) => (
       <div className="exercise">
-        <div className="exerciseName">
+        <div className="viewExerciseName">
           <b>{index + 1 + ". " + exercise.exerciseName}</b>
         </div>
         <div className="qty">

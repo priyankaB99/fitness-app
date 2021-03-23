@@ -16,6 +16,7 @@ class CreateWorkout extends React.Component {
       notes: "",
     };
     this.addExercise = this.addExercise.bind(this);
+    this.deleteExercise = this.deleteExercise.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
@@ -31,6 +32,13 @@ class CreateWorkout extends React.Component {
     }));
   }
 
+  deleteExercise(event) {
+    event.preventDefault();
+    let arrayIdx = event.target.parentNode.getAttribute("data-arrayIdx");
+    let exercisesArray = [...this.state.exercises];
+    exercisesArray.splice(arrayIdx, 1);
+    this.setState({ exercises: exercisesArray });
+  }
   submitHandler(event) {
     event.preventDefault();
 
@@ -98,10 +106,9 @@ class CreateWorkout extends React.Component {
             let unitId = `unit-${idx}`;
             return (
               <div key={idx} class="exercise-list">
-                <div className="eachExercise">
-                  <label htmlFor={exerciseId}>
-                    {`Exercise #${idx + 1} Name`}:
-                  </label>
+                <div className="eachExercise" data-arrayIdx={idx}>
+                  <p> {`Exercise #${idx + 1}`}</p>
+                  <label htmlFor={exerciseId}>Name:</label>
                   <input
                     type="text"
                     name={exerciseId}
@@ -137,6 +144,9 @@ class CreateWorkout extends React.Component {
                     <option value="secs"> seconds</option>
                     <option value="min"> minutes </option>
                   </select>
+                  <button class="deleteExercise" onClick={this.deleteExercise}>
+                    X
+                  </button>
                 </div>
               </div>
             );
