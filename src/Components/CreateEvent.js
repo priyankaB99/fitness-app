@@ -36,7 +36,7 @@ class CreateEvent extends React.Component {
         workoutsRef.once("value", function (data) {
           let workoutsFromDatabase = data.val();
           for (const key in workoutsFromDatabase) {
-            if (workoutsFromDatabase[key].creatorId == currentUser) {
+            if (workoutsFromDatabase[key].creatorId === currentUser) {
               let workout = {
                 name: workoutsFromDatabase[key].name,
                 workoutId: key,
@@ -57,7 +57,7 @@ class CreateEvent extends React.Component {
     this.retrieveWorkouts();
     //convert date
     console.log(this.props.selectedDay);
-    if (this.props.selectedDay != "") {
+    if (this.props.selectedDay !== "") {
       const fullDate = new Date(this.props.selectedDay);
       const formattedDate = fullDate.toISOString().substring(0, 10);
       this.setState({ date: formattedDate });
@@ -68,7 +68,7 @@ class CreateEvent extends React.Component {
     event.preventDefault();
     this.setState({ [event.target.name]: event.target.value });
 
-    if (event.target.name == "workout" && event.target.value != "create") {
+    if (event.target.name === "workout" && event.target.value !== "create") {
       getEvent(event.target.value).then((value) => {
         this.setState({ workoutName: value });
       });
@@ -128,7 +128,7 @@ class CreateEvent extends React.Component {
   // }
 
   render() {
-    if (this.state.workout == "create") {
+    if (this.state.workout === "create") {
       return <Redirect to="/createworkout" />;
     }
     return (
@@ -169,7 +169,10 @@ class CreateEvent extends React.Component {
             required
           />
           <br></br>
-          <label htmlFor="workout"> Choose from your workouts: </label>
+          <label htmlFor="workout">
+            {" "}
+            Choose one of your own custom workouts for this event:{" "}
+          </label>
           <select
             name="workout"
             value={this.state.workout}

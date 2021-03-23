@@ -134,23 +134,23 @@ class Home extends React.Component {
     //if false
     if (!this.state.showAddEvent) {
       //if clicking on the specific date element
-      if (event.target.id == "addEventBtn") {
+      if (event.target.id === "addEventBtn") {
         this.setState({ selectedDay: "" });
         this.setState({ showAddEvent: true });
       } else if (
-        event.target.className == "workoutEvent" ||
-        event.target.className == "eventWorkoutName" ||
-        event.target.className == "eventWorkoutTime" ||
-        event.target.className == "workoutBox"
+        event.target.className === "workoutEvent" ||
+        event.target.className === "eventWorkoutName" ||
+        event.target.className === "eventWorkoutTime" ||
+        event.target.className === "workoutBox"
       ) {
         console.log(event.target.className);
         this.setState({ showAddEvent: false });
-      } else if (event.target.tagName == "STRONG") {
+      } else if (event.target.tagName === "STRONG") {
         this.setState({ selectedDay: event.target.parentNode.parentNode.id });
         this.setState({ showAddEvent: true });
 
         //if clicking on the div inside
-      } else if (event.target.className == "dayNumber") {
+      } else if (event.target.className === "dayNumber") {
         this.setState({ selectedDay: event.target.parentNode.id });
         this.setState({ showAddEvent: true });
       } else {
