@@ -171,15 +171,6 @@ class Home extends React.Component {
       let daynumber = format(dayToAdd, "d");
       let today = new Date();
 
-      if (
-        isSameDay(today, dayToAdd) &&
-        isSameWeek(today, dayToAdd) &&
-        isSameYear(today, dayToAdd)
-      ) {
-        //identifies current day: make into CSS later!!!
-        daynumber = "*" + daynumber + "*";
-      }
-
       let todayEvents = [];
       for (let i = 0; i < this.state.workoutEvents.length; i++) {
         let event = this.state.workoutEvents[i];
@@ -210,19 +201,41 @@ class Home extends React.Component {
           );
         }
       }
-      days.push(
-        <div
-          className="col cell"
-          key={dayToAdd}
-          onClick={this.toggleAddEvent}
-          id={dayToAdd}
-        >
-          <div className="dayNumber">
-            <strong>{daynumber}</strong>
+      //if today
+      if (
+        isSameDay(today, dayToAdd) &&
+        isSameWeek(today, dayToAdd) &&
+        isSameYear(today, dayToAdd)
+      ) {
+        days.push(
+          <div
+            className="col cell today"
+            key={dayToAdd}
+            onClick={this.toggleAddEvent}
+            id={dayToAdd}
+          >
+            <div className="dayNumber">
+              <strong>{daynumber}</strong>
+            </div>
+            {todayEvents}
           </div>
-          {todayEvents}
-        </div>
-      );
+        );
+        //if not today
+      } else {
+        days.push(
+          <div
+            className="col cell"
+            key={dayToAdd}
+            onClick={this.toggleAddEvent}
+            id={dayToAdd}
+          >
+            <div className="dayNumber">
+              <strong>{daynumber}</strong>
+            </div>
+            {todayEvents}
+          </div>
+        );
+      }
     }
     return <div className="weekdayRow row">{days}</div>;
   }
