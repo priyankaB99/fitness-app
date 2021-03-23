@@ -59,6 +59,10 @@
   border-radius: 3px;
   background-color: #e1edf2;
 }
+
+.today {
+  background-color: #bbcdd4;
+}
 /* Not in use currently */
 .weekBox {
   margin-top: 3%;

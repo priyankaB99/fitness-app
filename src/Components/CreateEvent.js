@@ -11,7 +11,7 @@ class CreateEvent extends React.Component {
     this.state = {
       currentUserId: "",
       date: "",
-      startTime: "",
+      startTime: "12:00",
       endTime: "",
       workout: "",
       workoutName: "",
