@@ -4,7 +4,6 @@ import "firebase/auth";
 import "firebase/database";
 import { withRouter, Link, Redirect } from "react-router-dom";
 import "../CSS/Home.css";
-import EventModal from "./DisplayEachEvent";
 
 import {
   format,
@@ -22,7 +21,7 @@ import {
   parseISO,
 } from "date-fns";
 import CreateEvent from "./CreateEvent";
-import ViewEditEvent from './ViewEditEvent';
+import ViewEditEvent from "./ViewEditEvent";
 
 // Code Resources
 // -https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
@@ -38,6 +37,8 @@ class Home extends React.Component {
       workoutEvents: [],
       showPopup: false,
       selectedWorkout: "",
+      showAddEvent: false,
+      selectedDay: "",
       // isOpen: false,
     };
     this.previousMonth = this.previousMonth.bind(this);
@@ -49,6 +50,7 @@ class Home extends React.Component {
     this.findThisMonthEvents = this.findThisMonthEvents.bind(this);
     this.deleteWorkoutEvent = this.deleteWorkoutEvent.bind(this);
     this.toggleViewEditEvent = this.toggleViewEditEvent.bind(this);
+    this.toggleAddEvent = this.toggleAddEvent.bind(this);
   }
 
   componentDidMount() {
@@ -121,12 +123,18 @@ class Home extends React.Component {
   //Create pop-up of event details
   //Should be able to edit times, workout, etc.
   //https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
-  toggleViewEditEvent(event){
+  toggleViewEditEvent(event) {
     this.setState({
       showPopup: !this.state.showPopup,
-      selectedWorkout: event
+      selectedWorkout: event,
     });
-    
+  }
+
+  toggleAddEvent(event) {
+    if (!this.state.showAddEvent) {
+      this.setState({ selectedDay: event.target.id });
+    }
+    this.setState({ showAddEvent: !this.state.showAddEvent });
   }
 
   //Returns array of the week, starting from Sunday
@@ -156,14 +164,14 @@ class Home extends React.Component {
         if (
           isSameDay(formattedDate, dayToAdd) &&
           isSameWeek(formattedDate, dayToAdd)
-
         ) {
           todayEvents.push(
-            <div className = "workoutBox" id={event.eventKey}>
+            <div className="workoutBox" id={event.eventKey}>
               <div
                 className="workoutEvent"
                 id={event.eventKey}
-                key={event.eventKey} onClick={() => this.toggleViewEditEvent(event)}
+                key={event.eventKey}
+                onClick={() => this.toggleViewEditEvent(event)}
               >
                 <div>
                   <i>{event.workoutName}</i>
@@ -171,7 +179,6 @@ class Home extends React.Component {
                 <div>
                   {event.start} - {event.end}
                 </div>
- 
               </div>
               {/* <button type="button" onClick={this.deleteWorkoutEvent}>
                   Delete
@@ -182,10 +189,14 @@ class Home extends React.Component {
       }
       days.push(
         <div className="col cell" key={dayToAdd}>
-          <div className="dayNumber">
+          <div
+            className="dayNumber"
+            onClick={this.toggleAddEvent}
+            id={dayToAdd}
+          >
             <strong>{daynumber}</strong>
-            {todayEvents}
           </div>
+          {todayEvents}
         </div>
       );
     }
@@ -225,7 +236,6 @@ class Home extends React.Component {
             let formattedDate = new Date(
               format(parseISO(eventsFromDatabase[key].date), "MM/dd/yyyy")
             );
-            console.log(formattedDate);
             console.log(eventsFromDatabase[key]);
             if (
               isSameMonth(formattedDate, thisMonth) &&
@@ -259,14 +269,22 @@ class Home extends React.Component {
         <div>
           <h1 className="mb-4">Welcome Home</h1>
         </div>
-
+        <h4> Add a workout event by clicking on the calendar. </h4>
         {/**https://medium.com/@daniela.sandoval/creating-a-popup-window-using-js-and-react-4c4bd125da57 */}
-        {this.state.showPopup ? <ViewEditEvent closePopup={this.toggleViewEditEvent}
-                                               deleteEvent={this.deleteWorkoutEvent}
-                                               selectedWorkout={this.state.selectedWorkout}
-        /> : null}
-
-        <CreateEvent reloadCal={this.findThisMonthEvents} />
+        {this.state.showPopup ? (
+          <ViewEditEvent
+            closePopup={this.toggleViewEditEvent}
+            deleteEvent={this.deleteWorkoutEvent}
+            selectedWorkout={this.state.selectedWorkout}
+          />
+        ) : null}
+        {this.state.showAddEvent ? (
+          <CreateEvent
+            closePopup={this.toggleAddEvent}
+            reloadCal={this.findThisMonthEvents}
+            selectedDay={this.state.selectedDay}
+          />
+        ) : null}
         {/**Inspiration from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728 */}
         <div className="calendar">
           {this.renderMonth()}
@@ -296,7 +314,6 @@ class Home extends React.Component {
           </div>
           {this.createMonthCells()}
         </div>
-
       </div>
     );
   }
