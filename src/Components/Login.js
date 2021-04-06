@@ -1,9 +1,9 @@
 import React from "react";
 import fire from "../Firebase/fire";
-import 'firebase/auth';
-import 'firebase/database';
-import { withRouter, Link } from 'react-router-dom';
-import './general.css';
+import "firebase/auth";
+import "firebase/database";
+import { withRouter, Link } from "react-router-dom";
+import "./general.css";
 
 // Code Resources
 // - https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial#react-router-for-firebase-auth
@@ -16,7 +16,7 @@ class Login extends React.Component {
     this.state = {
       email: "",
       password: "",
-      error: null
+      error: null,
     };
     this.submitForm = this.submitForm.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
@@ -28,27 +28,26 @@ class Login extends React.Component {
   }
 
   submitForm(event) {
-    fire.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-    .then((authUser) => {
+    fire
+      .auth()
+      .signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then((authUser) => {
         // User has been logged in
         console.log(authUser);
         // login successful. Go home.
-        console.log('success logging in user');
-        this.props.history.push('/');
-    })
-    .catch((error) => {
-         // An error happened.
-        console.log("Login error:", error); 
-        this.setState({ error : error });
-    });
+        console.log("success logging in user");
+        this.props.history.push("/");
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log("Login error:", error);
+        this.setState({ error: error });
+      });
   }
 
   render() {
-
     let { email, password, error } = this.state;
-    const isInvalid = 
-    password === '' ||
-    email === '';
+    const isInvalid = password === "" || email === "";
 
     return (
       <div>
@@ -60,20 +59,31 @@ class Login extends React.Component {
             onChange={this.changeHandler}
             type="email"
             placeholder="Email"
-          /> <br></br>
+          />{" "}
+          <br></br>
           <input
             name="password"
             value={password}
             onChange={this.changeHandler}
             type="password"
             placeholder="Password"
-          /> <br></br>
-          <button className="btn btn-secondary" disabled={isInvalid} onClick={() => this.submitForm()}>Log In</button>
+          />{" "}
+          <br></br>
+          <button
+            className="btn btn-secondary"
+            disabled={isInvalid}
+            onClick={() => this.submitForm()}
+          >
+            Log In
+          </button>
           {error && <p>{error.message}</p>}
         </div>
         <div className="login">
           Don't have an account yet?<br></br>
           <Link to="/signup"> Sign Up </Link>
+        </div>
+        <div className="login">
+          Forgot password? <Link to="/forgotpassword"> Recover</Link>
         </div>
       </div>
     );

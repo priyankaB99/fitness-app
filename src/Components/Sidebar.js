@@ -69,6 +69,12 @@ class Sidebar extends React.Component {
           css: "fas fa-hashtag",
           key: 3,
         },
+        {
+          path: "/myprofile",
+          name: "My Profile",
+          //css
+          key: 4,
+        },
       ],
     };
     this.logout = this.logout.bind(this);
