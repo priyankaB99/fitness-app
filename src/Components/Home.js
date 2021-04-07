@@ -2,7 +2,7 @@ import React from "react";
 import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
-import { withRouter, Link, Redirect } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import "../CSS/Home.css";
 
 import {

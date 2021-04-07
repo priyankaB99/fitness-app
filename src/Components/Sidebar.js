@@ -99,6 +99,7 @@ class Sidebar extends React.Component {
           uid: user.uid,
           email: user.email,
           username: user.displayName,
+          activePath: this.props.location.pathname
         });
       } else {
         // No user is signed in

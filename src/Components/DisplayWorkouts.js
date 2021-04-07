@@ -3,7 +3,8 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
-import "./workouts.css";
+import "../CSS/workouts.css";
+
 class DisplayWorkouts extends React.Component {
   constructor(props) {
     super(props);

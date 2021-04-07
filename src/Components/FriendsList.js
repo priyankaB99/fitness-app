@@ -2,9 +2,10 @@ import React from "react";
 import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
-import { withRouter } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 import {format} from "date-fns";
-import { cleanup } from "@testing-library/react";
+import "../CSS/general.css";
+import "../CSS/workouts.css";
 
 class FriendsList extends React.Component {
   constructor(props) {
@@ -12,9 +13,11 @@ class FriendsList extends React.Component {
     this.state = {
         uid: "",
         friendList: [],
+        friendRequests: [],
         requestedUsername: ""
     };
     this.changeHandler = this.changeHandler.bind(this);
+    this.submitForm = this.submitForm.bind(this);
     this.sendFriendRequest = this.sendFriendRequest.bind(this);
   }
 
@@ -25,26 +28,40 @@ class FriendsList extends React.Component {
           // User is signed in
           console.log(user.email);
           console.log(user.displayName);
+          //get list of friends
           let friendsRef = fire.database().ref("FriendList/" + user.uid + "/Friends");
           let friendsData = [];
           friendsRef.once("value", function (data) {
             let friendsFromDatabase = data.val();
             for (const key in friendsFromDatabase) {
-                console.log(friendsFromDatabase[key]);
                 friendsData.push({
-                    friendKey: key,
+                    key: key,
                     friendID: friendsFromDatabase[key].friendId,
                     friendUsername: friendsFromDatabase[key].friendUsername
                 });
             }
-            currentComponent.setState({
-              uid: user.uid,
-              friendList: friendsData
-            });
+          }).then(() => {
+            let requestsRef = fire.database().ref("FriendList/" + user.uid + "/ReceivedRequests");
+            let requestsData = [];
+            requestsRef.once("value", function (data) {
+                let requestsFromDatabase = data.val();
+                for (const key in requestsFromDatabase) {
+                    requestsData.push({
+                        key: key,
+                        requestorID: requestsFromDatabase[key].requestorId,
+                        requestorUsername: requestsFromDatabase[key].requestorUsername
+                    });
+                }
+                currentComponent.setState({
+                    uid: user.uid,
+                    friendList: friendsData,
+                    friendRequests: requestsData
+                });
+            })
           });
       } else {
         // No user is signed in
-        this.props.history.push("/login");
+        useHistory().push("/login");
       }
     });
   }
@@ -54,7 +71,7 @@ class FriendsList extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   }
 
-  sendFriendRequest(event) {
+  submitForm(event) {
     let currentComponent = this;
     var requestedUserId = "";
 
@@ -81,46 +98,7 @@ class FriendsList extends React.Component {
         currentComponent.setState({ error: error.message });
     }).then(() => {
         if (requestedUserId != "") {
-            //Checks if we've already sent request to this person
-            let canPushRequest = true;
-            let currentUserRef = fire.database().ref("FriendList/" + currentComponent.state.uid + "/SentRequests");
-            currentUserRef.once("value", function (data) {
-                let reqData = data.val();
-                for (const key in reqData) {
-                    if (reqData[key].requestedId === requestedUserId) {
-                        console.log("already requested");
-                        currentComponent.setState({error: "You've already sent this user a friend request"})
-                        canPushRequest = false;
-                    }
-                }
-            }).then(() => {
-                if (canPushRequest) {
-                    //can send friend request!
-                    //first pushes the friend request to the database under current user
-                    let currentUserRef2 = fire.database().ref("FriendList/" + currentComponent.state.uid + "/SentRequests");
-                    let friendRequestRef = currentUserRef2.push();
-                    friendRequestRef.set(
-                    {
-                        requestedId: requestedUserId,
-                        requestedUsername: currentComponent.state.requestedUsername,
-                        dateRequested: format(new Date(), "mm/dd/yyyy")
-                    });
-                    //finally, pushes the friend request to the database under requested user
-                    let otherUserRef = fire.database().ref("FriendList/" + requestedUserId + "/ReceivedRequests");
-                    friendRequestRef = otherUserRef.push();
-                    friendRequestRef.set(
-                    {
-                        requestorId: currentComponent.state.uid,
-                        requestorUsername: fire.auth().currentUser.displayName,
-                        dateRequestReceived: format(new Date(), "mm/dd/yyyy")
-                    });
-                    console.log("sent request");
-                    alert("Request has been sent!");
-                    //reset states
-                    currentComponent.setState({requestedUsername: "", error: ""})
-                }
-            })
-            
+            this.sendFriendRequest(requestedUserId);
         }
         else {
             currentComponent.setState({error: "Entered username does not exist"})
@@ -128,30 +106,92 @@ class FriendsList extends React.Component {
     });
   }
 
+  sendFriendRequest(requestedUserId) {
+    let currentComponent = this;
+    //Checks if we've already sent request to this person
+    let canPushRequest = true;
+    let currentUserRef = fire.database().ref("FriendList/" + currentComponent.state.uid + "/SentRequests");
+    currentUserRef.once("value", function (data) {
+        let reqData = data.val();
+        for (const key in reqData) {
+            if (reqData[key].requestedId === requestedUserId) {
+                console.log("already requested");
+                currentComponent.setState({error: "You've already sent this user a friend request"})
+                canPushRequest = false;
+            }
+        }
+    }).then(() => {
+        if (canPushRequest) {
+            //can send friend request!
+            //first pushes the friend request to the database under current user
+            let currentUserRef2 = fire.database().ref("FriendList/" + currentComponent.state.uid + "/SentRequests");
+            let friendRequestRef = currentUserRef2.push();
+            friendRequestRef.set(
+            {
+                requestedId: requestedUserId,
+                requestedUsername: currentComponent.state.requestedUsername,
+                dateRequested: format(new Date(), "mm/dd/yyyy")
+            });
+            //finally, pushes the friend request to the database under requested user
+            let otherUserRef = fire.database().ref("FriendList/" + requestedUserId + "/ReceivedRequests");
+            friendRequestRef = otherUserRef.push();
+            friendRequestRef.set(
+            {
+                requestorId: currentComponent.state.uid,
+                requestorUsername: fire.auth().currentUser.displayName,
+                dateRequestReceived: format(new Date(), "mm/dd/yyyy")
+            });
+            console.log("sent request");
+            alert("Request has been sent!");
+            //reset states
+            currentComponent.setState({requestedUsername: "", error: ""})
+        }
+    })
+  }
+
   render() {
     let requestedUsername = this.state.requestedUsername;
     let error = this.state.error;
     const isInvalid = requestedUsername === "";
+
+    console.log(this.state.friendRequests);
+
     return (
       <div>
-          <h2>Friends</h2>
-          <div className="loginBox login">
-          <input
-            name="requestedUsername"
-            value={requestedUsername}
-            onChange={this.changeHandler}
-            type="text"
-            placeholder="Enter Username"
-          />{" "}
-          <br></br>
-          <button
-            className="btn btn-secondary"
-            disabled={isInvalid}
-            onClick={() => this.sendFriendRequest()}
-          >
-            Send Invite
-          </button>
-          {error && <p>{error}</p>}
+        <h2>My Friends</h2>
+        <div className="loginBox login">
+            <input
+                name="requestedUsername"
+                value={requestedUsername}
+                onChange={this.changeHandler}
+                type="text"
+                placeholder="Enter Username"
+            />{" "}
+            <br></br>
+            <button
+                className="btn btn-secondary"
+                disabled={isInvalid}
+                onClick={() => this.submitForm()}
+            >
+                Send Invite
+            </button>
+            {error && <p>{error}</p>}
+        </div>
+        <div className="row">
+            <div className="col-7">
+                <div className="workout">
+                    {this.state.friendList.map((data, index) => (
+                        <p key={data.key} data-object={data}>{index} - {data.friendUsername}</p>
+                    ))}
+                </div>
+            </div>
+            <div className="col">
+                <div className="workout">
+                    {this.state.friendRequests.map((data, index) => (
+                        <p key={data.key} data-object={data}>{index} - {data.requestorUsername}</p>
+                    ))}
+                </div>
+            </div>
         </div>
       </div>
     );
