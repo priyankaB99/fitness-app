@@ -159,24 +159,6 @@ class FriendsList extends React.Component {
     return (
       <div>
         <h2>My Friends</h2>
-        <div className="loginBox login">
-            <input
-                name="requestedUsername"
-                value={requestedUsername}
-                onChange={this.changeHandler}
-                type="text"
-                placeholder="Enter Username"
-            />{" "}
-            <br></br>
-            <button
-                className="btn btn-secondary"
-                disabled={isInvalid}
-                onClick={() => this.submitForm()}
-            >
-                Send Invite
-            </button>
-            {error && <p>{error}</p>}
-        </div>
         <div className="row">
             <div className="col-7">
                 <div className="workout">
@@ -187,9 +169,31 @@ class FriendsList extends React.Component {
             </div>
             <div className="col">
                 <div className="workout">
+                    <h5>Requests</h5>
                     {this.state.friendRequests.map((data, index) => (
                         <p key={data.key} data-object={data}>{index} - {data.requestorUsername}</p>
                     ))}
+                </div>
+                <div className="workout">
+                    <h5>Add Friend</h5>
+                    <div className="loginBox login">
+                        <input
+                            name="requestedUsername"
+                            value={requestedUsername}
+                            onChange={this.changeHandler}
+                            type="text"
+                            placeholder="Enter Username"
+                        />{" "}
+                        <br></br>
+                        <button
+                            className="btn btn-secondary"
+                            disabled={isInvalid}
+                            onClick={() => this.submitForm()}
+                        >
+                            Send Invite
+                        </button>
+                        {error && <p>{error}</p>}
+                    </div>
                 </div>
             </div>
         </div>
