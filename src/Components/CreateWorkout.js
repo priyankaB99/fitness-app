@@ -81,7 +81,7 @@ class CreateWorkout extends React.Component {
     let { name, timeLength, exercises, notes } = this.state;
     return (
       <div>
-        <h2> Create a New Workout</h2>
+        <h2>Create a New Workout</h2>
         <form id="createForm" onSubmit={this.submitHandler}>
           <label htmlFor="name"> Workout Name: </label>
           <input
