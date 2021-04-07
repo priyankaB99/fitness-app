@@ -72,9 +72,13 @@ class Sidebar extends React.Component {
         {
           path: "/myprofile",
           name: "My Profile",
-          //css
           key: 4,
         },
+        {
+          path: "/myfriends",
+          name: "Friends",
+          key: 5
+        }
       ],
     };
     this.logout = this.logout.bind(this);

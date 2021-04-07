@@ -6,6 +6,7 @@ import SignUp from "./Components/SignUp";
 import ForgotPassword from "./Components/ForgotPassword";
 import Login from "./Components/Login";
 import Sidebar from "./Components/Sidebar";
+import FriendsList from "./Components/FriendsList";
 import DisplayWorkouts from "./Components/DisplayWorkouts";
 import MyProfile from "./Components/MyProfile";
 import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
@@ -24,6 +25,9 @@ function App() {
             <Switch>
               <Route path="/" exact>
                 <Home />
+              </Route>
+              <Route path="/myfriends" exact>
+                <FriendsList />
               </Route>
               <Route path="/myprofile" exact>
                 <MyProfile />
