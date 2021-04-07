@@ -3,7 +3,8 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
-import "date-fns";
+import {format} from "date-fns";
+import { cleanup } from "@testing-library/react";
 
 class FriendsList extends React.Component {
   constructor(props) {
@@ -55,13 +56,15 @@ class FriendsList extends React.Component {
 
   sendFriendRequest(event) {
     let currentComponent = this;
-    let requestedUserId = "";
+    var requestedUserId = "";
 
+    //checks if entered user is same logged in user
     if (currentComponent.state.requestedUsername == fire.auth().currentUser.displayName) {
         currentComponent.setState({error: "Cannot send friend request to yourself :)"})
         return;
     }
-
+    
+    //checks if username entered is an actual user
     fire.database().ref("Users").once("value", function (data) {
         let userData = data.val();
         console.log(currentComponent.state.requestedUsername);
@@ -69,41 +72,59 @@ class FriendsList extends React.Component {
             if (userData[key].Username === currentComponent.state.requestedUsername) {
                 console.log("found match");
                 requestedUserId = userData[key].UserId;
+                console.log(requestedUserId);
                 break;
             }
         }
-
-        if (requestedUserId !== "") {
-            //first pushes the friend request to the database under current user
+    }).catch((error) => {
+        console.log("Friend Find:", error);
+        currentComponent.setState({ error: error.message });
+    }).then(() => {
+        if (requestedUserId != "") {
+            //Checks if we've already sent request to this person
+            let canPushRequest = true;
             let currentUserRef = fire.database().ref("FriendList/" + currentComponent.state.uid + "/SentRequests");
-            let friendRequestRef = currentUserRef.push();
-            friendRequestRef.set(
-            {
-                requestedId: requestedUserId,
-                requestedUsername: currentComponent.state.requestedUsername,
-                dateRequested: new Date()
-            });
-            //first pushes the friend request to the database under requested user
-            let otherUserRef = fire.database().ref("FriendList/" + requestedUserId + "/ReceivedRequests");
-            friendRequestRef = otherUserRef.push();
-            friendRequestRef.set(
-            {
-                requestorId: currentComponent.state.uid,
-                requestorUsername: fire.auth().currentUser.displayName,
-                dateRequestReceived: new Date()
-            });
-            console.log("sent request");
-            alert("Request has been sent!");
-            currentComponent.setState({requestedUsername: "", error: ""})
+            currentUserRef.once("value", function (data) {
+                let reqData = data.val();
+                for (const key in reqData) {
+                    if (reqData[key].requestedId === requestedUserId) {
+                        console.log("already requested");
+                        currentComponent.setState({error: "You've already sent this user a friend request"})
+                        canPushRequest = false;
+                    }
+                }
+            }).then(() => {
+                if (canPushRequest) {
+                    //can send friend request!
+                    //first pushes the friend request to the database under current user
+                    let currentUserRef2 = fire.database().ref("FriendList/" + currentComponent.state.uid + "/SentRequests");
+                    let friendRequestRef = currentUserRef2.push();
+                    friendRequestRef.set(
+                    {
+                        requestedId: requestedUserId,
+                        requestedUsername: currentComponent.state.requestedUsername,
+                        dateRequested: format(new Date(), "mm/dd/yyyy")
+                    });
+                    //finally, pushes the friend request to the database under requested user
+                    let otherUserRef = fire.database().ref("FriendList/" + requestedUserId + "/ReceivedRequests");
+                    friendRequestRef = otherUserRef.push();
+                    friendRequestRef.set(
+                    {
+                        requestorId: currentComponent.state.uid,
+                        requestorUsername: fire.auth().currentUser.displayName,
+                        dateRequestReceived: format(new Date(), "mm/dd/yyyy")
+                    });
+                    console.log("sent request");
+                    alert("Request has been sent!");
+                    //reset states
+                    currentComponent.setState({requestedUsername: "", error: ""})
+                }
+            })
+            
         }
         else {
             currentComponent.setState({error: "Entered username does not exist"})
         }
-
-    }).catch((error) => {
-        // An error happened.
-        console.log("Friend Find:", error);
-        currentComponent.setState({ error: error.message });
     });
   }
 
