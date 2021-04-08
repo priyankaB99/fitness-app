@@ -48,6 +48,15 @@ class SignUp extends React.Component {
       .auth()
       .createUserWithEmailAndPassword(this.state.email, this.state.password1)
       .then((authUser) => {
+        authUser.user
+          .sendEmailVerification()
+          .then(() => {
+            console.log("Email verification sent");
+          })
+          .catch((error) => {
+            console.log(error.code);
+          });
+
         // User has been logged in
         console.log(authUser);
         // Update profile with display name
@@ -88,31 +97,28 @@ class SignUp extends React.Component {
         this.setState({ error: error });
       });
 
-    //send verification email
-    var actionCodeSettings = {
-      // URL you want to redirect back to. The domain (www.example.com) for this
-      // URL must be in the authorized domains list in the Firebase Console.
-      url: "fitness-app-db861.firebaseapp.com",
-      // This must be true.
-      handleCodeInApp: true,
-      dynamicLinkDomain: "example.page.link",
-    };
-    fire
-      .auth()
-      .sendSignInLinkToEmail(this.state.email, actionCodeSettings)
-      .then(() => {
-        // The link was successfully sent. Inform the user.
-        // Save the email locally so you don't need to ask the user for it again
-        // if they open the link on the same device.
-        window.localStorage.setItem("emailForSignIn", this.state.email);
-        // ...
-        console.log("Email sent");
-      })
-      .catch((error) => {
-        var errorMessage = error.message;
-        console.log(errorMessage);
-        // ...
-      });
+    // //send verification email
+    // var actionCodeSettings = {
+    //   // URL you want to redirect back to. The domain (www.example.com) for this
+    //   // URL must be in the authorized domains list in the Firebase Console.
+    //   url: "fitness-app-db861.firebaseapp.com",
+    //   // This must be true.
+    //   handleCodeInApp: true,
+    //   dynamicLinkDomain: "example.page.link",
+    // };
+
+    // const useremail = this.state.email;
+    // fire
+    //   .auth()
+    //   .generateEmailVerificationLink(useremail, actionCodeSettings)
+    //   .then((link) => {
+    //     // Construct email verification template, embed the link and send
+    //     // using custom SMTP server.
+    //     console.log("Email");
+    //   })
+    //   .catch((error) => {
+    //     // Some error occurred.
+    //   });
   }
 
   render() {
