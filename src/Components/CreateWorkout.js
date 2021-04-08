@@ -34,7 +34,7 @@ class CreateWorkout extends React.Component {
 
   deleteExercise(event) {
     event.preventDefault();
-    let arrayIdx = event.target.parentNode.getAttribute("data-arrayIdx");
+    let arrayIdx = event.target.parentNode.getAttribute("data-arrayidx");
     let exercisesArray = [...this.state.exercises];
     exercisesArray.splice(arrayIdx, 1);
     this.setState({ exercises: exercisesArray });
@@ -106,7 +106,7 @@ class CreateWorkout extends React.Component {
             let unitId = `unit-${idx}`;
             return (
               <div key={idx} class="exercise-list">
-                <div className="eachExercise" data-arrayIdx={idx}>
+                <div className="eachExercise" data-arrayidx={idx}>
                   <p> {`Exercise #${idx + 1}`}</p>
                   <label htmlFor={exerciseId}>Name:</label>
                   <input

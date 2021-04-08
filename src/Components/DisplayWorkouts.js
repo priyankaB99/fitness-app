@@ -42,7 +42,6 @@ class DisplayWorkouts extends React.Component {
         });
       } else {
         console.log("signed out");
-        this.props.history.push("/login");
       }
     });
   }
