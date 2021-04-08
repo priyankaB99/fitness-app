@@ -120,14 +120,6 @@ class CreateEvent extends React.Component {
     this.props.closePopup();
   }
 
-  // showComponent() {
-  //   if (this.state.showComponent) {
-  //     this.setState({ showComponent: false });
-  //   } else {
-  //     this.setState({ showComponent: true });
-  //   }
-  // }
-
   render() {
     if (this.state.workout === "create") {
       return <Redirect to="/createworkout" />;

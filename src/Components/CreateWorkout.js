@@ -3,7 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
-import "./workouts.css";
+import "../CSS/workouts.css";
 //code pulled from https://itnext.io/building-a-dynamic-controlled-form-in-react-together-794a44ee552c
 
 class CreateWorkout extends React.Component {
@@ -34,7 +34,7 @@ class CreateWorkout extends React.Component {
 
   deleteExercise(event) {
     event.preventDefault();
-    let arrayIdx = event.target.parentNode.getAttribute("data-arrayIdx");
+    let arrayIdx = event.target.parentNode.getAttribute("data-arrayidx");
     let exercisesArray = [...this.state.exercises];
     exercisesArray.splice(arrayIdx, 1);
     this.setState({ exercises: exercisesArray });
@@ -81,7 +81,7 @@ class CreateWorkout extends React.Component {
     let { name, timeLength, exercises, notes } = this.state;
     return (
       <div>
-        <h2> Create a New Workout</h2>
+        <h2>Create a New Workout</h2>
         <form id="createForm" onSubmit={this.submitHandler}>
           <label htmlFor="name"> Workout Name: </label>
           <input
@@ -106,7 +106,7 @@ class CreateWorkout extends React.Component {
             let unitId = `unit-${idx}`;
             return (
               <div key={idx} class="exercise-list">
-                <div className="eachExercise" data-arrayIdx={idx}>
+                <div className="eachExercise" data-arrayidx={idx}>
                   <p> {`Exercise #${idx + 1}`}</p>
                   <label htmlFor={exerciseId}>Name:</label>
                   <input

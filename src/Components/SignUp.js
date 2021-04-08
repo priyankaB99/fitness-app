@@ -3,7 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter, Link } from "react-router-dom";
-import "./general.css";
+import "../CSS/general.css";
 
 // Code Resources
 // - https://www.robinwieruch.de/complete-firebase-authentication-react-tutorial#react-router-for-firebase-auth
@@ -77,9 +77,9 @@ class SignUp extends React.Component {
           .then(() => {
             var userRef = fire.database().ref("Users/" + authUser.user.uid);
             userRef.set({
-              userId: authUser.user.uid,
-              username: this.state.username,
-              email: this.state.email,
+              UserId: authUser.user.uid,
+              Username: this.state.username,
+              Email: this.state.email,
               firstName: this.state.firstName,
               lastName: this.state.lastName,
               bday: this.state.bday,
