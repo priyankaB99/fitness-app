@@ -20,6 +20,7 @@ class FriendsList extends React.Component {
     this.submitForm = this.submitForm.bind(this);
     this.sendFriendRequest = this.sendFriendRequest.bind(this);
     this.acceptRequest = this.acceptRequest.bind(this);
+    this.rejectRequest = this.rejectRequest.bind(this);
   }
 
   componentDidMount() {
@@ -190,10 +191,30 @@ class FriendsList extends React.Component {
                 friendSinceDate: format(new Date(), "MM/dd/yyyy")
             });
             alert("Friend has been added!");
+            this.setState(this.state);
         })
     }).catch((error) => {
         console.log("Accept Request:", error);
     })
+  }
+
+  rejectRequest(event) {
+    console.log(event.target.parentNode.dataset.index);
+    let index = event.target.parentNode.dataset.index;
+    let requestorId = this.state.friendRequests[index].requestorId;
+    let requestKey = this.state.friendRequests[index].key;
+
+    let currentComponent = this;
+    let currentUserRef = fire.database().ref("FriendList/" + currentComponent.state.uid + "/ReceivedRequests/" + requestKey);
+    currentUserRef.remove().then(() => {
+        console.log("should be removed");
+        let otherUserRef = fire.database().ref("FriendList/" + requestorId + "/SentRequests/" + requestKey);
+        otherUserRef.remove()
+        alert("Friend request was deleted!");
+        this.setState(this.state);
+    }).catch((error) => {
+        console.log("Accept Request:", error);
+    });
   }
 
   render() {
@@ -223,6 +244,12 @@ class FriendsList extends React.Component {
                                 onClick={(event) => this.acceptRequest(event)}
                             >
                                 Accept
+                            </button>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={(event) => this.rejectRequest(event)}
+                            >
+                                Reject
                             </button>
                         </div>
                     ))}
