@@ -13,6 +13,8 @@ class DisplayWorkouts extends React.Component {
     };
     this.deleteWorkout = this.deleteWorkout.bind(this);
     this.editWorkout = this.editWorkout.bind(this);
+    this.favorite = this.favorite.bind(this);
+    this.unfavorite = this.unfavorite.bind(this);
   }
 
   componentDidMount() {
@@ -44,6 +46,42 @@ class DisplayWorkouts extends React.Component {
         console.log("signed out");
       }
     });
+  }
+
+  favorite(event) {
+    let currentUser = fire.auth().currentUser.uid;
+    let workoutId = event.target.parentNode.id;
+    console.log(workoutId);
+    let favoritesRef = fire.database().ref("Favorites/" + currentUser);
+    let newFavoritesRef = favoritesRef.push();
+    newFavoritesRef.set({ workoutId: workoutId }).then(() => {
+      console.log("Workout successfully favorited");
+    });
+  }
+
+  unfavorite(event) {
+    let currentUser = fire.auth().currentUser.uid;
+    let workoutId = event.target.parentNode.id;
+    let favoritesRef = fire.database().ref("Favorites/" + currentUser + "/");
+    let deletedId = "";
+    favoritesRef
+      .once("value", function (data) {
+        let favoriteWorkouts = data.val();
+        for (const key in favoriteWorkouts) {
+          if (favoriteWorkouts[key].workoutId === workoutId) {
+            deletedId = key;
+          }
+        }
+      })
+      .then(() => {
+        console.log(deletedId);
+        let deletedRef = fire
+          .database()
+          .ref("Favorites/" + currentUser + "/" + deletedId);
+        deletedRef.remove().then(() => {
+          console.log("Successfully unfavorited");
+        });
+      });
   }
 
   deleteWorkout(event) {
@@ -104,6 +142,22 @@ class DisplayWorkouts extends React.Component {
                 onClick={this.deleteWorkout}
               >
                 Delete
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                id="favoriteBtn"
+                onClick={this.favorite}
+              >
+                Favorite
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                id="unfavoriteBtn"
+                onClick={this.unfavorite}
+              >
+                Unfavorite
               </button>
               <button
                 type="button"

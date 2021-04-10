@@ -14,12 +14,100 @@ class MyProfile extends React.Component {
       bday: "",
       location: "",
       pic: "",
-      faves: "",
+      favorites: [],
       goals: "",
     };
   }
+
+  componentDidMount() {
+    let currentComponent = this;
+    fire.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        //retrieve profile information
+        let currentUser = fire.auth().currentUser.uid;
+        let usersRef = fire.database().ref("Users/" + currentUser);
+        usersRef.on("value", function (data) {
+          let info = data.val();
+          currentComponent.setState({
+            username: info.Username,
+            firstName: info.firstName,
+            lastName: info.lastName,
+            bday: info.bday,
+          });
+          console.log(info);
+        });
+
+        //retrieve favorite workouts
+        let favoritesRef = fire
+          .database()
+          .ref("Favorites/" + currentUser + "/");
+
+        let workoutsRef = fire.database().ref("Workouts");
+
+        let favoritesData = [];
+        let favoriteWorkouts = [];
+
+        favoritesRef
+          .once("value", function (data) {
+            let info = data.val();
+            for (const key in info) {
+              favoritesData.push(info[key].workoutId);
+            }
+            console.log(favoritesData);
+          })
+          .then(() => {
+            workoutsRef.once("value", function (data) {
+              let workoutsFromDatabase = data.val();
+              for (const key in workoutsFromDatabase) {
+                for (const index in favoritesData) {
+                  if (key === favoritesData[index]) {
+                    let workout = {
+                      name: workoutsFromDatabase[key].name,
+                      workoutId: key,
+                      exercises: workoutsFromDatabase[key].exercises,
+                      timeLength: workoutsFromDatabase[key].timeLength,
+                      notes: workoutsFromDatabase[key].notes,
+                    };
+                    favoriteWorkouts.push(workout);
+                  }
+                }
+              }
+              currentComponent.setState({ favorites: favoriteWorkouts });
+            });
+          });
+      } else {
+        console.log("signed out");
+      }
+    });
+  }
   render() {
-    return <h2> My Profile</h2>;
+    return (
+      <div>
+        <div id="profileBox">
+          <h2> My Info</h2>
+          <p>
+            Name: {this.state.firstName} {this.state.lastName}
+          </p>
+          <p> Birthday: {this.state.bday}</p>
+          <p> Username: {this.state.username}</p>
+        </div>
+        <div id="goals">
+          <h2> Fitness Goals </h2>
+        </div>
+        <div id="favWorkouts">
+          <h2> Favorite Workouts</h2>
+          <div>
+            {this.state.favorites.map((data, index) => (
+              <div key={data.workoutId} id={data.workoutId} className="workout">
+                <div className="workoutHeader">
+                  <h3 id="workoutName">{data.name}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 export default withRouter(MyProfile);
