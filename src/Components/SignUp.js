@@ -96,22 +96,25 @@ class SignUp extends React.Component {
                   authUser.user.updateProfile({
                     photoURL: url,
                   });
+
+                  //put into users database w/ profile picture
+                  var userRef = fire
+                    .database()
+                    .ref("Users/" + authUser.user.uid);
+                  userRef.set({
+                    UserId: authUser.user.uid,
+                    Username: this.state.username,
+                    Email: this.state.email,
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    bday: this.state.bday,
+                    pic: url,
+                  });
                 })
                 .catch((error) => {
                   //error in retrieving url
                   console.log(error);
                 });
-            });
-
-            //put into users database
-            var userRef = fire.database().ref("Users/" + authUser.user.uid);
-            userRef.set({
-              UserId: authUser.user.uid,
-              Username: this.state.username,
-              Email: this.state.email,
-              firstName: this.state.firstName,
-              lastName: this.state.lastName,
-              bday: this.state.bday,
             });
           })
           .catch((error) => {
