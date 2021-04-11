@@ -17,6 +17,8 @@ class MyProfile extends React.Component {
       favorites: [],
       goals: "",
     };
+
+    this.addGoal = this.addGoal.bind(this);
   }
 
   componentDidMount() {
@@ -82,6 +84,8 @@ class MyProfile extends React.Component {
       }
     });
   }
+
+  addGoal(event) {}
   render() {
     return (
       <div>
@@ -102,6 +106,14 @@ class MyProfile extends React.Component {
         </div>
         <div id="goals">
           <h2> Fitness Goals </h2>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            id="addGoal"
+            onClick={this.addGoal}
+          >
+            Add Goal
+          </button>
         </div>
         <div id="favWorkouts">
           <h2> Favorite Workouts</h2>
