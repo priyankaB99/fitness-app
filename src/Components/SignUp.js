@@ -18,6 +18,7 @@ class SignUp extends React.Component {
       lastName: "",
       bday: "",
       email: "",
+      profpic: "",
       username: "",
       password1: "",
       password2: "",
@@ -29,6 +30,11 @@ class SignUp extends React.Component {
 
   onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
+  };
+
+  profpicChange = (event) => {
+    this.setState({ profpic: event.target.files[0] });
+    console.log(this.state.profpic);
   };
 
   submitForm(event) {
@@ -84,6 +90,9 @@ class SignUp extends React.Component {
               lastName: this.state.lastName,
               bday: this.state.bday,
             });
+
+            // let storageRef=firebase.storage().ref();
+            // let profpicRef=storageRef.child("user:" + authUser.user.uid)
           })
           .catch((error) => {
             // An error happened.
@@ -96,29 +105,6 @@ class SignUp extends React.Component {
         console.log("Sign up error:", error);
         this.setState({ error: error });
       });
-
-    // //send verification email
-    // var actionCodeSettings = {
-    //   // URL you want to redirect back to. The domain (www.example.com) for this
-    //   // URL must be in the authorized domains list in the Firebase Console.
-    //   url: "fitness-app-db861.firebaseapp.com",
-    //   // This must be true.
-    //   handleCodeInApp: true,
-    //   dynamicLinkDomain: "example.page.link",
-    // };
-
-    // const useremail = this.state.email;
-    // fire
-    //   .auth()
-    //   .generateEmailVerificationLink(useremail, actionCodeSettings)
-    //   .then((link) => {
-    //     // Construct email verification template, embed the link and send
-    //     // using custom SMTP server.
-    //     console.log("Email");
-    //   })
-    //   .catch((error) => {
-    //     // Some error occurred.
-    //   });
   }
 
   render() {
@@ -127,6 +113,7 @@ class SignUp extends React.Component {
       username,
       password1,
       password2,
+      profpic,
       warning,
       error,
       firstName,
@@ -171,6 +158,13 @@ class SignUp extends React.Component {
             type="text"
             placeholder="Username"
           />{" "}
+          <br></br>
+          <input
+            name="profpic"
+            onChange={this.profpicChange}
+            type="file"
+            accept="image/*"
+          />
           <br></br>
           <input
             name="email"
