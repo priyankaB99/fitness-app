@@ -34,7 +34,6 @@ class SignUp extends React.Component {
 
   profpicChange = (event) => {
     this.setState({ profpic: event.target.files[0] });
-    console.log(this.state.profpic);
   };
 
   submitForm(event) {
@@ -54,6 +53,7 @@ class SignUp extends React.Component {
       .auth()
       .createUserWithEmailAndPassword(this.state.email, this.state.password1)
       .then((authUser) => {
+        //send email to verify
         authUser.user
           .sendEmailVerification()
           .then(() => {
@@ -65,6 +65,7 @@ class SignUp extends React.Component {
 
         // User has been logged in
         console.log(authUser);
+
         // Update profile with display name
         authUser.user
           .updateProfile({
@@ -81,6 +82,28 @@ class SignUp extends React.Component {
             this.setState({ error: error });
           })
           .then(() => {
+            let file = this.state.profpic;
+            let storageRef = fire
+              .storage()
+              .ref(authUser.user.uid + "/profilePicture/" + file.name);
+
+            //upload profile picture to storage
+            storageRef.put(file).then(() => {
+              storageRef
+                .getDownloadURL()
+                .then((url) => {
+                  //update profile to include profile picture
+                  authUser.user.updateProfile({
+                    photoURL: url,
+                  });
+                })
+                .catch((error) => {
+                  //error in retrieving url
+                  console.log(error);
+                });
+            });
+
+            //put into users database
             var userRef = fire.database().ref("Users/" + authUser.user.uid);
             userRef.set({
               UserId: authUser.user.uid,
@@ -90,9 +113,6 @@ class SignUp extends React.Component {
               lastName: this.state.lastName,
               bday: this.state.bday,
             });
-
-            // let storageRef=firebase.storage().ref();
-            // let profpicRef=storageRef.child("user:" + authUser.user.uid)
           })
           .catch((error) => {
             // An error happened.

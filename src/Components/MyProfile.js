@@ -25,6 +25,8 @@ class MyProfile extends React.Component {
       if (user) {
         //retrieve profile information
         let currentUser = fire.auth().currentUser.uid;
+        let profpic = fire.auth().currentUser.photoURL;
+        currentComponent.setState({ pic: profpic });
         let usersRef = fire.database().ref("Users/" + currentUser);
         usersRef.on("value", function (data) {
           let info = data.val();
@@ -85,6 +87,13 @@ class MyProfile extends React.Component {
       <div>
         <div id="profileBox">
           <h2> My Info</h2>
+          <img
+            id="profPic"
+            src={this.state.pic}
+            alt={this.state.username}
+            width="100px"
+            length="100px"
+          ></img>
           <p>
             Name: {this.state.firstName} {this.state.lastName}
           </p>
