@@ -75,9 +75,10 @@ class UserCalendar extends React.Component {
   findThisMonthEvents(currentMonth) {
     let currentComponent = this;
     let displayUserId = this.state.displayUserId;
-    //get user's workout events
-    // fire.auth().onAuthStateChanged(function (user) {
-    //   if (user) {
+
+    //get other user's workout events
+    fire.auth().onAuthStateChanged(function (user) {
+      if (user) {
       let schedulesRef = fire.database().ref("Schedules/" + displayUserId);
 
       let thisMonth = currentComponent.state.month;
@@ -112,10 +113,11 @@ class UserCalendar extends React.Component {
           workoutEvents: eventsData
         });
       });
-    //   } else {
+      } 
+    // else {
     //     currentComponent.props.history.push("/login");
     //   }
-    // });
+    });
   }
 
   //Inspiration: https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728
@@ -173,6 +175,7 @@ class UserCalendar extends React.Component {
 
   //Create pop-up of event details. Should be able to edit times, workout, etc.
   //https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
+  
   toggleViewEditEvent(event) {
     this.setState({
       showPopup: !this.state.showPopup,

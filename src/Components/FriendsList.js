@@ -6,6 +6,7 @@ import { withRouter, useHistory } from "react-router-dom";
 import {format} from "date-fns";
 import "../CSS/general.css";
 import "../CSS/workouts.css";
+import UserCalendar from "./UserCalendar";
 
 class FriendsList extends React.Component {
   constructor(props) {
@@ -21,6 +22,7 @@ class FriendsList extends React.Component {
     this.sendFriendRequest = this.sendFriendRequest.bind(this);
     this.acceptRequest = this.acceptRequest.bind(this);
     this.rejectRequest = this.rejectRequest.bind(this);
+    this.openCalendar = this.openCalendar.bind(this);
   }
 
   componentDidMount() {
@@ -39,7 +41,8 @@ class FriendsList extends React.Component {
                 friendsData.push({
                     key: key,
                     friendId: friendsFromDatabase[key].friendId,
-                    friendUsername: friendsFromDatabase[key].friendUsername
+                    friendUsername: friendsFromDatabase[key].friendUsername,
+                    calendarOpen: false
                 });
             }
           }).then(() => {
@@ -217,6 +220,15 @@ class FriendsList extends React.Component {
     });
   }
 
+  openCalendar(event) {
+      let index = event.target.parentNode.dataset.index;
+      let currentFriendList = this.state.friendList;
+      currentFriendList[index].calendarOpen = !currentFriendList[index].calendarOpen;
+      this.setState({
+        friendList: currentFriendList
+      });
+  }
+
   render() {
     let requestedUsername = this.state.requestedUsername;
     let error = this.state.error;
@@ -229,7 +241,15 @@ class FriendsList extends React.Component {
             <div className="col-7">
                 <div className="workout">
                     {this.state.friendList.map((data, index) => (
-                        <p key={data.key} data-object={data}>{index} - {data.friendUsername}</p>
+                        <div data-index={index}>
+                            <p key={data.key} onClick={(event) => this.openCalendar(event)}
+                            >
+                                {index} - {data.friendUsername}
+                            </p>
+                            {data.calendarOpen 
+                            ? <UserCalendar displayUserId={data.friendId}/>
+                            : null}
+                        </div>
                     ))}
                 </div>
             </div>
