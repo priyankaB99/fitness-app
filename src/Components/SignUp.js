@@ -82,39 +82,19 @@ class SignUp extends React.Component {
             this.setState({ error: error });
           })
           .then(() => {
-            let file = this.state.profpic;
-            let storageRef = fire
-              .storage()
-              .ref(authUser.user.uid + "/profilePicture/" + file.name);
-
-            //upload profile picture to storage
-            storageRef.put(file).then(() => {
-              storageRef
-                .getDownloadURL()
-                .then((url) => {
-                  //update profile to include profile picture
-                  authUser.user.updateProfile({
-                    photoURL: url,
-                  });
-
-                  //put into users database w/ profile picture
-                  var userRef = fire
-                    .database()
-                    .ref("Users/" + authUser.user.uid);
-                  userRef.set({
-                    UserId: authUser.user.uid,
-                    Username: this.state.username,
-                    Email: this.state.email,
-                    firstName: this.state.firstName,
-                    lastName: this.state.lastName,
-                    bday: this.state.bday,
-                    pic: url,
-                  });
-                })
-                .catch((error) => {
-                  //error in retrieving url
-                  console.log(error);
-                });
+            //put into users database and insert default pic url
+            let storageRef = fire.storage().ref("person.png");
+            storageRef.getDownloadURL().then((url) => {
+              var userRef = fire.database().ref("Users/" + authUser.user.uid);
+              userRef.set({
+                UserId: authUser.user.uid,
+                Username: this.state.username,
+                Email: this.state.email,
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                bday: this.state.bday,
+                pic: url,
+              });
             });
           })
           .catch((error) => {
@@ -181,13 +161,13 @@ class SignUp extends React.Component {
             type="text"
             placeholder="Username"
           />{" "}
-          <br></br>
-          <input
+          {/* <br></br> */}
+          {/* <input
             name="profpic"
             onChange={this.profpicChange}
             type="file"
             accept="image/*"
-          />
+          /> */}
           <br></br>
           <input
             name="email"
