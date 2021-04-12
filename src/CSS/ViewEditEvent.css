@@ -26,6 +26,7 @@
 .close {
   margin: 5px 5px;
 }
+
 .close:hover {
   cursor: pointer;
 }
@@ -50,6 +51,7 @@
 .viewExerciseName {
   margin-left: 50px;
 }
+
 /* .qty {
   margin-right: 50px;
 } */

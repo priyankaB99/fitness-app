@@ -175,7 +175,7 @@ class UserCalendar extends React.Component {
 
   //Create pop-up of event details. Should be able to edit times, workout, etc.
   //https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
-  
+
   toggleViewEditEvent(event) {
     this.setState({
       showPopup: !this.state.showPopup,
@@ -346,25 +346,25 @@ class UserCalendar extends React.Component {
 
           <div className="row calHeader">
             <div className="col">
-              <strong>Sunday</strong>
+              <strong>Sun</strong>
             </div>
             <div className="col">
-              <strong>Monday</strong>
+              <strong>Mon</strong>
             </div>
             <div className="col">
-              <strong>Tuesday</strong>
+              <strong>Tue</strong>
             </div>
             <div className="col">
-              <strong>Wednesday</strong>
+              <strong>Wed</strong>
             </div>
             <div className="col">
-              <strong>Thursday</strong>
+              <strong>Thu</strong>
             </div>
             <div className="col">
-              <strong>Friday</strong>
+              <strong>Fri</strong>
             </div>
             <div className="col">
-              <strong>Saturday</strong>
+              <strong>Sat</strong>
             </div>
           </div>
 
