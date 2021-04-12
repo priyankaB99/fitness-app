@@ -4,7 +4,7 @@ import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
 import "../CSS/profile.css";
-class MyProfile extends React.Component {
+class UserProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,37 +16,18 @@ class MyProfile extends React.Component {
       pic: "",
       favorites: [],
       goals: "",
-      // displayUserId: this.props.displayUserId,
-      addGoalOpen: false,
+      displayUserId: this.props.displayUserId,
     };
-
-    this.showGoalForm = this.showGoalForm.bind(this);
   }
 
   componentDidMount() {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
       if (user) {
-        //retrieve profile information
-        let currentUser = fire.auth().currentUser.uid;
+        //retrieve profile information of friend
+        let friendUser = currentComponent.state.displayUserId;
 
-        if (!fire.auth().currentUser.photoURL) {
-          let storageRef = fire.storage().ref("person.png");
-          storageRef.getDownloadURL().then((url) => {
-            fire
-              .auth()
-              .currentUser.updateProfile({ photoURL: url })
-              .then(() => {
-                let profpic = fire.auth().currentUser.photoURL;
-                currentComponent.setState({ pic: profpic });
-              });
-          });
-        } else {
-          const profpic = fire.auth().currentUser.photoURL;
-          currentComponent.setState({ pic: profpic });
-        }
-
-        let usersRef = fire.database().ref("Users/" + currentUser);
+        let usersRef = fire.database().ref("Users/" + friendUser);
         usersRef.on("value", function (data) {
           let info = data.val();
           currentComponent.setState({
@@ -54,48 +35,13 @@ class MyProfile extends React.Component {
             firstName: info.firstName,
             lastName: info.lastName,
             bday: info.bday,
+            pic: info.pic,
           });
           console.log(info);
         });
 
-        // let file = this.state.profpic;
-        //     let storageRef = fire
-        //       .storage()
-        //       .ref(authUser.user.uid + "/profilePicture/" + file.name);
-
-        //     //upload profile picture to storage
-        //     storageRef.put(file).then(() => {
-        //       storageRef
-        //         .getDownloadURL()
-        //         .then((url) => {
-        //           //update profile to include profile picture
-        //           authUser.user.updateProfile({
-        //             photoURL: url,
-        //           });
-
-        //           var userRef = fire
-        //             .database()
-        //             .ref("Users/" + authUser.user.uid);
-        //           userRef.set({
-        //             UserId: authUser.user.uid,
-        //             Username: this.state.username,
-        //             Email: this.state.email,
-        //             firstName: this.state.firstName,
-        //             lastName: this.state.lastName,
-        //             bday: this.state.bday,
-        //             pic: url,
-        //           });
-        //         })
-        //         .catch((error) => {
-        //           //error in retrieving url
-        //           console.log(error);
-        //         });
-        //     });
-
         //retrieve favorite workouts
-        let favoritesRef = fire
-          .database()
-          .ref("Favorites/" + currentUser + "/");
+        let favoritesRef = fire.database().ref("Favorites/" + friendUser + "/");
 
         let workoutsRef = fire.database().ref("Workouts");
 
@@ -137,12 +83,10 @@ class MyProfile extends React.Component {
   }
 
   showGoalForm(event) {}
+
   render() {
     return (
       <div>
-        <button type="button" id="editProfile" className="btn btn-secondary">
-          Edit Info
-        </button>
         <div id="profileBox" class="workout">
           <h2> My Info</h2>
           <img
@@ -160,14 +104,6 @@ class MyProfile extends React.Component {
         </div>
         <div id="goals" class="workout">
           <h2> Fitness Goals </h2>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            id="addGoal"
-            onClick={this.showGoalForm}
-          >
-            Add Goal
-          </button>
         </div>
         <div id="favWorkouts" class="workout">
           <h2> Favorite Workouts</h2>
@@ -185,4 +121,4 @@ class MyProfile extends React.Component {
     );
   }
 }
-export default withRouter(MyProfile);
+export default withRouter(UserProfile);
