@@ -27,8 +27,23 @@ class MyProfile extends React.Component {
       if (user) {
         //retrieve profile information
         let currentUser = fire.auth().currentUser.uid;
-        let profpic = fire.auth().currentUser.photoURL;
-        currentComponent.setState({ pic: profpic });
+
+        if (!fire.auth().currentUser.photoURL) {
+          let storageRef = fire.storage().ref("person.png");
+          storageRef.getDownloadURL().then((url) => {
+            fire
+              .auth()
+              .currentUser.updateProfile({ photoURL: url })
+              .then(() => {
+                let profpic = fire.auth().currentUser.photoURL;
+                currentComponent.setState({ pic: profpic });
+              });
+          });
+        } else {
+          const profpic = fire.auth().currentUser.photoURL;
+          currentComponent.setState({ pic: profpic });
+        }
+
         let usersRef = fire.database().ref("Users/" + currentUser);
         usersRef.on("value", function (data) {
           let info = data.val();
@@ -40,6 +55,40 @@ class MyProfile extends React.Component {
           });
           console.log(info);
         });
+
+        // let file = this.state.profpic;
+        //     let storageRef = fire
+        //       .storage()
+        //       .ref(authUser.user.uid + "/profilePicture/" + file.name);
+
+        //     //upload profile picture to storage
+        //     storageRef.put(file).then(() => {
+        //       storageRef
+        //         .getDownloadURL()
+        //         .then((url) => {
+        //           //update profile to include profile picture
+        //           authUser.user.updateProfile({
+        //             photoURL: url,
+        //           });
+
+        //           var userRef = fire
+        //             .database()
+        //             .ref("Users/" + authUser.user.uid);
+        //           userRef.set({
+        //             UserId: authUser.user.uid,
+        //             Username: this.state.username,
+        //             Email: this.state.email,
+        //             firstName: this.state.firstName,
+        //             lastName: this.state.lastName,
+        //             bday: this.state.bday,
+        //             pic: url,
+        //           });
+        //         })
+        //         .catch((error) => {
+        //           //error in retrieving url
+        //           console.log(error);
+        //         });
+        //     });
 
         //retrieve favorite workouts
         let favoritesRef = fire

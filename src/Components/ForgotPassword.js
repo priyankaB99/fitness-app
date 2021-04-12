@@ -38,7 +38,7 @@ class ForgotPassword extends React.Component {
 
   render() {
     let content;
-    if (this.state.submitted == false) {
+    if (this.state.submitted === false) {
       content = (
         <form className="loginBox login" onSubmit={this.submitHandler}>
           <h5>
