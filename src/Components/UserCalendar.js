@@ -41,8 +41,7 @@ class UserCalendar extends React.Component {
       showPopup: false,
       selectedWorkout: "",
       showAddEvent: false,
-      selectedDay: "",
-      // isOpen: false,
+      selectedDay: ""
     };
     this.renderMonthHeader = this.renderMonthHeader.bind(this);
     this.previousMonth = this.previousMonth.bind(this);

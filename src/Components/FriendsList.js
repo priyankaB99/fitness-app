@@ -23,6 +23,7 @@ class FriendsList extends React.Component {
     this.acceptRequest = this.acceptRequest.bind(this);
     this.rejectRequest = this.rejectRequest.bind(this);
     this.openCalendar = this.openCalendar.bind(this);
+    this.openProfile = this.openProfile.bind(this);
   }
 
   componentDidMount() {
@@ -42,7 +43,8 @@ class FriendsList extends React.Component {
                     key: key,
                     friendId: friendsFromDatabase[key].friendId,
                     friendUsername: friendsFromDatabase[key].friendUsername,
-                    calendarOpen: false
+                    calendarOpen: false,
+                    profileOpen: false
                 });
             }
           }).then(() => {
@@ -229,6 +231,15 @@ class FriendsList extends React.Component {
       });
   }
 
+  openProfile(event) {
+    let index = event.target.parentNode.dataset.index;
+    let currentFriendList = this.state.friendList;
+    currentFriendList[index].profileOpen = !currentFriendList[index].profileOpen;
+    this.setState({
+      friendList: currentFriendList
+    });
+}
+
   render() {
     let requestedUsername = this.state.requestedUsername;
     let error = this.state.error;
@@ -242,13 +253,27 @@ class FriendsList extends React.Component {
                 <div className="workout">
                     {this.state.friendList.map((data, index) => (
                         <div data-index={index}>
-                            <p key={data.key} onClick={(event) => this.openCalendar(event)}
-                            >
+                            <p key={data.key}>
                                 {index} - {data.friendUsername}
                             </p>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={(event) => this.openCalendar(event)}
+                            >
+                                See Calendar
+                            </button>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={(event) => this.openProfile(event)}
+                            >
+                                See Profile
+                            </button>
                             {data.calendarOpen 
                             ? <UserCalendar displayUserId={data.friendId}/>
                             : null}
+                            {/* {data.profileOpen 
+                            ? <UserCalendar displayUserId={data.friendId}/>
+                            : null} */}
                         </div>
                     ))}
                 </div>

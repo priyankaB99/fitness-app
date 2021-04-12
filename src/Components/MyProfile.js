@@ -16,6 +16,7 @@ class MyProfile extends React.Component {
       pic: "",
       favorites: [],
       goals: "",
+      displayUserId: this.props.displayUserId
     };
 
     this.addGoal = this.addGoal.bind(this);
