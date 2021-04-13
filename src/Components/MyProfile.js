@@ -4,6 +4,7 @@ import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
 import "../CSS/profile.css";
+import ViewEditProfile from "./ViewEditProfile";
 class MyProfile extends React.Component {
   constructor(props) {
     super(props);
@@ -15,12 +16,18 @@ class MyProfile extends React.Component {
       location: "",
       pic: "",
       favorites: [],
-      goals: "",
-      // displayUserId: this.props.displayUserId,
+      goals: [],
       addGoalOpen: false,
+      goalToAdd: "",
+      editInfoOpen: false,
+      showWorkout: false,
     };
 
     this.showGoalForm = this.showGoalForm.bind(this);
+    this.showEditInfo = this.showEditInfo.bind(this);
+    this.changeHandler = this.changeHandler.bind(this);
+    this.submitHandler = this.submitHandler.bind(this);
+    this.retrieveGoals = this.retrieveGoals.bind(this);
   }
 
   componentDidMount() {
@@ -41,10 +48,11 @@ class MyProfile extends React.Component {
                 currentComponent.setState({ pic: profpic });
               });
           });
-        } else {
-          const profpic = fire.auth().currentUser.photoURL;
-          currentComponent.setState({ pic: profpic });
         }
+        // else {
+        //   const profpic = fire.auth().currentUser.photoURL;
+        //   currentComponent.setState({ pic: profpic });
+        // }
 
         let usersRef = fire.database().ref("Users/" + currentUser);
         usersRef.on("value", function (data) {
@@ -54,44 +62,12 @@ class MyProfile extends React.Component {
             firstName: info.firstName,
             lastName: info.lastName,
             bday: info.bday,
+            pic: info.pic,
           });
           console.log(info);
         });
 
-        // let file = this.state.profpic;
-        //     let storageRef = fire
-        //       .storage()
-        //       .ref(authUser.user.uid + "/profilePicture/" + file.name);
-
-        //     //upload profile picture to storage
-        //     storageRef.put(file).then(() => {
-        //       storageRef
-        //         .getDownloadURL()
-        //         .then((url) => {
-        //           //update profile to include profile picture
-        //           authUser.user.updateProfile({
-        //             photoURL: url,
-        //           });
-
-        //           var userRef = fire
-        //             .database()
-        //             .ref("Users/" + authUser.user.uid);
-        //           userRef.set({
-        //             UserId: authUser.user.uid,
-        //             Username: this.state.username,
-        //             Email: this.state.email,
-        //             firstName: this.state.firstName,
-        //             lastName: this.state.lastName,
-        //             bday: this.state.bday,
-        //             pic: url,
-        //           });
-        //         })
-        //         .catch((error) => {
-        //           //error in retrieving url
-        //           console.log(error);
-        //         });
-        //     });
-
+        currentComponent.retrieveGoals();
         //retrieve favorite workouts
         let favoritesRef = fire
           .database()
@@ -130,33 +106,93 @@ class MyProfile extends React.Component {
               currentComponent.setState({ favorites: favoriteWorkouts });
             });
           });
+
+        //add fitness goal
       } else {
         console.log("signed out");
       }
     });
   }
 
-  showGoalForm(event) {}
+  showGoalForm(event) {
+    this.setState({ addGoalOpen: !this.state.addGoalOpen });
+  }
+
+  changeHandler(event) {
+    event.preventDefault();
+    this.setState({ [event.target.name]: event.target.value });
+  }
+
+  submitHandler(event) {
+    event.preventDefault();
+    let currentUserId = fire.auth().currentUser.uid;
+    //submit goal to database
+    let goalsRef = fire.database().ref("FitnessGoals/" + currentUserId);
+    let newGoalRef = goalsRef.push();
+    newGoalRef
+      .set({
+        goal: this.state.goalToAdd,
+      })
+      .then(() => {
+        this.setState({ addGoalOpen: !this.state.addGoalOpen });
+        this.retrieveGoals();
+      });
+  }
+
+  retrieveGoals() {
+    let currentComponent = this;
+
+    let currentUser = fire.auth().currentUser.uid;
+    let goalsRef = fire.database().ref("FitnessGoals/" + currentUser);
+    let goalsData = [];
+    goalsRef.once("value", function (data) {
+      let goalsFromDatabase = data.val();
+      for (const key in goalsFromDatabase) {
+        let eachGoal = { goal: goalsFromDatabase[key].goal, goalId: key };
+        goalsData.push(eachGoal);
+      }
+      currentComponent.setState({ goals: goalsData });
+    });
+  }
+
+  showEditInfo(event) {
+    this.setState({ editInfoOpen: !this.state.editInfoOpen });
+  }
+
   render() {
     return (
       <div>
-        <button type="button" id="editProfile" className="btn btn-secondary">
-          Edit Info
-        </button>
         <div id="profileBox" class="workout">
           <h2> My Info</h2>
+          {this.state.editInfoOpen ? (
+            <ViewEditProfile
+              username={this.state.username}
+              bday={this.state.bday}
+              pic={this.state.pic}
+              closePopup={this.showEditInfo}
+            />
+          ) : null}
           <img
             id="profPic"
             src={this.state.pic}
             alt={this.state.username}
-            width="100px"
-            length="100px"
           ></img>
+          <p className="profileLabel">Name: </p>
           <p>
-            Name: {this.state.firstName} {this.state.lastName}
+            {this.state.firstName} {this.state.lastName}
           </p>
-          <p> Birthday: {this.state.bday}</p>
-          <p> Username: {this.state.username}</p>
+          <p className="profileLabel"> Birthday: </p>
+          <p>{this.state.bday}</p>
+          <p className="profileLabel"> Username: </p>
+          <p>{this.state.username}</p>
+          <button
+            onClick={this.showEditInfo}
+            type="button"
+            id="editProfile"
+            className="btn btn-secondary"
+          >
+            Edit Info
+          </button>
         </div>
         <div id="goals" class="workout">
           <h2> Fitness Goals </h2>
@@ -168,8 +204,21 @@ class MyProfile extends React.Component {
           >
             Add Goal
           </button>
+          {this.state.addGoalOpen ? (
+            <form onChange={this.changeHandler} onSubmit={this.submitHandler}>
+              <input type="text" name="goalToAdd" />
+              <input type="submit" value="Add Goal" />
+            </form>
+          ) : null}
+          <ol>
+            {this.state.goals.map((data, index) => (
+              <li key={data.goalId} id={data.goalId}>
+                {data.goal}
+              </li>
+            ))}
+          </ol>
         </div>
-        <div id="favWorkouts" class="workout">
+        <div id="favWorkouts" className="workout">
           <h2> Favorite Workouts</h2>
           <div>
             {this.state.favorites.map((data, index) => (

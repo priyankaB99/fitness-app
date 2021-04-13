@@ -76,6 +76,16 @@ class UserProfile extends React.Component {
               currentComponent.setState({ favorites: favoriteWorkouts });
             });
           });
+        let goalsRef = fire.database().ref("FitnessGoals/" + friendUser);
+        let goalsData = [];
+        goalsRef.once("value", function (data) {
+          let goalsFromDatabase = data.val();
+          for (const key in goalsFromDatabase) {
+            let eachGoal = { goal: goalsFromDatabase[key].goal, goalId: key };
+            goalsData.push(eachGoal);
+          }
+          currentComponent.setState({ goals: goalsData });
+        });
       } else {
         console.log("signed out");
       }
