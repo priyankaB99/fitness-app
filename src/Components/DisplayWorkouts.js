@@ -4,17 +4,21 @@ import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
 import "../CSS/workouts.css";
+import EditWorkout from "./EditWorkout";
+
 
 class DisplayWorkouts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       workouts: [],
+      selectedWorkout: "",
+      showPopup: false
     };
     this.deleteWorkout = this.deleteWorkout.bind(this);
-    this.editWorkout = this.editWorkout.bind(this);
     this.favorite = this.favorite.bind(this);
     this.unfavorite = this.unfavorite.bind(this);
+    this.toggleEditWorkout = this.toggleEditWorkout.bind(this);
   }
 
   componentDidMount() {
@@ -102,14 +106,30 @@ class DisplayWorkouts extends React.Component {
     this.setState({ workouts: changedWorkouts });
   }
 
-  editWorkout(event) {
+  //Create pop-up of event details
+  //Should be able to edit times, workout, etc.
+  //https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
+  toggleEditWorkout(event) {
     let workoutId = event.target.parentNode.id;
-    console.log(workoutId);
+    this.setState({
+      showPopup: !this.state.showPopup,
+      selectedWorkout: workoutId,
+    });
   }
+
   render() {
     return (
       <div>
         <h2> My Saved Workouts</h2>
+
+        {/**https://medium.com/@daniela.sandoval/creating-a-popup-window-using-js-and-react-4c4bd125da57 */}
+        {this.state.showPopup ? (
+          <EditWorkout
+            closePopup={this.toggleEditWorkout}
+            selectedWorkout={this.state.selectedWorkout}
+          />
+        ) : null}
+
         <div>
           {this.state.workouts.map((data, index) => (
             <div key={data.workoutId} id={data.workoutId} className="workout">
@@ -163,7 +183,7 @@ class DisplayWorkouts extends React.Component {
                 type="button"
                 className="btn btn-secondary"
                 id="editBtn"
-                onClick={this.editWorkout}
+                onClick={this.toggleEditWorkout}
               >
                 Edit
               </button>
