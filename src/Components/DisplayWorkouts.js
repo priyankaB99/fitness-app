@@ -15,6 +15,7 @@ class DisplayWorkouts extends React.Component {
       selectedWorkout: "",
       showPopup: false
     };
+    this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
     this.deleteWorkout = this.deleteWorkout.bind(this);
     this.favorite = this.favorite.bind(this);
     this.unfavorite = this.unfavorite.bind(this);
@@ -22,6 +23,10 @@ class DisplayWorkouts extends React.Component {
   }
 
   componentDidMount() {
+    this.retrieveWorkouts();
+  }
+
+  retrieveWorkouts(){
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
       console.log("check 17");
@@ -29,7 +34,7 @@ class DisplayWorkouts extends React.Component {
         let currentUser = fire.auth().currentUser.uid;
         let workoutsRef = fire.database().ref("Workouts");
         let workoutsData = [];
-        workoutsRef.on("value", function (data) {
+        workoutsRef.once("value", function (data) {
           let workoutsFromDatabase = data.val();
           //iterates through the returned json object
           for (const key in workoutsFromDatabase) {
@@ -126,6 +131,7 @@ class DisplayWorkouts extends React.Component {
         {this.state.showPopup ? (
           <EditWorkout
             closePopup={this.toggleEditWorkout}
+            retrieveWorkouts={this.retrieveWorkouts}
             selectedWorkout={this.state.selectedWorkout}
           />
         ) : null}

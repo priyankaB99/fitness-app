@@ -80,7 +80,6 @@ class EditWorkout extends React.Component {
   //submit edits to FireBase
   submitHandler(event) {
     event.preventDefault();
-    let currentUserId = fire.auth().currentUser.uid;
     //reference to existing workout
     let workoutRef = fire.database().ref("Workouts/" + this.state.workout);
     console.log(workoutRef);
@@ -91,17 +90,11 @@ class EditWorkout extends React.Component {
       notes: this.state.workoutNotes,
       exercises: this.state.workoutExercises,
     });
+    this.props.retrieveWorkouts();
     console.log("successfully edited workout in database");
     alert(
       "Your workout has been edited!"
     );
-    //refresh form
-    // this.setState({
-    //   name: "",
-    //   timeLength: "",
-    //   exercises: [{ exerciseName: "", qty: "", unit: "" }],
-    //   notes: "",
-    // });
   }
 
   changeHandler(event) {
