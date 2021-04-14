@@ -318,6 +318,8 @@ class Home extends React.Component {
             closePopup={this.toggleViewEditEvent}
             deleteEvent={this.deleteWorkoutEvent}
             selectedWorkout={this.state.selectedWorkout}
+            scheduleId = {this.state.uid}
+            reloadCal = {this.findThisMonthEvents}
           />
         ) : null}
         {this.state.showAddEvent ? (

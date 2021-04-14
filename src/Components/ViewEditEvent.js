@@ -14,6 +14,7 @@ class ViewEditEvent extends React.Component {
     this.state = {
       otherUserEvent: this.props.otherUserEvent,
       workout: this.props.selectedWorkout, //includes workoutId, workoutName, date, start, end
+      scheduleId: this.props.scheduleId,
       workoutId: "",
       workoutName: "",
       workoutExercises: [],
@@ -23,13 +24,18 @@ class ViewEditEvent extends React.Component {
       workoutEnd: this.props.selectedWorkout.end,
       eventKey: this.props.selectedWorkout.eventKey,
       warning: "",
+      editToggled: false //if edit button has been clicked
     };
     this.parseWorkoutData = this.parseWorkoutData.bind(this);
-    this.editEvent = this.editEvent.bind(this);
+    this.toggleEditEvent = this.toggleEditEvent.bind(this);
     this.formatDate = this.formatDate.bind(this);
     this.formatTime = this.formatTime.bind(this);
     this.formatExercises = this.formatExercises.bind(this);
     this.deleteEvent = this.deleteEvent.bind(this);
+    this.displayNonEdit = this.displayNonEdit.bind(this);
+    this.displayEdit = this.displayEdit.bind(this);
+    this.changeHandler = this.changeHandler.bind(this);
+    this.submitHandler = this.submitHandler.bind(this);
   }
 
   componentDidMount() {
@@ -69,10 +75,6 @@ class ViewEditEvent extends React.Component {
     });
   }
 
-  editEvent() {
-    console.log("edit");
-  }
-
   formatDate() {
     let date = parse(this.state.workoutDate, "yyyy-MM-dd", new Date());
     let weekday = format(date, "EEEE");
@@ -90,9 +92,96 @@ class ViewEditEvent extends React.Component {
     }
   }
 
+  //view when edit is not clicked
+  displayNonEdit(){
+    return(
+      <div>
+        {this.formatDate() + " | " + this.formatTime()}
+
+        <div className="notes"> Notes: {this.state.workoutNotes}</div>
+
+        {this.props.deleteEvent ? (
+          <div>
+            <button
+              className="btn btn-secondary popup-buttons btn-sm"
+              onClick={this.toggleEditEvent}
+            >
+              Edit Event
+            </button>
+
+            <button
+              className="btn btn-secondary popup-buttons btn-sm"
+              onClick={this.deleteEvent}
+            >
+              Delete Event
+            </button>
+
+          </div> ) : null}
+      </div>);
+  }
+
+  //view when edit is clicked
+  displayEdit(){
+    return(
+      <div>
+          <label htmlFor="workoutDate"> Date: </label>
+          <input
+            type="date"
+            name="workoutDate"
+            value={this.state.workoutDate}
+            onChange={this.changeHandler}
+            required
+          />
+          <br></br>
+          <label htmlFor="startTime"> Start Time: </label>
+          <input
+            type="time"
+            name="workoutStart"
+            value={this.state.workoutStart}
+            onChange={this.changeHandler}
+            required
+          />
+          <label htmlFor="workoutEnd"> End Time: </label>
+          <input
+            type="time"
+            name="workoutEnd"
+            value={this.state.workoutEnd}
+            onChange={this.changeHandler}
+            required
+          />
+
+          <button onClick={ () => {this.submitHandler()} }>Save</button>
+          <button onClick={ () => {this.toggleEditEvent()} }>Cancel</button>
+
+
+
+        {/* ADD IN BUTTONS FOR SAVE AND CANCEL CHANGES */}
+      </div>
+    );
+  }
+
+  changeHandler(event) {
+      this.setState({ [event.target.name]: event.target.value });
+  }
+
+  //submit edits to FireBase
+  submitHandler(event) {
+    //reference to existing workout
+    let eventRef = fire.database().ref("Schedules/" + this.state.scheduleId + "/" + this.state.eventKey);
+
+    eventRef.update({
+      date: this.state.workoutDate,
+      endtime: this.state.workoutEnd,
+      startTime: this.state.workoutStart,
+    });
+    this.props.reloadCal();
+    console.log(
+      "Your event has been edited!"
+    );
+  }
+
   formatExercises() {
     let exercises = this.state.workoutExercises;
-    console.log(exercises);
     let formattedExercises = [];
 
     formattedExercises = exercises.map((exercise, index) => (
@@ -106,6 +195,12 @@ class ViewEditEvent extends React.Component {
       </div>
     ));
     return formattedExercises;
+  }
+
+  toggleEditEvent() {
+    this.setState({
+      editToggled: !this.state.editToggled
+    });
   }
 
   deleteEvent(event) {
@@ -122,38 +217,20 @@ class ViewEditEvent extends React.Component {
           </p>
         </div>
 
+        {/* if the workout has not been deleted */}
         {this.state.warning === "" ? (
           <div className="workoutInfo" id={this.state.eventKey}>
             <div className="name">
               <h2>{this.state.workoutName}</h2>
             </div>
 
-            <div className="dateTime">
-              {this.formatDate() + " | "}
-              {this.formatTime()}
-            </div>
+            {this.state.editToggled ? this.displayEdit() : this.displayNonEdit()}
+            
 
-            <div className="notes"> Notes: {this.state.workoutNotes}</div>
-
-            {this.props.deleteEvent ? (
-              <div>
-                <button
-                  className="btn btn-secondary popup-buttons btn-sm"
-                  onClick={this.editEvent}
-                  disabled
-                >
-                  Edit Event
-                </button>
-                <button
-                  className="btn btn-secondary popup-buttons btn-sm"
-                  onClick={this.deleteEvent}
-                >
-                  Delete Event
-                </button>
-              </div>
-            ) : null}
           </div>
-        ) : (
+          
+         ) : ( 
+           //if workout has been deleted
           <div class="warning">
             <strong>{this.state.warning}</strong>
             <br></br>
@@ -161,7 +238,7 @@ class ViewEditEvent extends React.Component {
               <div>
                 <button
                   className="btn btn-secondary popup-buttons btn-sm"
-                  onClick={this.editEvent}
+                  onClick={this.toggleEditEvent}
                   disabled
                 >
                   Edit Event
