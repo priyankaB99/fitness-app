@@ -327,7 +327,7 @@ class FriendsList extends React.Component {
       <div>
         <h2>My Friends</h2>
         <div className="row">
-          <div className="col-7">
+          <div className="col-8">
             <div className="workout">
               {this.state.friendList.map((data, index) => (
                 <div data-index={index}>
