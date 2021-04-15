@@ -243,7 +243,7 @@ class DisplayWorkouts extends React.Component {
                 name="filter"
                 id="noFilter"
                 value="none"
-                checked
+                defaultChecked
               />
               <label htmlFor="currentUserFilter"> None </label>
               <br></br>
