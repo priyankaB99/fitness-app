@@ -6,27 +6,31 @@ import { withRouter } from "react-router-dom";
 import "../CSS/workouts.css";
 import EditWorkout from "./EditWorkout";
 
-
 class DisplayWorkouts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       workouts: [],
       selectedWorkout: "",
-      showPopup: false
+      showPopup: false,
+      showFilter: false,
+      filters: [],
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
     this.deleteWorkout = this.deleteWorkout.bind(this);
     this.favorite = this.favorite.bind(this);
     this.unfavorite = this.unfavorite.bind(this);
     this.toggleEditWorkout = this.toggleEditWorkout.bind(this);
+    this.showFilter = this.showFilter.bind(this);
+    this.filterChange = this.filterChange.bind(this);
+    this.applyFilters = this.applyFilters.bind(this);
   }
 
   componentDidMount() {
     this.retrieveWorkouts();
   }
 
-  retrieveWorkouts(){
+  retrieveWorkouts() {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
       console.log("check 17");
@@ -122,6 +126,37 @@ class DisplayWorkouts extends React.Component {
     });
   }
 
+  //Create pop up for filtering options
+  showFilter(event) {
+    this.setState({ showFilter: !this.state.showFilter });
+  }
+
+  //retrieve filtered creator element
+  filterChange(event) {
+    let checkedOptions = this.state.filters;
+    if (event.target.checked === true) {
+      checkedOptions.push(event.target.value);
+      this.setState({ filters: checkedOptions });
+    } else {
+      let deletedIndex = "";
+      for (const index in checkedOptions) {
+        if (checkedOptions[index] === event.target.value);
+        deletedIndex = index;
+      }
+      checkedOptions.splice(deletedIndex, 1);
+      this.setState({ filters: checkedOptions });
+    }
+  }
+
+  applyFilters(event) {
+    event.preventDefault();
+    let filters = this.state.filters;
+    if (filters.length === 0) {
+      this.retrieveWorkouts();
+    } else if (filters.includes("currentUser")) {
+      console.log("!");
+    }
+  }
   render() {
     return (
       <div>
@@ -135,7 +170,48 @@ class DisplayWorkouts extends React.Component {
             selectedWorkout={this.state.selectedWorkout}
           />
         ) : null}
-
+        <div>
+          <button type="button" id="filterBtn" onClick={this.showFilter}>
+            Filter
+          </button>
+          {this.state.showFilter ? (
+            <form onChange={this.filterChange}>
+              <p> Filter by Creator:</p>
+              <input
+                type="checkbox"
+                name="filter"
+                id="currentUserFilter"
+                value="currentUser"
+              />
+              <label htmlFor="currentUserFilter"> Me </label>
+              <br></br>
+              <input
+                type="checkbox"
+                name="filter"
+                id="otherUserFilter"
+                value="otherUser"
+              />
+              <label htmlFor="otherUserFilter"> Other Users </label>
+              <p> Filter by Created Date: </p>
+              <input
+                type="checkbox"
+                name="filter"
+                id="todayFilter"
+                value="today"
+              />
+              <label htmlFor="todayFilter"> Today </label>
+              <br></br>
+              <input
+                type="checkbox"
+                name="filter"
+                id="yesterdayFilter"
+                value="yesterday"
+              />
+              <label htmlFor="yesterdayFilter"> Yesterday </label>
+              <br></br>
+            </form>
+          ) : null}
+        </div>
         <div>
           {this.state.workouts.map((data, index) => (
             <div key={data.workoutId} id={data.workoutId} className="workout">

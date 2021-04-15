@@ -14,13 +14,21 @@ class CreateWorkout extends React.Component {
       timeLength: "",
       exercises: [{ exerciseName: "", qty: "", unit: "reps" }],
       notes: "",
+      createdDate: "",
     };
     this.addExercise = this.addExercise.bind(this);
     this.deleteExercise = this.deleteExercise.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
-
+  componentDidMount() {
+    //automatically set createdDate element
+    //today
+    const fullDate = new Date();
+    //change to database accepted format
+    const formattedDate = fullDate.toISOString().substring(0, 10);
+    this.setState({ createdDate: formattedDate });
+  }
   //function to produce dynamic form input for each exercise
   addExercise(event) {
     event.preventDefault();
@@ -53,6 +61,7 @@ class CreateWorkout extends React.Component {
       timeLength: this.state.timeLength,
       notes: this.state.notes,
       exercises: this.state.exercises,
+      createdDate: this.state.createdDate,
     });
     console.log("successfully added workout to database");
     alert(
