@@ -165,7 +165,7 @@ class ViewEditEvent extends React.Component {
   }
 
   //submit edits to FireBase
-  submitHandler(event) {
+  submitHandler() {
     //reference to existing workout
     let eventRef = fire.database().ref("Schedules/" + this.state.scheduleId + "/" + this.state.eventKey);
 
@@ -174,6 +174,7 @@ class ViewEditEvent extends React.Component {
       endtime: this.state.workoutEnd,
       startTime: this.state.workoutStart,
     });
+    this.toggleEditEvent();
     this.props.reloadCal();
     console.log(
       "Your event has been edited!"

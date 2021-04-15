@@ -272,7 +272,6 @@ class Home extends React.Component {
             let formattedDate = new Date(
               format(parseISO(eventsFromDatabase[key].date), "MM/dd/yyyy")
             );
-            console.log(eventsFromDatabase[key]);
             if (
               isSameMonth(formattedDate, thisMonth) &&
               isSameYear(formattedDate, thisMonth)
