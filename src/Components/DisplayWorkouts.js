@@ -33,7 +33,6 @@ class DisplayWorkouts extends React.Component {
   retrieveWorkouts() {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
-      console.log("check 17");
       if (user) {
         let currentUser = fire.auth().currentUser.uid;
         let workoutsRef = fire.database().ref("Workouts");
@@ -154,7 +153,62 @@ class DisplayWorkouts extends React.Component {
     if (filters.length === 0) {
       this.retrieveWorkouts();
     } else if (filters.includes("currentUser")) {
-      console.log("!");
+      let currentComponent = this;
+      fire.auth().onAuthStateChanged(function (user) {
+        if (user) {
+          let currentUser = fire.auth().currentUser.uid;
+          let workoutsRef = fire.database().ref("Workouts");
+          let workoutsData = [];
+          workoutsRef.once("value", function (data) {
+            let workoutsFromDatabase = data.val();
+            //iterates through the returned json object
+            for (const key in workoutsFromDatabase) {
+              if (workoutsFromDatabase[key].creatorId !== currentUser) {
+                let workout = {
+                  name: workoutsFromDatabase[key].name,
+                  workoutId: key,
+                  exercises: workoutsFromDatabase[key].exercises,
+                  timeLength: workoutsFromDatabase[key].timeLength,
+                  notes: workoutsFromDatabase[key].notes,
+                };
+                workoutsData.push(workout);
+              }
+            }
+            currentComponent.setState({ workouts: workoutsData });
+          });
+        } else {
+          console.log("signed out");
+        }
+      });
+    } else if (filters.includes("otherUser")) {
+      let currentComponent = this;
+      fire.auth().onAuthStateChanged(function (user) {
+        console.log("check 17");
+        if (user) {
+          let currentUser = fire.auth().currentUser.uid;
+          let workoutsRef = fire.database().ref("Workouts");
+          let workoutsData = [];
+          workoutsRef.once("value", function (data) {
+            let workoutsFromDatabase = data.val();
+            //iterates through the returned json object
+            for (const key in workoutsFromDatabase) {
+              if (workoutsFromDatabase[key].creatorId === currentUser) {
+                let workout = {
+                  name: workoutsFromDatabase[key].name,
+                  workoutId: key,
+                  exercises: workoutsFromDatabase[key].exercises,
+                  timeLength: workoutsFromDatabase[key].timeLength,
+                  notes: workoutsFromDatabase[key].notes,
+                };
+                workoutsData.push(workout);
+              }
+            }
+            currentComponent.setState({ workouts: workoutsData });
+          });
+        } else {
+          console.log("signed out");
+        }
+      });
     }
   }
   render() {
@@ -192,7 +246,7 @@ class DisplayWorkouts extends React.Component {
                 value="otherUser"
               />
               <label htmlFor="otherUserFilter"> Other Users </label>
-              <p> Filter by Created Date: </p>
+              {/* <p> Filter by Created Date: </p>
               <input
                 type="checkbox"
                 name="filter"
@@ -208,7 +262,7 @@ class DisplayWorkouts extends React.Component {
                 value="yesterday"
               />
               <label htmlFor="yesterdayFilter"> Yesterday </label>
-              <br></br>
+              <br></br> */}
             </form>
           ) : null}
         </div>
