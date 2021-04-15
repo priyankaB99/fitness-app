@@ -15,8 +15,10 @@ class CreateWorkout extends React.Component {
       exercises: [{ exerciseName: "", qty: "", unit: "reps" }],
       notes: "",
       createdDate: "",
+      tags: []
     };
     this.addExercise = this.addExercise.bind(this);
+    this.removeTag = this.removeTag.bind(this);
     this.deleteExercise = this.deleteExercise.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
@@ -47,6 +49,15 @@ class CreateWorkout extends React.Component {
     exercisesArray.splice(arrayIdx, 1);
     this.setState({ exercises: exercisesArray });
   }
+
+  removeTag(index) {
+    this.setState((prevState) => ({
+      tags: [
+        ...prevState.tags.filter(tag => prevState.tags.indexOf(tag) !== index)
+      ]
+    }));
+  }
+
   submitHandler(event) {
     event.preventDefault();
 
@@ -54,6 +65,7 @@ class CreateWorkout extends React.Component {
     //add to workouts table
     let workoutRef = fire.database().ref("Workouts/");
     let newWorkoutRef = workoutRef.push();
+    let newWorkoutId = newWorkoutRef.key;
     newWorkoutRef.set({
       name: this.state.name,
       creatorId: currentUserId,
@@ -62,17 +74,28 @@ class CreateWorkout extends React.Component {
       notes: this.state.notes,
       exercises: this.state.exercises,
       createdDate: this.state.createdDate,
+      tags: this.state.tags
     });
     console.log("successfully added workout to database");
     alert(
       "Workout added! Visit 'My Workouts' to see all your saved workouts or 'Home' to create an event with your new workout."
     );
+
+    // let tagRef;
+    // for (let i=0; i<this.state.tags.length; i++) {
+    //   tagRef = fire.database().ref("Tags/");
+    //   tagRef.set({
+    //     this.state.tags[i]: newWorkoutId
+    //   });
+    // }
+    
     //refresh form
     this.setState({
       name: "",
       timeLength: "",
       exercises: [{ exerciseName: "", qty: "", unit: "" }],
       notes: "",
+      tags: []
     });
   }
 
@@ -82,6 +105,15 @@ class CreateWorkout extends React.Component {
       exercises[event.target.dataset.id][event.target.className] =
         event.target.value;
       this.setState({ exercises }, () => console.log(this.state.exercises));
+    } else if(event.target.className === 'tags' && event.key === "Enter" && event.target.value !== "") {
+      console.log(event.target.value);
+      this.setState({
+        tags: [
+          ...this.state.tags, event.target.value
+        ]
+      });
+      event.target.value = "";
+      console.log(this.state.tags);
     } else {
       this.setState({ [event.target.name]: event.target.value });
     }
@@ -91,7 +123,7 @@ class CreateWorkout extends React.Component {
     return (
       <div>
         <h2>Create a New Workout</h2>
-        <form id="createForm" onSubmit={this.submitHandler}>
+        <div id="createForm">
           <label htmlFor="name"> Workout Name: </label>
           <input
             type="text"
@@ -169,6 +201,32 @@ class CreateWorkout extends React.Component {
             Add Another Exercise
           </button>
 
+          {/* "Tags" Source: https://dev.to/prvnbist/create-a-tags-input-component-in-reactjs-ki */}
+          <div className="tags-input">
+            <ul id="tags">
+                {this.state.tags.map((tag, index) => (
+                    <li key={index} className="tag">
+                        <span className='tag-title'>{tag}</span>
+                        <i className="tag-close-icon" onClick={() => this.removeTag(index)}>X</i>
+                    </li>
+                ))}
+            </ul>
+            <input
+                type="text"
+                className="tags"
+                onKeyUp={this.changeHandler}
+                placeholder="Press enter to add tags"
+                list="tag-options"
+            />
+            <datalist id="tag-options">
+              {/* {this.state.workoutNames.map((data, index) => (
+                <option key={index} value={data.workoutId}>
+                  {data.name}
+                </option>
+              ))} */}
+            </datalist>
+          </div>
+
           <label htmlFor="notes"> Notes/Links: </label>
           <textarea
             type="textarea"
@@ -180,10 +238,11 @@ class CreateWorkout extends React.Component {
           <input
             id="createBtn"
             className="btn btn-secondary"
-            type="submit"
+            // type="submit"
+            onClick={this.submitHandler}
             value="Finish Creating Workout"
           />
-        </form>
+        </div>
       </div>
     );
   }
