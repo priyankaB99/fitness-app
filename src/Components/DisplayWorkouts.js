@@ -23,7 +23,6 @@ class DisplayWorkouts extends React.Component {
     this.toggleEditWorkout = this.toggleEditWorkout.bind(this);
     this.showFilter = this.showFilter.bind(this);
     this.filterChange = this.filterChange.bind(this);
-    this.applyFilters = this.applyFilters.bind(this);
   }
 
   componentDidMount() {
@@ -33,7 +32,6 @@ class DisplayWorkouts extends React.Component {
   retrieveWorkouts() {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
-      console.log("check 17");
       if (user) {
         let currentUser = fire.auth().currentUser.uid;
         let workoutsRef = fire.database().ref("Workouts");
@@ -133,30 +131,93 @@ class DisplayWorkouts extends React.Component {
 
   //retrieve filtered creator element
   filterChange(event) {
-    let checkedOptions = this.state.filters;
-    if (event.target.checked === true) {
-      checkedOptions.push(event.target.value);
-      this.setState({ filters: checkedOptions });
-    } else {
-      let deletedIndex = "";
-      for (const index in checkedOptions) {
-        if (checkedOptions[index] === event.target.value);
-        deletedIndex = index;
-      }
-      checkedOptions.splice(deletedIndex, 1);
-      this.setState({ filters: checkedOptions });
+    if (event.target.value === "none") {
+      this.retrieveWorkouts();
+    } else if (event.target.value === "currentUser") {
+      let currentComponent = this;
+      fire.auth().onAuthStateChanged(function (user) {
+        if (user) {
+          let currentUser = fire.auth().currentUser.uid;
+          let workoutsRef = fire.database().ref("Workouts");
+          let workoutsData = [];
+          workoutsRef.once("value", function (data) {
+            let workoutsFromDatabase = data.val();
+            //iterates through the returned json object
+            for (const key in workoutsFromDatabase) {
+              if (
+                workoutsFromDatabase[key].creatorId === currentUser &&
+                workoutsFromDatabase[key].users.includes(currentUser)
+              ) {
+                let workout = {
+                  name: workoutsFromDatabase[key].name,
+                  workoutId: key,
+                  exercises: workoutsFromDatabase[key].exercises,
+                  timeLength: workoutsFromDatabase[key].timeLength,
+                  notes: workoutsFromDatabase[key].notes,
+                };
+                workoutsData.push(workout);
+              }
+            }
+            currentComponent.setState({ workouts: workoutsData });
+          });
+        } else {
+          console.log("signed out");
+        }
+      });
+    } else if (event.target.value === "otherUser") {
+      let currentComponent = this;
+      fire.auth().onAuthStateChanged(function (user) {
+        console.log("check 17");
+        if (user) {
+          let currentUser = fire.auth().currentUser.uid;
+          let workoutsRef = fire.database().ref("Workouts");
+          let workoutsData = [];
+          workoutsRef.once("value", function (data) {
+            let workoutsFromDatabase = data.val();
+            //iterates through the returned json object
+            for (const key in workoutsFromDatabase) {
+              if (
+                workoutsFromDatabase[key].creatorId !== currentUser &&
+                workoutsFromDatabase[key].users.includes(currentUser)
+              ) {
+                let workout = {
+                  name: workoutsFromDatabase[key].name,
+                  workoutId: key,
+                  exercises: workoutsFromDatabase[key].exercises,
+                  timeLength: workoutsFromDatabase[key].timeLength,
+                  notes: workoutsFromDatabase[key].notes,
+                };
+                workoutsData.push(workout);
+              }
+            }
+            currentComponent.setState({ workouts: workoutsData });
+          });
+        } else {
+          console.log("signed out");
+        }
+      });
     }
+    // let checkedOptions = this.state.filters;
+    // if (event.target.checked === true) {
+    //   checkedOptions.push(event.target.value);
+    //   this.setState({ filters: checkedOptions });
+    //   if (this.state.filters === checkedOptions) {
+    //     this.applyFilters();
+    //   }
+    // } else {
+    //   let deletedIndex = "";
+    //   for (const index in checkedOptions) {
+    //     if (checkedOptions[index] === event.target.value);
+    //     deletedIndex = index;
+    //   }
+    //   checkedOptions.splice(deletedIndex, 1);
+    //   this.setState({ filters: checkedOptions });
+    //   if (this.state.filters === checkedOptions) {
+    //     this.applyFilters();
+    //   }
+    // }
   }
 
-  applyFilters(event) {
-    event.preventDefault();
-    let filters = this.state.filters;
-    if (filters.length === 0) {
-      this.retrieveWorkouts();
-    } else if (filters.includes("currentUser")) {
-      console.log("!");
-    }
-  }
   render() {
     return (
       <div>
@@ -178,7 +239,16 @@ class DisplayWorkouts extends React.Component {
             <form onChange={this.filterChange}>
               <p> Filter by Creator:</p>
               <input
-                type="checkbox"
+                type="radio"
+                name="filter"
+                id="noFilter"
+                value="none"
+                checked
+              />
+              <label htmlFor="currentUserFilter"> None </label>
+              <br></br>
+              <input
+                type="radio"
                 name="filter"
                 id="currentUserFilter"
                 value="currentUser"
@@ -186,13 +256,13 @@ class DisplayWorkouts extends React.Component {
               <label htmlFor="currentUserFilter"> Me </label>
               <br></br>
               <input
-                type="checkbox"
+                type="radio"
                 name="filter"
                 id="otherUserFilter"
                 value="otherUser"
               />
               <label htmlFor="otherUserFilter"> Other Users </label>
-              <p> Filter by Created Date: </p>
+              {/* <p> Filter by Created Date: </p>
               <input
                 type="checkbox"
                 name="filter"
@@ -208,7 +278,7 @@ class DisplayWorkouts extends React.Component {
                 value="yesterday"
               />
               <label htmlFor="yesterdayFilter"> Yesterday </label>
-              <br></br>
+              <br></br> */}
             </form>
           ) : null}
         </div>
