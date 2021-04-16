@@ -31,10 +31,12 @@ class CreateWorkout extends React.Component {
     tagRef.once("value", function(snapshot) {
       const data = snapshot.val();
       console.log(data)
-      let keys = Object.keys(data);
-      currentComponent.setState({
-        tagOptions : keys
-      });
+      if (data) {
+        let keys = Object.keys(data);
+        currentComponent.setState({
+          tagOptions : keys
+        });
+      } 
     });
   }
   //function to produce dynamic form input for each exercise
@@ -118,19 +120,20 @@ class CreateWorkout extends React.Component {
     } else if(event.target.className === 'tags' && event.key === "Enter" && event.target.value !== "") {
       let cleanedTag = event.target.value.trim();
       cleanedTag = cleanedTag.toLowerCase();
+      console.log(this.state.tags);
       if (!this.state.tags.includes(cleanedTag)) {
-        this.setState({
-          tags: [
-            ...this.state.tags, cleanedTag
-          ]
-        });
+        this.setState((prevState) => ({
+          tags: [...prevState.tags, cleanedTag]
+        }));
       }
       event.target.value = "";
       console.log(this.state.tags);
-    } else {
+      console.log(this.state);
+    } else if(event.target.className !== 'tags') {
       this.setState({ [event.target.name]: event.target.value });
     }
   }
+
   render() {
     let { name, timeLength, exercises, notes } = this.state;
     return (
@@ -230,7 +233,7 @@ class CreateWorkout extends React.Component {
                 name="tags"
                 className="tags"
                 onKeyUp={this.changeHandler}
-                placeholder="Double Click for Tag Options or Enter Your Own"
+                placeholder="Double click for tag options or enter your own"
                 list="tag-options"
             />
             <datalist id="tag-options">

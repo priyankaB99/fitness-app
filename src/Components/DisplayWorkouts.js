@@ -14,7 +14,7 @@ class DisplayWorkouts extends React.Component {
       selectedWorkout: "",
       showPopup: false,
       showFilter: false,
-      filters: [],
+      filters: []
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
     this.deleteWorkout = this.deleteWorkout.bind(this);
@@ -47,6 +47,7 @@ class DisplayWorkouts extends React.Component {
                 exercises: workoutsFromDatabase[key].exercises,
                 timeLength: workoutsFromDatabase[key].timeLength,
                 notes: workoutsFromDatabase[key].notes,
+                tags: workoutsFromDatabase[key].tags
               };
               workoutsData.push(workout);
             }
@@ -306,6 +307,13 @@ class DisplayWorkouts extends React.Component {
                   ))}
                 </tbody>
               </table>
+              <ul id="tags">
+                {data.tags && data.tags.map((tag, index) => (
+                    <li key={index} className="tag">
+                        <span className='tag-title'>{tag}</span>
+                    </li>
+                ))}
+              </ul>
               <p id="workoutNotes"> Notes/Links: {data.notes}</p>
               <button
                 type="button"

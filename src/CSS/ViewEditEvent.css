@@ -31,25 +31,25 @@
   cursor: pointer;
 }
 
-.workoutInfo {
-  border-bottom: 1px solid navy;
-}
-.workoutInfo > *, .warning > * {
-  margin-bottom: 15px;
+.workoutInfo > *, .warning > *, .displayTags {
+  margin-bottom: 15px !important;
 }
 
 .popup-buttons {
-  margin-bottom: 15px;
   margin-right: 15px;
 }
 
+.exerciseBox {
+  border-top: 1px solid navy;
+  padding-top: 15px;
+}
 .exercise {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
 }
 .viewExerciseName {
-  margin-left: 50px;
+  margin-left: 20px;
 }
 
 #createEventForm > * {

@@ -74,7 +74,14 @@ class SignUp extends React.Component {
           .then(() => {
             // Update successful. Go home.
             console.log("success adding user");
-            this.props.history.push("/");
+            // if(fire.auth().currentUser.emailVerified) {
+              this.setState({ warning: "" })
+              this.props.history.push("/");
+            // }
+            // else {
+            //   this.props.history.push("/login");
+            //   this.setState({ warning: "Please verify your email and log in again to access your account." });
+            // }
           })
           .catch((error) => {
             // An error happened.

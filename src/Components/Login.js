@@ -16,7 +16,7 @@ class Login extends React.Component {
     this.state = {
       email: "",
       password: "",
-      error: null,
+      error: "",
     };
     this.submitForm = this.submitForm.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
@@ -35,13 +35,20 @@ class Login extends React.Component {
         // User has been logged in
         console.log(authUser);
         // login successful. Go home.
-        console.log("success logging in user");
-        this.props.history.push("/");
+        // if(fire.auth().currentUser.emailVerified) {
+          console.log("success logging in user");
+          this.setState({ error: "" })
+          this.props.history.push("/");
+        // }
+        // else {
+        //   fire.auth().signOut()
+        //   this.setState({ error: "Please verify your email and log in again to access your account." });
+        // }
       })
       .catch((error) => {
         // An error happened.
         console.log("Login error:", error);
-        this.setState({ error: error });
+        this.setState({ error: error.message });
       });
   }
 
@@ -76,7 +83,7 @@ class Login extends React.Component {
           >
             Log In
           </button>
-          {error && <p>{error.message}</p>}
+          {error && <p>{error}</p>}
         </div>
         <div className="login">
           Don't have an account yet?<br></br>

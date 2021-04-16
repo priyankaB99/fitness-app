@@ -18,6 +18,7 @@ class ViewEditEvent extends React.Component {
       workoutId: "",
       workoutName: "",
       workoutExercises: [],
+      workoutTags: [],
       workoutNotes: "",
       workoutDate: this.props.selectedWorkout.date,
       workoutStart: this.props.selectedWorkout.start,
@@ -45,7 +46,7 @@ class ViewEditEvent extends React.Component {
         this.parseWorkoutData();
       } else {
         // No user is signed in
-        this.props.history.push("/login");
+        // this.props.history.push("/login");
       }
     });
   }
@@ -65,6 +66,7 @@ class ViewEditEvent extends React.Component {
           workoutExercises: workoutData.exercises,
           workoutNotes: workoutData.notes,
           warning: "",
+          workoutTags: workoutData.tags
         });
       } else {
         this.setState({
@@ -184,7 +186,6 @@ class ViewEditEvent extends React.Component {
   formatExercises() {
     let exercises = this.state.workoutExercises;
     let formattedExercises = [];
-
     formattedExercises = exercises.map((exercise, index) => (
       <div className="exercise">
         <div className="viewExerciseName">
@@ -255,7 +256,13 @@ class ViewEditEvent extends React.Component {
           </div>
         )}
 
-        <hr></hr>
+        <ul className="displayTags" id="tags">
+          {this.state.workoutTags && this.state.workoutTags.map((tag, index) => (
+              <li key={index} className="tag">
+                  <span className='tag-title'>{tag}</span>
+              </li>
+          ))}
+        </ul>
 
         <div className="exerciseBox">{this.formatExercises()}</div>
       </div>
