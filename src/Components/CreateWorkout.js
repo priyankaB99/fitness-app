@@ -3,6 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
+import { format } from "date-fns";
 import "../CSS/workouts.css";
 //code pulled from https://itnext.io/building-a-dynamic-controlled-form-in-react-together-794a44ee552c
 
@@ -14,20 +15,29 @@ class CreateWorkout extends React.Component {
       timeLength: "",
       exercises: [{ exerciseName: "", qty: "", unit: "reps" }],
       notes: "",
-      createdDate: "",
+      tags: [],
+      tagOptions: []
     };
     this.addExercise = this.addExercise.bind(this);
+    this.removeTag = this.removeTag.bind(this);
     this.deleteExercise = this.deleteExercise.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
   componentDidMount() {
-    //automatically set createdDate element
-    //today
-    const fullDate = new Date();
-    //change to database accepted format
-    const formattedDate = fullDate.toISOString().substring(0, 10);
-    this.setState({ createdDate: formattedDate });
+    var currentComponent = this;
+    //retrieve current list of tags
+    let tagRef  = fire.database().ref("Tags/").orderByKey();
+    tagRef.once("value", function(snapshot) {
+      const data = snapshot.val();
+      console.log(data)
+      if (data) {
+        let keys = Object.keys(data);
+        currentComponent.setState({
+          tagOptions : keys
+        });
+      } 
+    });
   }
   //function to produce dynamic form input for each exercise
   addExercise(event) {
@@ -47,13 +57,26 @@ class CreateWorkout extends React.Component {
     exercisesArray.splice(arrayIdx, 1);
     this.setState({ exercises: exercisesArray });
   }
+
+  removeTag(index) {
+    this.setState((prevState) => ({
+      tags: [
+        ...prevState.tags.filter(tag => prevState.tags.indexOf(tag) !== index)
+      ]
+    }));
+  }
+
   submitHandler(event) {
     event.preventDefault();
+
+    let tags = this.state.tags;
+    let workoutName = this.state.name;
 
     let currentUserId = fire.auth().currentUser.uid;
     //add to workouts table
     let workoutRef = fire.database().ref("Workouts/");
     let newWorkoutRef = workoutRef.push();
+    let newWorkoutId = newWorkoutRef.key;
     newWorkoutRef.set({
       name: this.state.name,
       creatorId: currentUserId,
@@ -61,18 +84,30 @@ class CreateWorkout extends React.Component {
       timeLength: this.state.timeLength,
       notes: this.state.notes,
       exercises: this.state.exercises,
-      createdDate: this.state.createdDate,
+      createdDate: format(new Date(), "MM/dd/yyyy"),
+      tags: this.state.tags
     });
     console.log("successfully added workout to database");
     alert(
       "Workout added! Visit 'My Workouts' to see all your saved workouts or 'Home' to create an event with your new workout."
     );
+
+    for (let i=0; i<tags.length; i++) {
+        let newTagRef = fire.database().ref("Tags/" + tags[i]).push();
+        newTagRef.set({
+          workoutId : newWorkoutId,
+          workoutName: workoutName
+        });
+        console.log("should have added tag");
+    }
+    
     //refresh form
     this.setState({
       name: "",
       timeLength: "",
       exercises: [{ exerciseName: "", qty: "", unit: "" }],
       notes: "",
+      tags: []
     });
   }
 
@@ -82,16 +117,29 @@ class CreateWorkout extends React.Component {
       exercises[event.target.dataset.id][event.target.className] =
         event.target.value;
       this.setState({ exercises }, () => console.log(this.state.exercises));
-    } else {
+    } else if(event.target.className === 'tags' && event.key === "Enter" && event.target.value !== "") {
+      let cleanedTag = event.target.value.trim();
+      cleanedTag = cleanedTag.toLowerCase();
+      console.log(this.state.tags);
+      if (!this.state.tags.includes(cleanedTag)) {
+        this.setState((prevState) => ({
+          tags: [...prevState.tags, cleanedTag]
+        }));
+      }
+      event.target.value = "";
+      console.log(this.state.tags);
+      console.log(this.state);
+    } else if(event.target.className !== 'tags') {
       this.setState({ [event.target.name]: event.target.value });
     }
   }
+
   render() {
     let { name, timeLength, exercises, notes } = this.state;
     return (
       <div>
         <h2>Create a New Workout</h2>
-        <form id="createForm" onSubmit={this.submitHandler}>
+        <div id="createForm">
           <label htmlFor="name"> Workout Name: </label>
           <input
             type="text"
@@ -169,6 +217,34 @@ class CreateWorkout extends React.Component {
             Add Another Exercise
           </button>
 
+          {/* "Tags" Source: https://dev.to/prvnbist/create-a-tags-input-component-in-reactjs-ki */}
+          <label htmlFor="tags"> Tags: </label>
+          <div className="tags-input">
+            <ul id="tags">
+                {this.state.tags.map((tag, index) => (
+                    <li key={index} className="tag">
+                        <span className='tag-title'>{tag}</span>
+                        <i className="tag-close-icon" onClick={() => this.removeTag(index)}>X</i>
+                    </li>
+                ))}
+            </ul>
+            <input
+                type="text"
+                name="tags"
+                className="tags"
+                onKeyUp={this.changeHandler}
+                placeholder="Double click for tag options or enter your own"
+                list="tag-options"
+            />
+            <datalist id="tag-options">
+              {this.state.tagOptions && this.state.tagOptions.map((data, index) => (
+                <option key={index} value={data}>
+                  {data}
+                </option>
+              ))}
+            </datalist>
+          </div>
+
           <label htmlFor="notes"> Notes/Links: </label>
           <textarea
             type="textarea"
@@ -180,10 +256,11 @@ class CreateWorkout extends React.Component {
           <input
             id="createBtn"
             className="btn btn-secondary"
-            type="submit"
+            // type="submit"
+            onClick={this.submitHandler}
             value="Finish Creating Workout"
           />
-        </form>
+        </div>
       </div>
     );
   }

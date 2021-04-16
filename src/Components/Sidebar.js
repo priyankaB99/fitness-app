@@ -90,7 +90,9 @@ class Sidebar extends React.Component {
 
   componentDidMount() {
     fire.auth().onAuthStateChanged((user) => {
-      if (user) {
+      if (user 
+        // && fire.auth().currentUser.emailVerified
+        ) {
         // User is signed in
         console.log(user.email);
         console.log(user.displayName);
