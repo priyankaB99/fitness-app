@@ -3,6 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
+import { format } from "date-fns";
 import "../CSS/workouts.css";
 //code pulled from https://itnext.io/building-a-dynamic-controlled-form-in-react-together-794a44ee552c
 
@@ -14,8 +15,8 @@ class CreateWorkout extends React.Component {
       timeLength: "",
       exercises: [{ exerciseName: "", qty: "", unit: "reps" }],
       notes: "",
-      createdDate: "",
-      tags: []
+      tags: [],
+      tagOptions: []
     };
     this.addExercise = this.addExercise.bind(this);
     this.removeTag = this.removeTag.bind(this);
@@ -24,12 +25,17 @@ class CreateWorkout extends React.Component {
     this.changeHandler = this.changeHandler.bind(this);
   }
   componentDidMount() {
-    //automatically set createdDate element
-    //today
-    const fullDate = new Date();
-    //change to database accepted format
-    const formattedDate = fullDate.toISOString().substring(0, 10);
-    this.setState({ createdDate: formattedDate });
+    var currentComponent = this;
+    //retrieve current list of tags
+    let tagRef  = fire.database().ref("Tags/").orderByKey();
+    tagRef.once("value", function(snapshot) {
+      const data = snapshot.val();
+      console.log(data)
+      let keys = Object.keys(data);
+      currentComponent.setState({
+        tagOptions : keys
+      });
+    });
   }
   //function to produce dynamic form input for each exercise
   addExercise(event) {
@@ -61,6 +67,9 @@ class CreateWorkout extends React.Component {
   submitHandler(event) {
     event.preventDefault();
 
+    let tags = this.state.tags;
+    let workoutName = this.state.name;
+
     let currentUserId = fire.auth().currentUser.uid;
     //add to workouts table
     let workoutRef = fire.database().ref("Workouts/");
@@ -73,7 +82,7 @@ class CreateWorkout extends React.Component {
       timeLength: this.state.timeLength,
       notes: this.state.notes,
       exercises: this.state.exercises,
-      createdDate: this.state.createdDate,
+      createdDate: format(new Date(), "MM/dd/yyyy"),
       tags: this.state.tags
     });
     console.log("successfully added workout to database");
@@ -81,13 +90,14 @@ class CreateWorkout extends React.Component {
       "Workout added! Visit 'My Workouts' to see all your saved workouts or 'Home' to create an event with your new workout."
     );
 
-    // let tagRef;
-    // for (let i=0; i<this.state.tags.length; i++) {
-    //   tagRef = fire.database().ref("Tags/");
-    //   tagRef.set({
-    //     this.state.tags[i]: newWorkoutId
-    //   });
-    // }
+    for (let i=0; i<tags.length; i++) {
+        let newTagRef = fire.database().ref("Tags/" + tags[i]).push();
+        newTagRef.set({
+          workoutId : newWorkoutId,
+          workoutName: workoutName
+        });
+        console.log("should have added tag");
+    }
     
     //refresh form
     this.setState({
@@ -106,12 +116,15 @@ class CreateWorkout extends React.Component {
         event.target.value;
       this.setState({ exercises }, () => console.log(this.state.exercises));
     } else if(event.target.className === 'tags' && event.key === "Enter" && event.target.value !== "") {
-      console.log(event.target.value);
-      this.setState({
-        tags: [
-          ...this.state.tags, event.target.value
-        ]
-      });
+      let cleanedTag = event.target.value.trim();
+      cleanedTag = cleanedTag.toLowerCase();
+      if (!this.state.tags.includes(cleanedTag)) {
+        this.setState({
+          tags: [
+            ...this.state.tags, cleanedTag
+          ]
+        });
+      }
       event.target.value = "";
       console.log(this.state.tags);
     } else {
@@ -202,6 +215,7 @@ class CreateWorkout extends React.Component {
           </button>
 
           {/* "Tags" Source: https://dev.to/prvnbist/create-a-tags-input-component-in-reactjs-ki */}
+          <label htmlFor="tags"> Tags: </label>
           <div className="tags-input">
             <ul id="tags">
                 {this.state.tags.map((tag, index) => (
@@ -213,17 +227,18 @@ class CreateWorkout extends React.Component {
             </ul>
             <input
                 type="text"
+                name="tags"
                 className="tags"
                 onKeyUp={this.changeHandler}
-                placeholder="Press enter to add tags"
+                placeholder="Double Click for Tag Options or Enter Your Own"
                 list="tag-options"
             />
             <datalist id="tag-options">
-              {/* {this.state.workoutNames.map((data, index) => (
-                <option key={index} value={data.workoutId}>
-                  {data.name}
+              {this.state.tagOptions && this.state.tagOptions.map((data, index) => (
+                <option key={index} value={data}>
+                  {data}
                 </option>
-              ))} */}
+              ))}
             </datalist>
           </div>
 

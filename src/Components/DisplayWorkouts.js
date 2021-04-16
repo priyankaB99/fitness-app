@@ -295,7 +295,7 @@ class DisplayWorkouts extends React.Component {
               </div>
               <table id="exercises">
                 <tbody>
-                  {data.exercises.map((exercise, index) => (
+                  {data.exercises && data.exercises.map((exercise, index) => (
                     <tr key={index}>
                       <td>
                         <strong>{index + 1}:</strong> {exercise.exerciseName}{" "}
