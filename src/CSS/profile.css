@@ -1,5 +1,13 @@
-#profileBox {
-  width: 200px;
+/* My profile page */
+#myProfile {
+  display: flex;
+  flex-direction: row;
+}
+#profileBox,
+#favWorkouts,
+#goals {
+  margin: 20px;
+  width: 30%;
 }
 
 #profPic {
@@ -10,4 +18,30 @@
 
 .profileLabel {
   font-weight: bolder;
+}
+
+#favWorkouts {
+  overflow: scroll;
+}
+
+.workoutName {
+  border: none;
+  background-color: white;
+  width: 100%;
+  overflow: scroll;
+}
+
+.workoutName:hover {
+  background-color: #bbcdd4;
+}
+
+/* editProfile */
+.editBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.editBox button {
+  height: 30%;
+  margin: 10px;
 }

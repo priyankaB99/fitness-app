@@ -14,7 +14,7 @@ class DisplayWorkouts extends React.Component {
       selectedWorkout: "",
       showPopup: false,
       showFilter: false,
-      filters: []
+      filters: [],
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
     this.deleteWorkout = this.deleteWorkout.bind(this);
@@ -47,7 +47,7 @@ class DisplayWorkouts extends React.Component {
                 exercises: workoutsFromDatabase[key].exercises,
                 timeLength: workoutsFromDatabase[key].timeLength,
                 notes: workoutsFromDatabase[key].notes,
-                tags: workoutsFromDatabase[key].tags
+                tags: workoutsFromDatabase[key].tags,
               };
               workoutsData.push(workout);
             }
@@ -294,25 +294,27 @@ class DisplayWorkouts extends React.Component {
                   Length of Workout: {data.timeLength} min
                 </p>
               </div>
-              <table id="exercises">
+              <table className="exercises">
                 <tbody>
-                  {data.exercises && data.exercises.map((exercise, index) => (
-                    <tr key={index}>
-                      <td>
-                        <strong>{index + 1}:</strong> {exercise.exerciseName}{" "}
-                      </td>
-                      <td>{exercise.qty}</td>
-                      <td> {exercise.unit}</td>
-                    </tr>
-                  ))}
+                  {data.exercises &&
+                    data.exercises.map((exercise, index) => (
+                      <tr key={index}>
+                        <td>
+                          <strong>{index + 1}:</strong> {exercise.exerciseName}{" "}
+                        </td>
+                        <td>{exercise.qty}</td>
+                        <td> {exercise.unit}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
               <ul id="tags">
-                {data.tags && data.tags.map((tag, index) => (
+                {data.tags &&
+                  data.tags.map((tag, index) => (
                     <li key={index} className="tag">
-                        <span className='tag-title'>{tag}</span>
+                      <span className="tag-title">{tag}</span>
                     </li>
-                ))}
+                  ))}
               </ul>
               <p id="workoutNotes"> Notes/Links: {data.notes}</p>
               <button

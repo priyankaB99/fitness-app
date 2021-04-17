@@ -13,7 +13,7 @@
   margin-bottom: 10px;
 }
 
-#exercises td {
+.exercises td {
   padding: 5px;
 }
 #deleteBtn,
@@ -77,7 +77,6 @@ input[type="number"] {
   margin-top: 10px;
 }
 
-
 /* Source: https://dev.to/prvnbist/create-a-tags-input-component-in-reactjs-ki */
 .tags-input {
   display: flex;
@@ -99,7 +98,7 @@ input[type="number"] {
   padding: 4px 0 0 0;
 }
 .tags-input input:focus {
-    outline: transparent;
+  outline: transparent;
 }
 
 #tags {
@@ -123,23 +122,23 @@ input[type="number"] {
   margin: 0 8px 8px 0;
   background: #0e0066;
 }
-  .tag-title {
-    margin-top: 3px;
-  }
+.tag-title {
+  margin-top: 3px;
+}
 
-  .tag-close-icon {
-    display: block;
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-    text-align: center;
-    font-size: 14px;
-    margin-left: 8px;
-    color: #0052cc;
-    border-radius: 50%;
-    background: #fff;
-    cursor: pointer;
-  }
-  .tag-close-icon:focus {
-    cursor: hover;
-  }
+.tag-close-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  font-size: 14px;
+  margin-left: 8px;
+  color: #0052cc;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+.tag-close-icon:focus {
+  cursor: hover;
+}
