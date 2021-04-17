@@ -69,10 +69,18 @@ class ViewEditEvent extends React.Component {
           workoutTags: workoutData.tags
         });
       } else {
-        this.setState({
-          warning:
-            "This workout assigned to this event has been deleted. Edit and choose a different workout or delete this event.",
-        });
+        if (this.state.otherUserEvent) {
+          this.setState({
+            warning:
+              "The workout assigned to this event has been deleted by the owner.",
+          });
+        }
+        else {
+          this.setState({
+            warning:
+              "The workout assigned to this event has been deleted. Edit and choose a different workout or delete this event.",
+          });
+        }
       }
     });
   }

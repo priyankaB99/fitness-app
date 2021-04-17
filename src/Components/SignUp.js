@@ -74,6 +74,7 @@ class SignUp extends React.Component {
           .then(() => {
             // Update successful. Go home.
             console.log("success adding user");
+            alert("Success! Please check your email to verify your account.")
             // if(fire.auth().currentUser.emailVerified) {
               this.setState({ warning: "" })
               this.props.history.push("/");

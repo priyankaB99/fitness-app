@@ -15,8 +15,10 @@ class DisplayWorkouts extends React.Component {
       showPopup: false,
       showFilter: false,
       filters: [],
+      favorites: []
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
+    this.retrieveFavorites = this.retrieveFavorites.bind(this);
     this.deleteWorkout = this.deleteWorkout.bind(this);
     this.favorite = this.favorite.bind(this);
     this.unfavorite = this.unfavorite.bind(this);
@@ -27,6 +29,7 @@ class DisplayWorkouts extends React.Component {
 
   componentDidMount() {
     this.retrieveWorkouts();
+    this.retrieveFavorites();
   }
 
   retrieveWorkouts() {
@@ -47,7 +50,7 @@ class DisplayWorkouts extends React.Component {
                 exercises: workoutsFromDatabase[key].exercises,
                 timeLength: workoutsFromDatabase[key].timeLength,
                 notes: workoutsFromDatabase[key].notes,
-                tags: workoutsFromDatabase[key].tags,
+                tags: workoutsFromDatabase[key].tags
               };
               workoutsData.push(workout);
             }
@@ -60,24 +63,43 @@ class DisplayWorkouts extends React.Component {
     });
   }
 
+  retrieveFavorites() {
+    let currentComponent = this;
+    let currentUser = fire.auth().currentUser.uid;
+    let favoritesRef = fire.database().ref("Favorites/" + currentUser + "/");
+    let favorites = []
+    favoritesRef.once("value", function (data) {
+        let favoriteWorkouts = data.val();
+        console.log("Favorites", favoriteWorkouts)
+        for (const key in favoriteWorkouts) {
+          favorites.push(favoriteWorkouts[key].workoutId)
+        }
+        currentComponent.setState({favorites: favorites})
+    }).then(() => {
+      console.log(currentComponent.state)
+    })
+  }
+
   favorite(event) {
     let currentUser = fire.auth().currentUser.uid;
     let workoutId = event.target.parentNode.id;
     console.log(workoutId);
+
     let favoritesRef = fire.database().ref("Favorites/" + currentUser);
     let newFavoritesRef = favoritesRef.push();
     newFavoritesRef.set({ workoutId: workoutId }).then(() => {
       console.log("Workout successfully favorited");
     });
+    this.retrieveFavorites();
   }
 
   unfavorite(event) {
     let currentUser = fire.auth().currentUser.uid;
     let workoutId = event.target.parentNode.id;
+
     let favoritesRef = fire.database().ref("Favorites/" + currentUser + "/");
     let deletedId = "";
-    favoritesRef
-      .once("value", function (data) {
+    favoritesRef.once("value", function (data) {
         let favoriteWorkouts = data.val();
         for (const key in favoriteWorkouts) {
           if (favoriteWorkouts[key].workoutId === workoutId) {
@@ -87,12 +109,11 @@ class DisplayWorkouts extends React.Component {
       })
       .then(() => {
         console.log(deletedId);
-        let deletedRef = fire
-          .database()
-          .ref("Favorites/" + currentUser + "/" + deletedId);
+        let deletedRef = fire.database().ref("Favorites/" + currentUser + "/" + deletedId);
         deletedRef.remove().then(() => {
           console.log("Successfully unfavorited");
         });
+        this.retrieveFavorites();
       });
   }
 
@@ -186,7 +207,7 @@ class DisplayWorkouts extends React.Component {
                   workoutId: key,
                   exercises: workoutsFromDatabase[key].exercises,
                   timeLength: workoutsFromDatabase[key].timeLength,
-                  notes: workoutsFromDatabase[key].notes,
+                  notes: workoutsFromDatabase[key].notes
                 };
                 workoutsData.push(workout);
               }
@@ -232,13 +253,21 @@ class DisplayWorkouts extends React.Component {
             selectedWorkout={this.state.selectedWorkout}
           />
         ) : null}
-        <div>
-          <button type="button" id="filterBtn" onClick={this.showFilter}>
+
+        <div id="filter-box">
+          <button 
+          type="button" 
+          className="btn btn-secondary" 
+          id="filterBtn" 
+          onClick={this.showFilter}
+          >
             Filter
           </button>
+
           {this.state.showFilter ? (
             <form onChange={this.filterChange}>
-              <p> Filter by Creator:</p>
+              <strong> Filter by Creator:</strong>
+              <br></br>
               <input
                 type="radio"
                 name="filter"
@@ -248,6 +277,7 @@ class DisplayWorkouts extends React.Component {
               />
               <label htmlFor="currentUserFilter"> None </label>
               <br></br>
+
               <input
                 type="radio"
                 name="filter"
@@ -256,6 +286,7 @@ class DisplayWorkouts extends React.Component {
               />
               <label htmlFor="currentUserFilter"> Me </label>
               <br></br>
+
               <input
                 type="radio"
                 name="filter"
@@ -263,6 +294,7 @@ class DisplayWorkouts extends React.Component {
                 value="otherUser"
               />
               <label htmlFor="otherUserFilter"> Other Users </label>
+
               {/* <p> Filter by Created Date: </p>
               <input
                 type="checkbox"
@@ -283,6 +315,7 @@ class DisplayWorkouts extends React.Component {
             </form>
           ) : null}
         </div>
+
         <div>
           {this.state.workouts.map((data, index) => (
             <div key={data.workoutId} id={data.workoutId} className="workout">
@@ -294,6 +327,14 @@ class DisplayWorkouts extends React.Component {
                   Length of Workout: {data.timeLength} min
                 </p>
               </div>
+              <ul id="tags">
+                {data.tags &&
+                  data.tags.map((tag, index) => (
+                    <li key={index} className="tag">
+                      <span className="tag-title">{tag}</span>
+                    </li>
+                  ))}
+              </ul>
               <table className="exercises">
                 <tbody>
                   {data.exercises &&
@@ -308,18 +349,12 @@ class DisplayWorkouts extends React.Component {
                     ))}
                 </tbody>
               </table>
-              <ul id="tags">
-                {data.tags &&
-                  data.tags.map((tag, index) => (
-                    <li key={index} className="tag">
-                      <span className="tag-title">{tag}</span>
-                    </li>
-                  ))}
-              </ul>
-              <p id="workoutNotes"> Notes/Links: {data.notes}</p>
+              {data.notes && 
+                <p id="workoutNotes"> Notes/Links: {data.notes}</p>
+              }
               <button
                 type="button"
-                className="btn btn-secondary"
+                className="btn btn-secondary displayButtons"
                 id="deleteBtn"
                 onClick={this.deleteWorkout}
               >
@@ -327,28 +362,31 @@ class DisplayWorkouts extends React.Component {
               </button>
               <button
                 type="button"
-                className="btn btn-secondary"
-                id="favoriteBtn"
-                onClick={this.favorite}
-              >
-                Favorite
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                id="unfavoriteBtn"
-                onClick={this.unfavorite}
-              >
-                Unfavorite
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
+                className="btn btn-secondary displayButtons"
                 id="editBtn"
                 onClick={this.toggleEditWorkout}
               >
                 Edit
               </button>
+              {this.state.favorites.includes(data.workoutId) ? 
+                  <button
+                  type="button"
+                  className="btn btn-secondary displayButtons"
+                  id="unfavoriteBtn"
+                  onClick={this.unfavorite}
+                  >
+                    Unfavorite
+                  </button>
+                  :
+                  <button
+                  type="button"
+                  className="btn btn-secondary displayButtons"
+                  id="favoriteBtn"
+                  onClick={this.favorite}
+                  >
+                    Favorite
+                  </button>
+              }
             </div>
           ))}
         </div>

@@ -18,15 +18,11 @@
   box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5);
 }
 
-.editClose {
-  margin-top: 10px;
-  text-align: right;
-}
-
 .close {
+  margin-top: 10px !important;
+  text-align: right !important;
   margin: 5px 5px;
 }
-
 .close:hover {
   cursor: pointer;
 }

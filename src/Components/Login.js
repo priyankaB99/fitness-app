@@ -37,7 +37,7 @@ class Login extends React.Component {
         // login successful. Go home.
         // if(fire.auth().currentUser.emailVerified) {
           console.log("success logging in user");
-          this.setState({ error: "" })
+          this.setState({error: ""});
           this.props.history.push("/");
         // }
         // else {

@@ -16,3 +16,11 @@
 .sidebar-box {
     margin-bottom: 20px;
 }
+#verify-reminder-box {
+    border-radius: 5px;
+    background-color: #e1edf2;
+    padding: 15px;
+    margin: 15px 0;
+    font-size: smaller;
+    color: black;
+}
