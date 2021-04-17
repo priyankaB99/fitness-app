@@ -5,6 +5,7 @@ import "firebase/database";
 import { withRouter } from "react-router-dom";
 import "../CSS/profile.css";
 import ViewEditProfile from "./ViewEditProfile";
+import ShowFavorite from "./ShowFavorite";
 class MyProfile extends React.Component {
   constructor(props) {
     super(props);
@@ -28,6 +29,7 @@ class MyProfile extends React.Component {
     this.changeHandler = this.changeHandler.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.retrieveGoals = this.retrieveGoals.bind(this);
+    this.showFavorite = this.showFavorite.bind(this);
   }
 
   componentDidMount() {
@@ -159,9 +161,13 @@ class MyProfile extends React.Component {
     this.setState({ editInfoOpen: !this.state.editInfoOpen });
   }
 
+  showFavorite() {
+    this.setState({ showWorkout: !this.state.showWorkout });
+  }
+
   render() {
     return (
-      <div>
+      <div id="myProfile">
         <div id="profileBox" class="workout">
           <h2> My Info</h2>
           {this.state.editInfoOpen ? (
@@ -207,7 +213,7 @@ class MyProfile extends React.Component {
           {this.state.addGoalOpen ? (
             <form onChange={this.changeHandler} onSubmit={this.submitHandler}>
               <input type="text" name="goalToAdd" />
-              <input type="submit" value="Add Goal" />
+              <input type="submit" value="Add" />
             </form>
           ) : null}
           <ol>
@@ -223,9 +229,19 @@ class MyProfile extends React.Component {
           <div>
             {this.state.favorites.map((data, index) => (
               <div key={data.workoutId} id={data.workoutId}>
-                <div className="workoutHeader">
-                  <h3 id="workoutName">{data.name}</h3>
-                </div>
+                <button
+                  className="workoutName"
+                  type="button"
+                  onClick={this.showFavorite}
+                >
+                  {data.name}
+                </button>
+                {this.state.showWorkout ? (
+                  <ShowFavorite
+                    closePopup={this.showFavorite}
+                    favoriteId={data.workoutId}
+                  />
+                ) : null}
               </div>
             ))}
           </div>

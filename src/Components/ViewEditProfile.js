@@ -95,13 +95,22 @@ class ViewEditProfile extends React.Component {
 
   render() {
     return (
-      <div className="popup">
+      <div className="popup" id="editProfile">
         <p className="close" onClick={this.props.closePopup}>
           x
         </p>
-        <div id="editProfPic">
-          <img src={this.state.pic} width="100px" length="100px"></img>
-          <button id="editProfPic" onClick={this.toggle}>
+        <div id="editProfPic" class="editBox">
+          <img
+            className="profpic"
+            src={this.state.pic}
+            width="100px"
+            length="100px"
+          ></img>
+          <button
+            id="editProfPicBtn"
+            className="btn btn-secondary"
+            onClick={this.toggle}
+          >
             Edit
           </button>
           {this.state.showEditProfPic ? (
@@ -116,9 +125,11 @@ class ViewEditProfile extends React.Component {
             </form>
           ) : null}
         </div>
-        <div id="editUsername">
+        <div id="editUsername" class="editBox">
           <p>Username: {this.state.username}</p>
-          <button onClick={this.toggle}>Edit</button>
+          <button onClick={this.toggle} className="btn btn-secondary">
+            Edit
+          </button>
           {this.state.showEditUser ? (
             <form onSubmit={this.submitHandler}>
               <input
@@ -131,9 +142,11 @@ class ViewEditProfile extends React.Component {
             </form>
           ) : null}
         </div>
-        <div id="editBday">
+        <div id="editBday" class="editBox">
           <p>Birthday: {this.state.bday}</p>
-          <button onClick={this.toggle}>Edit</button>
+          <button onClick={this.toggle} className="btn btn-secondary">
+            Edit
+          </button>
           {this.state.showEditBday ? (
             <form onSubmit={this.submitHandler}>
               <input
