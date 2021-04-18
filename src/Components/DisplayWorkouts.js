@@ -11,7 +11,8 @@ class DisplayWorkouts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      workouts: [],
+      myWorkouts: [],
+      sharedWorkouts: [],
       selectedWorkout: "", //workout ID 
       showEditPopup: false,
       showSharePopup: false,
@@ -26,6 +27,14 @@ class DisplayWorkouts extends React.Component {
     this.showFilter = this.showFilter.bind(this);
     this.filterChange = this.filterChange.bind(this);
     this.toggleShareWorkout = this.toggleShareWorkout.bind(this);
+    this.createWorkoutDiv = this.createWorkoutDiv.bind(this);
+    this.renderHeader = this.renderHeader.bind(this);
+    this.renderExercises = this.renderExercises.bind(this);
+    this.renderTagsAndNotes = this.renderTagsAndNotes.bind(this);
+    this.renderAdminFunctions = this.renderAdminFunctions.bind(this);
+    this.renderFavoriteFunctions = this.renderFavoriteFunctions.bind(this);
+    this.displayMyWorkout = this.displayMyWorkout.bind(this);
+    this.displaySharedWorkout = this.displaySharedWorkout.bind(this);
   }
 
   componentDidMount() {
@@ -33,29 +42,31 @@ class DisplayWorkouts extends React.Component {
   }
 
   retrieveWorkouts() {
-    let currentComponent = this;
-    fire.auth().onAuthStateChanged(function (user) {
+    fire.auth().onAuthStateChanged( (user) => {
       if (user) {
         let currentUser = fire.auth().currentUser.uid;
         let workoutsRef = fire.database().ref("Workouts");
-        let workoutsData = [];
-        workoutsRef.once("value", function (data) {
+        let myWorkouts = [];
+        let sharedWorkouts = [];
+        workoutsRef.once("value", (data) => {
           let workoutsFromDatabase = data.val();
+
           //iterates through the returned json object
           for (const key in workoutsFromDatabase) {
             if (workoutsFromDatabase[key].creatorId === currentUser) {
-              let workout = {
-                name: workoutsFromDatabase[key].name,
-                workoutId: key,
-                exercises: workoutsFromDatabase[key].exercises,
-                timeLength: workoutsFromDatabase[key].timeLength,
-                notes: workoutsFromDatabase[key].notes,
-                tags: workoutsFromDatabase[key].tags,
-              };
-              workoutsData.push(workout);
+              let workout = this.createWorkoutDiv(workoutsFromDatabase, key, false);
+              myWorkouts.push(workout);
+            }
+            //shared workouts
+            else if(workoutsFromDatabase[key].users.includes(currentUser)){
+              let workout = this.createWorkoutDiv(workoutsFromDatabase, key, true);
+              sharedWorkouts.push(workout);
             }
           }
-          currentComponent.setState({ workouts: workoutsData });
+          this.setState({ 
+            myWorkouts: myWorkouts,
+            sharedWorkouts: sharedWorkouts
+          });
         });
       } else {
         console.log("signed out");
@@ -63,9 +74,21 @@ class DisplayWorkouts extends React.Component {
     });
   }
 
+  createWorkoutDiv(data, key, isShared){
+    return({
+      name: data[key].name,
+      workoutId: key,
+      exercises: data[key].exercises,
+      timeLength: data[key].timeLength,
+      notes: data[key].notes,
+      tags: data[key].tags,
+      shared: isShared
+    });
+  }
+
   favorite(event) {
     let currentUser = fire.auth().currentUser.uid;
-    let workoutId = event.target.parentNode.id;
+    let workoutId = event.target.parentNode.parentNode.id;
     console.log(workoutId);
     let favoritesRef = fire.database().ref("Favorites/" + currentUser);
     let newFavoritesRef = favoritesRef.push();
@@ -76,7 +99,7 @@ class DisplayWorkouts extends React.Component {
 
   unfavorite(event) {
     let currentUser = fire.auth().currentUser.uid;
-    let workoutId = event.target.parentNode.id;
+    let workoutId = event.target.parentNode.parentNode.id;
     let favoritesRef = fire.database().ref("Favorites/" + currentUser + "/");
     let deletedId = "";
     favoritesRef
@@ -102,11 +125,10 @@ class DisplayWorkouts extends React.Component {
   deleteWorkout(event) {
     let workoutsRef = fire.database().ref("Workouts/");
     workoutsRef.off("value");
-    let workoutId = event.target.parentNode.id;
-    console.log(workoutId);
+    let workoutId = event.target.parentNode.parentNode.id;
     let deleteWorkoutRef = fire.database().ref("Workouts/" + workoutId);
     deleteWorkoutRef.remove();
-    let changedWorkouts = this.state.workouts;
+    let changedWorkouts = this.state.myWorkouts;
     let deletedWorkoutIndex = "";
     for (const key in changedWorkouts) {
       if (changedWorkouts[key].workoutId === workoutId) {
@@ -114,14 +136,15 @@ class DisplayWorkouts extends React.Component {
       }
     }
     changedWorkouts.splice(deletedWorkoutIndex, 1);
-    this.setState({ workouts: changedWorkouts });
+    this.setState({ myWorkouts: changedWorkouts });
   }
 
   //Create pop-up of event details
   //Should be able to edit times, workout, etc.
   //https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
   toggleEditWorkout(event) {
-    let workoutId = event.target.parentNode.id;
+    let workoutId = event.target.parentNode.parentNode.id;
+    console.log(workoutId);
     this.setState({
       showEditPopup: !this.state.showEditPopup,
       selectedWorkout: workoutId,
@@ -129,7 +152,7 @@ class DisplayWorkouts extends React.Component {
   }
 
   toggleShareWorkout(event){
-    let workoutId = event.target.parentNode.id;
+    let workoutId = event.target.parentNode.parentNode.id;
     this.setState({
       showSharePopup: !this.state.showSharePopup,
       selectedWorkout: workoutId,
@@ -141,6 +164,7 @@ class DisplayWorkouts extends React.Component {
     this.setState({ showFilter: !this.state.showFilter });
   }
 
+  //CAN MAKE THIS MORE EFFICIENT with "shared" attribute (see createWorkoutDiv function)
   //retrieve filtered creator element
   filterChange(event) {
     if (event.target.value === "none") {
@@ -170,7 +194,7 @@ class DisplayWorkouts extends React.Component {
                 workoutsData.push(workout);
               }
             }
-            currentComponent.setState({ workouts: workoutsData });
+            currentComponent.setState({ myWorkouts: workoutsData });
           });
         } else {
           console.log("signed out");
@@ -202,13 +226,109 @@ class DisplayWorkouts extends React.Component {
                 workoutsData.push(workout);
               }
             }
-            currentComponent.setState({ workouts: workoutsData });
+            currentComponent.setState({ myWorkouts: workoutsData });
           });
         } else {
           console.log("signed out");
         }
       });
     }
+  }
+
+  renderHeader(data){
+    return(
+      <div className = "header">
+        <h3 className = "name">{data.name}</h3>
+        <p className = "length">
+          Workout Length: {data.timeLength} min
+        </p>
+      </div>
+    )
+  }
+
+  renderExercises(data){
+    return(
+      <table className="exercises">
+        <tbody>
+          {data.exercises && data.exercises.map((exercise, index) => ( //&& used to catch if exercises is empty
+            <tr key = {index}>
+              <td><strong>{(index+1) + ". " + exercise.exerciseName}</strong></td>
+              <td>{exercise.qty}</td>
+              <td> {exercise.unit}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )
+  }
+
+  renderTagsAndNotes(data){
+    return(
+      <div>
+        <ul id="tags">
+            {data.tags && data.tags.map( (tag, index) => { //&& used to catch if tags is empty
+              <li key = {index} className = "tag">
+                <span className = "tag-title">{tag}</span>
+              </li>
+            })}
+        </ul>
+        <p id="workoutNotes">Notes/Links: {data.notes}</p>
+      </div>
+    )
+  }
+
+  renderFavoriteFunctions(){
+    return(
+      <div className = "favoriteButtons">
+        <button type="button" className="btn btn-secondary" id="favoriteBtn" onClick={this.favorite}>
+          Favorite
+        </button>
+        <button type="button" className="btn btn-secondary" id="unfavoriteBtn" onClick={this.unfavorite}>
+          Unfavorite
+        </button>
+      </div>
+    )
+  }
+
+  renderAdminFunctions(){
+    return(
+      <div className = "adminButtons">
+        <button type="button" className="btn btn-secondary" id="deleteBtn" onClick={this.deleteWorkout}>
+          Delete
+        </button>
+        <button type="button" className="btn btn-secondary" id="editBtn" onClick={this.toggleEditWorkout}>
+          Edit
+        </button>
+        <button type = "button" className="btn btn-secondary" id="shareBtn" onClick={this.toggleShareWorkout}>
+          Share
+        </button>
+      </div>
+    )
+  }
+
+  displayMyWorkout(data, index){
+    return(
+      <div className = "workout owner" key={index} id={data.workoutId}>
+        {this.renderHeader(data)}
+        {this.renderExercises(data)}
+        {this.renderTagsAndNotes(data)}
+        {this.renderFavoriteFunctions()}
+        {this.renderAdminFunctions()}
+      </div>
+    );
+  }
+
+  //does not include edit, share, delete (only favorite and unfavorite)
+  displaySharedWorkout(data, index){
+    console.log(data);
+    return(
+      <div className = "workout shared" key={index} id={data.workoutId}>
+        {this.renderHeader(data)}
+        {this.renderExercises(data)}
+        {this.renderTagsAndNotes(data)}
+        {this.renderFavoriteFunctions()}
+      </div>
+    );
   }
 
   render() {
@@ -268,83 +388,15 @@ class DisplayWorkouts extends React.Component {
             </form>
           ) : null}
         </div>
-        <div>
-          {this.state.workouts.map((data, index) => (
-            <div key={data.workoutId} id={data.workoutId} className="workout">
-              <div className="workoutHeader">
-                <h3 id="workoutName">
-                  Workout #{index + 1}: {data.name}
-                </h3>
-                <p id="workoutLength">
-                  Length of Workout: {data.timeLength} min
-                </p>
-              </div>
-              <table className="exercises">
-                <tbody>
-                  {data.exercises &&
-                    data.exercises.map((exercise, index) => (
-                      <tr key={index}>
-                        <td>
-                          <strong>{index + 1}:</strong> {exercise.exerciseName}{" "}
-                        </td>
-                        <td>{exercise.qty}</td>
-                        <td> {exercise.unit}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-              <ul id="tags">
-                {data.tags &&
-                  data.tags.map((tag, index) => (
-                    <li key={index} className="tag">
-                      <span className="tag-title">{tag}</span>
-                    </li>
-                  ))}
-              </ul>
-              <p id="workoutNotes"> Notes/Links: {data.notes}</p>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                id="deleteBtn"
-                onClick={this.deleteWorkout}
-              >
-                Delete
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                id="favoriteBtn"
-                onClick={this.favorite}
-              >
-                Favorite
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                id="unfavoriteBtn"
-                onClick={this.unfavorite}
-              >
-                Unfavorite
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                id="editBtn"
-                onClick={this.toggleEditWorkout}
-              >
-                Edit
-              </button>
 
-              <button
-                type = "button"
-                className="btn btn-secondary"
-                id="shareBtn"
-                onClick={this.toggleShareWorkout}>
-                  Share
-              </button>
-            </div>
-          ))}
-        </div>
+        {this.state.myWorkouts.map((data, index) => (
+          this.displayMyWorkout(data, index)
+        ))}
+
+        {this.state.sharedWorkouts.map((data, index) => (
+          this.displaySharedWorkout(data, index)
+        ))}
+         
       </div>
     );
   }
