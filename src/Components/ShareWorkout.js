@@ -22,6 +22,7 @@ class ShareWorkout extends React.Component {
       notSharedFriends: [], //people have not yet shared workout with
       toShareWith: "", //user ID of friend that has been selected to share with
       eventKey: this.props.selectedWorkout.eventKey,
+      warning: false
     };
     this.parseWorkoutData = this.parseWorkoutData.bind(this);
     this.parseFriends = this.parseFriends.bind(this);
@@ -40,7 +41,6 @@ class ShareWorkout extends React.Component {
           uid: user.uid
         });
         this.parseWorkoutData();
-        this.parseFriends();
       } else {
         // No user is signed in
         this.props.history.push("/login");
@@ -53,7 +53,6 @@ class ShareWorkout extends React.Component {
     let workoutRef = fire.database().ref("Workouts/" + this.state.workout);
 
     workoutRef.once("value", (data) => {
-      //using arrow function => instead of function (data) preserves use of 'this' inside function
       let workoutData = data.val();
       if (workoutData) {
         this.setState({
@@ -64,9 +63,10 @@ class ShareWorkout extends React.Component {
         console.log("Workout No Longer Exists");
       }
     });
+    this.parseFriends();
   }
 
-  //fiends user's current friends
+  //finds user's current friends
   parseFriends(){    
     let friendListRef = fire.database().ref("FriendList/" + this.state.uid + "/Friends");
     let allFriends = [];
@@ -109,7 +109,7 @@ class ShareWorkout extends React.Component {
     return(
       <div>
         <select name="toShare" onChange={this.changeHandler}>
-          {this.state.notSharedFriends.map((friend, index) => 
+          {this.state.friends.map((friend, index) => 
             <option  value={friend.id} key={index}>{friend.username}</option>
           )}
         </select>
@@ -139,13 +139,19 @@ class ShareWorkout extends React.Component {
 
   //updates "shared with" list under the specified workout in Firebase w/selected user 
   shareHandler(){
-    let shareRef = fire.database().ref("Workouts/" + this.state.workout + "/users");
-    shareRef.once("value", (data) => {
-        let sharedUsers = data.val();
-        sharedUsers.push(this.state.toShareWith); //add new user to shared list
-        shareRef.set(sharedUsers);
-        console.log("New shared user list is: " + sharedUsers)
-    });
+    if(this.state.workoutUsers.includes(this.state.toShareWith)){
+      this.setState({warning: true})
+    }
+    else{
+      this.setState({warning: false})
+      let shareRef = fire.database().ref("Workouts/" + this.state.workout + "/users");
+      shareRef.once("value", (data) => {
+          let sharedUsers = data.val();
+          sharedUsers.push(this.state.toShareWith); //add new user to shared list
+          shareRef.set(sharedUsers);
+      });
+      this.parseWorkoutData();
+    }
   }
 
   render() {
@@ -161,7 +167,6 @@ class ShareWorkout extends React.Component {
         <p>Shared with:</p>    
 
         {this.sharedList()} 
-        <br></br>
 
         <p>Share with:</p>       
         {this.toShareList()}
@@ -169,6 +174,12 @@ class ShareWorkout extends React.Component {
         <br></br>
 
         <input type="button" value="Share" onClick={this.shareHandler}></input>
+
+        {this.state.warning == true ? 
+          <p className="warning">Workout has already been shared with this user</p>  
+        :
+          <p className="warning"></p>
+        }
 
       </div>
     );
