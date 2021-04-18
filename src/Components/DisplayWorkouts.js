@@ -339,7 +339,6 @@ class DisplayWorkouts extends React.Component {
 
   //does not include edit, share, delete (only favorite and unfavorite)
   displaySharedWorkout(data, index){
-    console.log(data);
     return(
       <div className = "workout shared" key={index} id={data.workoutId}>
         {this.renderHeader(data)}
@@ -359,6 +358,14 @@ class DisplayWorkouts extends React.Component {
         {this.state.showEditPopup ? (
           <EditWorkout
             closePopup={this.toggleEditWorkout}
+            retrieveWorkouts={this.retrieveWorkouts}
+            selectedWorkout={this.state.selectedWorkout}
+          />
+        ) : null}
+
+        {this.state.showSharePopup ? (
+          <ShareWorkout
+            closePopup={this.toggleShareWorkout}
             retrieveWorkouts={this.retrieveWorkouts}
             selectedWorkout={this.state.selectedWorkout}
           />
