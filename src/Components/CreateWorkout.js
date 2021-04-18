@@ -80,7 +80,7 @@ class CreateWorkout extends React.Component {
     newWorkoutRef.set({
       name: this.state.name,
       creatorId: currentUserId,
-      users: currentUserId,
+      users: [currentUserId],
       timeLength: this.state.timeLength,
       notes: this.state.notes,
       exercises: this.state.exercises,

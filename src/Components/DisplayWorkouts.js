@@ -5,14 +5,16 @@ import "firebase/database";
 import { withRouter } from "react-router-dom";
 import "../CSS/workouts.css";
 import EditWorkout from "./EditWorkout";
+import ShareWorkout from "./ShareWorkout";
 
 class DisplayWorkouts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       workouts: [],
-      selectedWorkout: "",
-      showPopup: false,
+      selectedWorkout: "", //workout ID 
+      showEditPopup: false,
+      showSharePopup: false,
       showFilter: false,
       filters: [],
     };
@@ -23,6 +25,7 @@ class DisplayWorkouts extends React.Component {
     this.toggleEditWorkout = this.toggleEditWorkout.bind(this);
     this.showFilter = this.showFilter.bind(this);
     this.filterChange = this.filterChange.bind(this);
+    this.toggleShareWorkout = this.toggleShareWorkout.bind(this);
   }
 
   componentDidMount() {
@@ -120,9 +123,17 @@ class DisplayWorkouts extends React.Component {
   toggleEditWorkout(event) {
     let workoutId = event.target.parentNode.id;
     this.setState({
-      showPopup: !this.state.showPopup,
+      showEditPopup: !this.state.showEditPopup,
       selectedWorkout: workoutId,
     });
+  }
+
+  toggleShareWorkout(event){
+    let workoutId = event.target.parentNode.id;
+    this.setState({
+      showSharePopup: !this.state.showSharePopup,
+      selectedWorkout: workoutId,
+    });    
   }
 
   //Create pop up for filtering options
@@ -143,7 +154,7 @@ class DisplayWorkouts extends React.Component {
           let workoutsData = [];
           workoutsRef.once("value", function (data) {
             let workoutsFromDatabase = data.val();
-            //iterates through the returned json object
+            //iterates through the returned json object and parses each workout
             for (const key in workoutsFromDatabase) {
               if (
                 workoutsFromDatabase[key].creatorId === currentUser &&
@@ -198,25 +209,6 @@ class DisplayWorkouts extends React.Component {
         }
       });
     }
-    // let checkedOptions = this.state.filters;
-    // if (event.target.checked === true) {
-    //   checkedOptions.push(event.target.value);
-    //   this.setState({ filters: checkedOptions });
-    //   if (this.state.filters === checkedOptions) {
-    //     this.applyFilters();
-    //   }
-    // } else {
-    //   let deletedIndex = "";
-    //   for (const index in checkedOptions) {
-    //     if (checkedOptions[index] === event.target.value);
-    //     deletedIndex = index;
-    //   }
-    //   checkedOptions.splice(deletedIndex, 1);
-    //   this.setState({ filters: checkedOptions });
-    //   if (this.state.filters === checkedOptions) {
-    //     this.applyFilters();
-    //   }
-    // }
   }
 
   render() {
@@ -225,13 +217,22 @@ class DisplayWorkouts extends React.Component {
         <h2> My Saved Workouts</h2>
 
         {/**https://medium.com/@daniela.sandoval/creating-a-popup-window-using-js-and-react-4c4bd125da57 */}
-        {this.state.showPopup ? (
+        {this.state.showEditPopup ? (
           <EditWorkout
             closePopup={this.toggleEditWorkout}
             retrieveWorkouts={this.retrieveWorkouts}
             selectedWorkout={this.state.selectedWorkout}
           />
         ) : null}
+
+        {this.state.showSharePopup ? (
+          <ShareWorkout
+            closePopup={this.toggleShareWorkout}
+            retrieveWorkouts={this.retrieveWorkouts}
+            selectedWorkout={this.state.selectedWorkout}
+          />
+        ) : null}
+
         <div>
           <button type="button" id="filterBtn" onClick={this.showFilter}>
             Filter
@@ -263,23 +264,7 @@ class DisplayWorkouts extends React.Component {
                 value="otherUser"
               />
               <label htmlFor="otherUserFilter"> Other Users </label>
-              {/* <p> Filter by Created Date: </p>
-              <input
-                type="checkbox"
-                name="filter"
-                id="todayFilter"
-                value="today"
-              />
-              <label htmlFor="todayFilter"> Today </label>
-              <br></br>
-              <input
-                type="checkbox"
-                name="filter"
-                id="yesterdayFilter"
-                value="yesterday"
-              />
-              <label htmlFor="yesterdayFilter"> Yesterday </label>
-              <br></br> */}
+             
             </form>
           ) : null}
         </div>
@@ -348,6 +333,14 @@ class DisplayWorkouts extends React.Component {
                 onClick={this.toggleEditWorkout}
               >
                 Edit
+              </button>
+
+              <button
+                type = "button"
+                className="btn btn-secondary"
+                id="shareBtn"
+                onClick={this.toggleShareWorkout}>
+                  Share
               </button>
             </div>
           ))}
