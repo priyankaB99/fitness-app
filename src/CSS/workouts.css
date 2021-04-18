@@ -21,9 +21,19 @@
   margin: 20px 0;
   padding: 20px;
 }
+  .shared{
+    background-color: lightgray;
+  }
+
 .workout > * {
   margin-bottom: 10px;
 }
+
+/* .workoutName{
+  border: none;
+  background-color: #bbcdd4;
+  overflow: none;
+} */
 
 .exercises td {
   padding: 5px;
