@@ -4,7 +4,7 @@ import "firebase/auth";
 import "firebase/database";
 import { withRouter, useHistory, Link } from "react-router-dom";
 import styled from "styled-components";
-import "./sidebar.css";
+import "../CSS/sidebar.css";
 
 // Code Resources
 // - https://codeburst.io/how-to-create-a-navigation-bar-and-sidebar-using-react-348243ccd93
@@ -96,12 +96,14 @@ class Sidebar extends React.Component {
         // User is signed in
         console.log(user.email);
         console.log(user.displayName);
+        let isVerified = fire.auth().currentUser.emailVerified;
         this.setState({
           loggedIn: true,
           uid: user.uid,
           email: user.email,
           username: user.displayName,
-          activePath: this.props.location.pathname
+          activePath: this.props.location.pathname,
+          isVerified: isVerified
         });
       } else {
         // No user is signed in
@@ -129,7 +131,7 @@ class Sidebar extends React.Component {
     return (
       <div class="sidebar">
         <h3>Fitness App</h3>
-        {this.state.loggedIn ? (
+        {this.state.loggedIn && (
           <div>
             <div class="sidebar-box">
               <p>Welcome {this.state.username}!</p>
@@ -155,28 +157,14 @@ class Sidebar extends React.Component {
               );
             })}
           </div>
-        ) : (
-          <div></div>
+        )}
+        {(this.state.loggedIn && !this.state.isVerified) && (
+          <div id="verify-reminder-box">
+            Verify your email to finish setting up your account.
+          </div>
         )}
       </div>
     );
-    // return (
-    //   <div id="sidebar">
-    //       <nav>
-    //           <h2>FITNESS APP</h2>
-    //           <div>
-    //               <h3>Welcome, {this.state.username}</h3>
-    //               <button onClick={this.logout}>Logout</button>
-    //         </div>
-    //           <div>
-    //             <Link to="/createworkout"> Create Workout </Link>
-    //           </div>
-    //           <div>
-    //             <Link to="/displayworkouts"> My Saved Workouts </Link>
-    //           </div>
-    //     </nav>
-    //   </div>
-    // );
   }
 }
 

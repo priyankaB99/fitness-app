@@ -1,14 +1,4 @@
 /* My profile page */
-#myProfile {
-  display: flex;
-  flex-direction: row;
-}
-#profileBox,
-#favWorkouts,
-#goals {
-  margin: 20px;
-  width: 30%;
-}
 
 #profPic {
   border-radius: 70px;
@@ -20,19 +10,16 @@
   font-weight: bolder;
 }
 
-#favWorkouts {
-  overflow: scroll;
-}
-
 .workoutName {
-  border: none;
-  background-color: white;
-  width: 100%;
-  overflow: scroll;
+  padding: 15px;
+  border-radius: 4px;
+  background-color: #0e0066;
+  max-width: 300px;
+  color: white;
 }
 
 .workoutName:hover {
-  background-color: #bbcdd4;
+  cursor: pointer;
 }
 
 /* editProfile */

@@ -6,6 +6,7 @@ import { withRouter, useHistory } from "react-router-dom";
 import { format } from "date-fns";
 import "../CSS/general.css";
 import "../CSS/workouts.css";
+import "../CSS/friends.css";
 import UserCalendar from "./UserCalendar";
 import UserProfile from "./UserProfile";
 
@@ -301,8 +302,8 @@ class FriendsList extends React.Component {
   openCalendar(event) {
     let index = event.target.parentNode.dataset.index;
     let currentFriendList = this.state.friendList;
-    currentFriendList[index].calendarOpen = !currentFriendList[index]
-      .calendarOpen;
+    currentFriendList[index].profileOpen = false;
+    currentFriendList[index].calendarOpen = !currentFriendList[index].calendarOpen;
     this.setState({
       friendList: currentFriendList,
     });
@@ -311,8 +312,8 @@ class FriendsList extends React.Component {
   openProfile(event) {
     let index = event.target.parentNode.dataset.index;
     let currentFriendList = this.state.friendList;
-    currentFriendList[index].profileOpen = !currentFriendList[index]
-      .profileOpen;
+    currentFriendList[index].calendarOpen = false;
+    currentFriendList[index].profileOpen = !currentFriendList[index].profileOpen;
     this.setState({
       friendList: currentFriendList,
     });
@@ -327,21 +328,23 @@ class FriendsList extends React.Component {
       <div>
         <h2>My Friends</h2>
         <div className="row">
-          <div className="col-8">
-            <div className="workout">
+          <div className="pl-0 col-8">
+            <div className="friends-box workout">
+              {(this.state.friendList.length == 0) &&
+              <h5>Send a friend request to share workouts and events!</h5>}
               {this.state.friendList.map((data, index) => (
                 <div data-index={index}>
                   <p key={data.key}>
-                    {index} - {data.friendUsername}
+                    {index + 1} - {data.friendUsername}
                   </p>
                   <button
-                    className="btn btn-secondary"
+                    className="btn btn-secondary mr-2"
                     onClick={(event) => this.openCalendar(event)}
                   >
                     See Calendar
                   </button>
                   <button
-                    className="btn btn-secondary"
+                    className="btn btn-secondary mr-2"
                     onClick={(event) => this.openProfile(event)}
                   >
                     See Profile
@@ -352,14 +355,11 @@ class FriendsList extends React.Component {
                   {data.calendarOpen ? (
                     <UserCalendar displayUserId={data.friendId} />
                   ) : null}
-                  {/* {data.profileOpen 
-                            ? <UserCalendar displayUserId={data.friendId}/>
-                            : null} */}
                 </div>
               ))}
             </div>
           </div>
-          <div className="col">
+          <div className="pl-0 col">
             <div className="workout">
               <h5>Requests</h5>
               {this.state.friendRequests.map((data, index) => (
@@ -391,8 +391,8 @@ class FriendsList extends React.Component {
                   onChange={this.changeHandler}
                   type="text"
                   placeholder="Enter Username"
-                />{" "}
-                <br></br>
+                  className="input-box"
+                />
                 <button
                   className="btn btn-secondary"
                   disabled={isInvalid}

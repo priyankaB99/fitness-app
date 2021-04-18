@@ -5,6 +5,7 @@ import "firebase/database";
 import { withRouter } from "react-router-dom";
 import { format } from "date-fns";
 import "../CSS/workouts.css";
+
 //code pulled from https://itnext.io/building-a-dynamic-controlled-form-in-react-together-794a44ee552c
 
 class CreateWorkout extends React.Component {
@@ -24,13 +25,13 @@ class CreateWorkout extends React.Component {
     this.submitHandler = this.submitHandler.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
   }
+
   componentDidMount() {
     var currentComponent = this;
     //retrieve current list of tags
     let tagRef  = fire.database().ref("Tags/").orderByKey();
     tagRef.once("value", function(snapshot) {
       const data = snapshot.val();
-      console.log(data)
       if (data) {
         let keys = Object.keys(data);
         currentComponent.setState({
@@ -39,7 +40,7 @@ class CreateWorkout extends React.Component {
       } 
     });
   }
-  //function to produce dynamic form input for each exercise
+  
   addExercise(event) {
     event.preventDefault();
     this.setState((prevState) => ({
@@ -116,7 +117,7 @@ class CreateWorkout extends React.Component {
       let exercises = [...this.state.exercises];
       exercises[event.target.dataset.id][event.target.className] =
         event.target.value;
-      this.setState({ exercises }, () => console.log(this.state.exercises));
+      this.setState({ exercises: exercises });
     } else if(event.target.className === 'tags' && event.key === "Enter" && event.target.value !== "") {
       let cleanedTag = event.target.value.trim();
       cleanedTag = cleanedTag.toLowerCase();
@@ -144,6 +145,7 @@ class CreateWorkout extends React.Component {
           <input
             type="text"
             name="name"
+            className="input-box"
             value={name}
             onChange={this.changeHandler}
             required
@@ -152,6 +154,7 @@ class CreateWorkout extends React.Component {
           <input
             type="number"
             name="timeLength"
+            className="input-box"
             value={timeLength}
             onChange={this.changeHandler}
             min="0"
@@ -251,6 +254,7 @@ class CreateWorkout extends React.Component {
             name="notes"
             value={notes}
             onChange={this.changeHandler}
+            className="input-box"
           ></textarea>
 
           <input

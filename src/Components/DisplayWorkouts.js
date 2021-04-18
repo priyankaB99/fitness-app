@@ -18,8 +18,10 @@ class DisplayWorkouts extends React.Component {
       showSharePopup: false,
       showFilter: false,
       filters: [],
+      favorites: []
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
+    this.retrieveFavorites = this.retrieveFavorites.bind(this);
     this.deleteWorkout = this.deleteWorkout.bind(this);
     this.favorite = this.favorite.bind(this);
     this.unfavorite = this.unfavorite.bind(this);
@@ -39,6 +41,7 @@ class DisplayWorkouts extends React.Component {
 
   componentDidMount() {
     this.retrieveWorkouts();
+    this.retrieveFavorites();
   }
 
   retrieveWorkouts() {
@@ -85,16 +88,34 @@ class DisplayWorkouts extends React.Component {
       shared: isShared
     });
   }
+  retrieveFavorites() {
+    let currentComponent = this;
+    let currentUser = fire.auth().currentUser.uid;
+    let favoritesRef = fire.database().ref("Favorites/" + currentUser + "/");
+    let favorites = []
+    favoritesRef.once("value", function (data) {
+        let favoriteWorkouts = data.val();
+        console.log("Favorites", favoriteWorkouts)
+        for (const key in favoriteWorkouts) {
+          favorites.push(favoriteWorkouts[key].workoutId)
+        }
+        currentComponent.setState({favorites: favorites})
+    }).then(() => {
+      console.log(currentComponent.state)
+    })
+  }
 
   favorite(event) {
     let currentUser = fire.auth().currentUser.uid;
     let workoutId = event.target.parentNode.parentNode.id;
     console.log(workoutId);
+
     let favoritesRef = fire.database().ref("Favorites/" + currentUser);
     let newFavoritesRef = favoritesRef.push();
     newFavoritesRef.set({ workoutId: workoutId }).then(() => {
       console.log("Workout successfully favorited");
     });
+    this.retrieveFavorites();
   }
 
   unfavorite(event) {
@@ -102,8 +123,7 @@ class DisplayWorkouts extends React.Component {
     let workoutId = event.target.parentNode.parentNode.id;
     let favoritesRef = fire.database().ref("Favorites/" + currentUser + "/");
     let deletedId = "";
-    favoritesRef
-      .once("value", function (data) {
+    favoritesRef.once("value", function (data) {
         let favoriteWorkouts = data.val();
         for (const key in favoriteWorkouts) {
           if (favoriteWorkouts[key].workoutId === workoutId) {
@@ -113,12 +133,11 @@ class DisplayWorkouts extends React.Component {
       })
       .then(() => {
         console.log(deletedId);
-        let deletedRef = fire
-          .database()
-          .ref("Favorites/" + currentUser + "/" + deletedId);
+        let deletedRef = fire.database().ref("Favorites/" + currentUser + "/" + deletedId);
         deletedRef.remove().then(() => {
           console.log("Successfully unfavorited");
         });
+        this.retrieveFavorites();
       });
   }
 
@@ -221,7 +240,7 @@ class DisplayWorkouts extends React.Component {
                   workoutId: key,
                   exercises: workoutsFromDatabase[key].exercises,
                   timeLength: workoutsFromDatabase[key].timeLength,
-                  notes: workoutsFromDatabase[key].notes,
+                  notes: workoutsFromDatabase[key].notes
                 };
                 workoutsData.push(workout);
               }
@@ -345,21 +364,20 @@ class DisplayWorkouts extends React.Component {
           />
         ) : null}
 
-        {this.state.showSharePopup ? (
-          <ShareWorkout
-            closePopup={this.toggleShareWorkout}
-            retrieveWorkouts={this.retrieveWorkouts}
-            selectedWorkout={this.state.selectedWorkout}
-          />
-        ) : null}
-
-        <div>
-          <button type="button" id="filterBtn" onClick={this.showFilter}>
+        <div id="filter-box">
+          <button 
+          type="button" 
+          className="btn btn-secondary" 
+          id="filterBtn" 
+          onClick={this.showFilter}
+          >
             Filter
           </button>
+
           {this.state.showFilter ? (
             <form onChange={this.filterChange}>
-              <p> Filter by Creator:</p>
+              <strong> Filter by Creator:</strong>
+              <br></br>
               <input
                 type="radio"
                 name="filter"
@@ -369,6 +387,7 @@ class DisplayWorkouts extends React.Component {
               />
               <label htmlFor="currentUserFilter"> None </label>
               <br></br>
+
               <input
                 type="radio"
                 name="filter"
@@ -377,6 +396,7 @@ class DisplayWorkouts extends React.Component {
               />
               <label htmlFor="currentUserFilter"> Me </label>
               <br></br>
+
               <input
                 type="radio"
                 name="filter"

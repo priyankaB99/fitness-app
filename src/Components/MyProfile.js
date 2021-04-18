@@ -168,8 +168,8 @@ class MyProfile extends React.Component {
   render() {
     return (
       <div id="myProfile">
+        <h2> My Profile</h2>
         <div id="profileBox" class="workout">
-          <h2> My Info</h2>
           {this.state.editInfoOpen ? (
             <ViewEditProfile
               username={this.state.username}
@@ -178,30 +178,38 @@ class MyProfile extends React.Component {
               closePopup={this.showEditInfo}
             />
           ) : null}
+
           <img
             id="profPic"
             src={this.state.pic}
             alt={this.state.username}
           ></img>
-          <p className="profileLabel">Name: </p>
-          <p>
-            {this.state.firstName} {this.state.lastName}
-          </p>
-          <p className="profileLabel"> Birthday: </p>
-          <p>{this.state.bday}</p>
-          <p className="profileLabel"> Username: </p>
-          <p>{this.state.username}</p>
+          <div className="align-middle mx-4 d-inline-block">
+            <p className="profileLabel">Name: </p>
+            <p>
+              {this.state.firstName} {this.state.lastName}
+            </p>
+          </div>
+          <div className="align-middle mx-4 d-inline-block">
+            <p className="profileLabel"> Birthday: </p>
+            <p>{this.state.bday}</p>
+          </div>
+          <div className="align-middle mx-4 d-inline-block">
+            <p className="profileLabel"> Username: </p>
+            <p>{this.state.username}</p>
+          </div>
+
           <button
             onClick={this.showEditInfo}
             type="button"
             id="editProfile"
-            className="btn btn-secondary"
+            className="btn btn-secondary mx-4"
           >
             Edit Info
           </button>
         </div>
         <div id="goals" class="workout">
-          <h2> Fitness Goals </h2>
+          <h3 className="mb-3"> Fitness Goals </h3>
           <button
             type="button"
             className="btn btn-secondary"
@@ -212,8 +220,8 @@ class MyProfile extends React.Component {
           </button>
           {this.state.addGoalOpen ? (
             <form onChange={this.changeHandler} onSubmit={this.submitHandler}>
-              <input type="text" name="goalToAdd" />
-              <input type="submit" value="Add" />
+              <input type="text" name="goalToAdd" className="input-box" placeholder="Enter Goal" />
+              <input type="submit" className="my-2 btn btn-secondary" value="Add" />
             </form>
           ) : null}
           <ol>
@@ -225,17 +233,16 @@ class MyProfile extends React.Component {
           </ol>
         </div>
         <div id="favWorkouts" className="workout">
-          <h2> Favorite Workouts</h2>
+          <h3 className="mb-3"> Favorite Workouts</h3>
           <div>
             {this.state.favorites.map((data, index) => (
               <div key={data.workoutId} id={data.workoutId}>
-                <button
+                <div
                   className="workoutName"
-                  type="button"
                   onClick={this.showFavorite}
                 >
                   {data.name}
-                </button>
+                </div>
                 {this.state.showWorkout ? (
                   <ShowFavorite
                     closePopup={this.showFavorite}
