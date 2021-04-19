@@ -4,6 +4,8 @@ import "firebase/auth";
 import "firebase/database";
 import "../CSS/ViewEditEvent.css";
 import { format, parse } from "date-fns";
+import ShareEvent from "./ShareEvent";
+
 
 //Code Resources
 // -https://codepen.io/bastianalbers/pen/PWBYvz?editors=0110
@@ -25,7 +27,9 @@ class ViewEditEvent extends React.Component {
       workoutEnd: this.props.selectedWorkout.end,
       eventKey: this.props.selectedWorkout.eventKey,
       warning: "",
-      editToggled: false //if edit button has been clicked
+      editToggled: false, //if edit button has been clicked
+      isShared: this.props.selectedWorkout.shared, //is this user's event or someone else's?
+      showSharePopup: false,
     };
     this.parseWorkoutData = this.parseWorkoutData.bind(this);
     this.toggleEditEvent = this.toggleEditEvent.bind(this);
@@ -37,6 +41,12 @@ class ViewEditEvent extends React.Component {
     this.displayEdit = this.displayEdit.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
+    this.displayTags = this.displayTags.bind(this);
+    this.displayWorkout = this.displayWorkout.bind(this);
+    this.displayMyWorkout = this.displayMyWorkout.bind(this);
+    this.displaySharedWorkout = this.displaySharedWorkout.bind(this);
+    this.displayWarning = this.displayWarning.bind(this);
+    this.toggleShareEvent = this.toggleShareEvent.bind(this);
   }
 
   componentDidMount() {
@@ -102,14 +112,18 @@ class ViewEditEvent extends React.Component {
     }
   }
 
+  toggleShareEvent(){
+    this.setState({
+      showSharePopup: !this.state.showSharePopup,
+    });    
+  }
+
   //view when edit is not clicked
   displayNonEdit(){
     return(
       <div>
         {this.formatDate() + " | " + this.formatTime()}
-
         <div className="notes"> Notes: {this.state.workoutNotes}</div>
-
         {this.props.deleteEvent ? (
           <div>
             <button
@@ -126,6 +140,12 @@ class ViewEditEvent extends React.Component {
               Delete Event
             </button>
 
+            <button
+              className="btn btn-secondary popup-buttons btn-sm"
+              onClick={this.toggleShareEvent}
+            >
+              Share Event
+            </button>
           </div> ) : null}
       </div>);
   }
@@ -162,10 +182,77 @@ class ViewEditEvent extends React.Component {
 
           <button onClick={ () => {this.submitHandler()} }>Save</button>
           <button onClick={ () => {this.toggleEditEvent()} }>Cancel</button>
+      </div>
+    );
+  }
 
+  displayTags(){
+    return(
+      <ul className="displayTags" id="tags">
+        {this.state.workoutTags && this.state.workoutTags.map((tag, index) => (
+            <li key={index} className="tag">
+                <span className='tag-title'>{tag}</span>
+            </li>
+        ))}
+      </ul>
+    );
+  }
 
+  displayWorkout(){
+    if(this.state.warning === ""){
+      return(this.state.isShared  ? this.displaySharedWorkout() : this.displayMyWorkout());
+    }
+    else{
+      return(this.displayWarning());
+    }
+  }
 
-        {/* ADD IN BUTTONS FOR SAVE AND CANCEL CHANGES */}
+  displayMyWorkout(){
+    return(
+      <div className="workoutInfo owner" id={this.state.eventKey}>
+        <div className="name">
+          <h2>{this.state.workoutName}</h2>
+        </div>
+
+        {this.state.editToggled ? this.displayEdit() : this.displayNonEdit()}
+      </div>
+    );
+  }
+
+  displaySharedWorkout(){
+    return(
+      <div className="workoutInfo shared" id={this.state.eventKey}>
+        <div className="name">
+          <h2>{this.state.workoutName}</h2>
+        </div>
+        {this.formatDate() + " | " + this.formatTime()}
+        <div className="notes"> Notes: {this.state.workoutNotes}</div>
+      </div>
+    );
+  }
+
+  displayWarning(){
+    return(
+      <div class="warning">
+        <strong>{this.state.warning}</strong>
+        <br></br>
+        {this.props.deleteEvent ? (
+          <div>
+            <button
+              className="btn btn-secondary popup-buttons btn-sm"
+              onClick={this.toggleEditEvent}
+              disabled
+            >
+              Edit Event
+            </button>
+            <button
+              className="btn btn-secondary popup-buttons btn-sm"
+              onClick={this.deleteEvent}
+            >
+              Delete Event
+            </button>
+          </div>
+        ) : null}
       </div>
     );
   }
@@ -177,11 +264,12 @@ class ViewEditEvent extends React.Component {
   //submit edits to FireBase
   submitHandler() {
     //reference to existing workout
-    let eventRef = fire.database().ref("Schedules/" + this.state.scheduleId + "/" + this.state.eventKey);
+    console.log(this.state.eventKey);
+    let eventRef = fire.database().ref("Events/" + this.state.eventKey);
 
     eventRef.update({
       date: this.state.workoutDate,
-      endtime: this.state.workoutEnd,
+      endTime: this.state.workoutEnd,
       startTime: this.state.workoutStart,
     });
     this.toggleEditEvent();
@@ -227,50 +315,15 @@ class ViewEditEvent extends React.Component {
           </p>
         </div>
 
-        {/* if the workout has not been deleted */}
-        {this.state.warning === "" ? (
-          <div className="workoutInfo" id={this.state.eventKey}>
-            <div className="name">
-              <h2>{this.state.workoutName}</h2>
-            </div>
+        {this.state.showSharePopup ? (
+          <ShareEvent
+            closePopup={this.toggleShareEvent}
+            selectedEvent={this.state.eventKey}
+          />
+        ) : null}
 
-            {this.state.editToggled ? this.displayEdit() : this.displayNonEdit()}
-            
-
-          </div>
-          
-         ) : ( 
-           //if workout has been deleted
-          <div class="warning">
-            <strong>{this.state.warning}</strong>
-            <br></br>
-            {this.props.deleteEvent ? (
-              <div>
-                <button
-                  className="btn btn-secondary popup-buttons btn-sm"
-                  onClick={this.toggleEditEvent}
-                  disabled
-                >
-                  Edit Event
-                </button>
-                <button
-                  className="btn btn-secondary popup-buttons btn-sm"
-                  onClick={this.deleteEvent}
-                >
-                  Delete Event
-                </button>
-              </div>
-            ) : null}
-          </div>
-        )}
-
-        <ul className="displayTags" id="tags">
-          {this.state.workoutTags && this.state.workoutTags.map((tag, index) => (
-              <li key={index} className="tag">
-                  <span className='tag-title'>{tag}</span>
-              </li>
-          ))}
-        </ul>
+        {this.displayWorkout()}
+        {this.displayTags()}
 
         <div className="exerciseBox">{this.formatExercises()}</div>
       </div>

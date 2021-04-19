@@ -129,15 +129,15 @@ class Sidebar extends React.Component {
   render() {
     const { items, activePath } = this.state;
     return (
-      <div class="sidebar">
+      <div className="sidebar">
         <h3>Fitness App</h3>
         {this.state.loggedIn && (
           <div>
-            <div class="sidebar-box">
+            <div className="sidebar-box">
               <p>Welcome {this.state.username}!</p>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                className="btn btn-light btn-sm"
                 onClick={this.logout}
               >
                 {" "}

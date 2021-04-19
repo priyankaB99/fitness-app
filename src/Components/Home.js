@@ -36,7 +36,7 @@ class Home extends React.Component {
     this.state = {
       uid: "",
       month: new Date(),
-      workoutEvents: [],
+      events: [],
       showPopup: false,
       selectedWorkout: "",
       showAddEvent: false,
@@ -45,22 +45,21 @@ class Home extends React.Component {
     };
     this.previousMonth = this.previousMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
-    // this.previousWeek = this.previousWeek.bind(this);
-    // this.nextWeek = this.nextWeek.bind(this);
     this.createWeekArray = this.createWeekArray.bind(this);
     this.createMonthCells = this.createMonthCells.bind(this);
     this.findThisMonthEvents = this.findThisMonthEvents.bind(this);
     this.deleteWorkoutEvent = this.deleteWorkoutEvent.bind(this);
     this.toggleViewEditEvent = this.toggleViewEditEvent.bind(this);
     this.toggleAddEvent = this.toggleAddEvent.bind(this);
+    this.createEvent = this.createEvent.bind(this);
+    this.displayMyEvent = this.displayMyEvent.bind(this);
+    this.displaySharedEvent = this.displaySharedEvent.bind(this);
   }
 
   componentDidMount() {
     fire.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in
-        console.log(user.email);
-        console.log(user.displayName);
         this.findThisMonthEvents();
       } else {
         // No user is signed in
@@ -110,14 +109,12 @@ class Home extends React.Component {
     this.findThisMonthEvents(newMonth);
   }
 
+  //TODO: FIX THIS TO CHANGE TO EVENTS/
   deleteWorkoutEvent(event) {
-    let workoutsRef = fire.database().ref("Schedules/");
+    let workoutsRef = fire.database().ref("Events/");
     workoutsRef.off("value");
     let eventId = event.target.parentNode.id;
-    console.log(event.target.parentNode);
-    let deleteEventRef = fire
-      .database()
-      .ref("Schedules/" + this.state.uid + "/" + eventId);
+    let deleteEventRef = fire.database().ref("Events/" + eventId);
     deleteEventRef.remove();
     this.findThisMonthEvents();
   }
@@ -140,10 +137,10 @@ class Home extends React.Component {
         this.setState({ selectedDay: "" });
         this.setState({ showAddEvent: true });
       } else if (
-        event.target.className === "workoutEvent" ||
-        event.target.className === "eventWorkoutName" ||
-        event.target.className === "eventWorkoutTime" ||
-        event.target.className === "workoutBox"
+        event.target.className === "event" ||
+        event.target.className === "eventName" ||
+        event.target.className === "eventTime" ||
+        event.target.className === "eventBox"
       ) {
         console.log(event.target.className);
         this.setState({ showAddEvent: false });
@@ -162,6 +159,36 @@ class Home extends React.Component {
     } else {
       this.setState({ showAddEvent: false });
     }
+  }
+
+  displayMyEvent(eventData){
+    return(
+      <div className="eventBox">
+        <div 
+        className = "event owner" 
+        id={eventData.eventKey} key={eventData.eventKey} 
+        onClick={() => this.toggleViewEditEvent(eventData)}
+        >
+          <div className = "eventName"> {eventData.workoutName} </div>
+          <div className = "eventTime"> {eventData.start} - {eventData.end} </div>
+        </div>
+      </div>
+    );
+  }
+
+  displaySharedEvent(eventData){
+    return(
+      <div className="eventBox">
+        <div 
+          className = "event shared" 
+          id={eventData.eventKey} key={eventData.eventKey} 
+          onClick={() => this.toggleViewEditEvent(eventData)}
+        >
+          <div className = "eventName"> {eventData.workoutName} </div>
+          <div className = "eventTime"> {eventData.start} - {eventData.end} </div>
+        </div>
+      </div>
+    );
   }
 
   //Returns array of the week, starting from Sunday
@@ -192,35 +219,21 @@ class Home extends React.Component {
         cellDivClass += " today";
       }
 
-      //add events
       let todayEvents = [];
-      for (let i = 0; i < this.state.workoutEvents.length; i++) {
-        let event = this.state.workoutEvents[i];
-        let formattedDate = new Date(
-          format(parseISO(event.date), "MM/dd/yyyy")
-        );
-        if (
-          isSameDay(formattedDate, dayToAdd) &&
-          isSameWeek(formattedDate, dayToAdd)
-        ) {
-          todayEvents.push(
-            <div className="workoutBox">
-              <div
-                className="workoutEvent"
-                id={event.eventKey}
-                key={event.eventKey}
-                onClick={() => this.toggleViewEditEvent(event)}
-              >
-                <div className="eventWorkoutName">{event.workoutName}</div>
-                <div className="eventWorkoutTime">
-                  {event.start} - {event.end}
-                </div>
-              </div>
-            </div>
-          );
+      
+      //go through events
+      for (let i = 0; i < this.state.events.length; i++) {
+        let event = this.state.events[i];
+        let formattedDate = new Date(format(parseISO(event.date), "MM/dd/yyyy") );
+        if (isSameDay(formattedDate, dayToAdd) && isSameWeek(formattedDate, dayToAdd)) {
+          if(!event.shared){ //if user is owner of event
+            todayEvents.push(this.displayMyEvent(event));
+          }
+          else if(event.shared){
+            todayEvents.push(this.displaySharedEvent(event));
+          }
         }
       }
-
       //Finish day cell with events
       days.push(
         <div
@@ -255,47 +268,58 @@ class Home extends React.Component {
     return <div className="all-cells">{weekRows}</div>;
   }
 
+  //get user's workout events
   findThisMonthEvents(currentMonth) {
-    let currentComponent = this;
-    //get user's workout events
-    fire.auth().onAuthStateChanged(function (user) {
+    fire.auth().onAuthStateChanged( (user) => {
       if (user) {
-        let schedulesRef = fire.database().ref("Schedules/" + user.uid);
-        let eventsData = [];
-        let thisMonth = currentComponent.state.month;
+        let currentUser = fire.auth().currentUser.uid;
+        let schedulesRef = fire.database().ref("Events/");
+        let events = [];
+        let thisMonth = this.state.month;
         if (currentMonth) {
           thisMonth = currentMonth;
         }
-        schedulesRef.once("value", function (data) {
+        schedulesRef.once("value",  (data) => {
           let eventsFromDatabase = data.val();
           for (const key in eventsFromDatabase) {
             let formattedDate = new Date(
               format(parseISO(eventsFromDatabase[key].date), "MM/dd/yyyy")
             );
-            if (
-              isSameMonth(formattedDate, thisMonth) &&
-              isSameYear(formattedDate, thisMonth)
-            ) {
-              eventsData.push({
-                eventKey: key,
-                workoutName: eventsFromDatabase[key].workoutName,
-                workoutId: eventsFromDatabase[key].workoutId, //this is the ID in firebase corresponding to exercise
-                date: eventsFromDatabase[key].date,
-                start: eventsFromDatabase[key].startTime,
-                end: eventsFromDatabase[key].endtime,
-              });
+            //check if event is in selected month and year
+            if(isSameMonth(formattedDate, thisMonth) && isSameYear(formattedDate, thisMonth) ) {
+              if(eventsFromDatabase[key].creatorId === currentUser){
+                let event = this.createEvent(eventsFromDatabase, key, false);
+                events.push(event);
+              }
+              else if(eventsFromDatabase[key].users.includes(currentUser)){
+                let event = this.createEvent(eventsFromDatabase, key, true);
+                events.push(event);
+              }
             }
           }
-          currentComponent.setState({
+          this.setState({
             month: thisMonth,
-            workoutEvents: eventsData,
+            events: events,
             uid: user.uid,
           });
         });
       } else {
-        currentComponent.props.history.push("/login");
+        this.props.history.push("/login");
       }
     });
+  }
+
+  createEvent(data, key, isShared){
+    return(
+      {eventKey: key,
+      workoutName: data[key].workoutName,
+      workoutId: data[key].workoutId,
+      date: data[key].date,
+      start: data[key].startTime,
+      end: data[key].endTime,
+      shared: isShared
+      }
+    )
   }
 
   render() {
@@ -304,7 +328,7 @@ class Home extends React.Component {
         <div>
           <h1 className="mb-4">Welcome Home</h1>
         </div>
-        <h5 class="home-banner">
+        <h5 className="home-banner">
           Create a workout event by clicking on a date in your
           calendar or here
           <button type="button" id="addEventBtn" className="btn btn-secondary" onClick={this.toggleAddEvent}>

@@ -88,15 +88,19 @@ class CreateEvent extends React.Component {
     let currentUserId = fire.auth().currentUser.uid;
     
     //first pushes the event to the database
-    let eventRef = fire.database().ref("Schedules/" + currentUserId);
+    // let eventRef = fire.database().ref("Schedules/" + currentUserId);
+    let eventRef = fire.database().ref("Events/");
+
     let newEventRef = eventRef.push();
     newEventRef.set(
       {
         date: this.state.date,
+        creatorId: currentUserId,
         startTime: this.state.startTime,
-        endtime: this.state.endTime,
+        endTime: this.state.endTime,
         workoutId: this.state.workout,
         workoutName: this.state.workoutName,
+        users: [currentUserId]
       },
       (error) => {
         if (error) {
