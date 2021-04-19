@@ -36,17 +36,17 @@
   margin-right: unset !important;
 }
 
-.workoutEvent > button {
+.event > button {
   margin: 5px;
 }
-.workoutBox {
+.eventBox {
   background-color: #e1edf2;
   padding: 10px 5px;
   border-radius: 3px;
   text-align: center;
   margin-top: 5px;
 }
-.workoutBox:hover {
+.eventBox:hover {
   background-color: #bbcdd4;
   cursor: pointer;
 }
@@ -70,42 +70,3 @@
   margin-left: 10px;
   vertical-align: baseline;
 }
-
-/* Not in use currently */
-.weekBox {
-  margin-top: 3%;
-  display: flex;
-}
-.weekNav {
-  flex: 1;
-}
-.week {
-  flex: 7;
-  column-count: 7;
-}
-
-.timeBox {
-  display: flex;
-  height: 1500px;
-}
-.timeLabels {
-  flex: 1;
-}
-.times {
-  height: 1500px;
-  border-right: 1px solid black;
-}
-.timesUnderDates {
-  flex: 7;
-  column-count: 7;
-}
-.timesUnderDates > div {
-  height: 1500px;
-  border: 1px solid red;
-}
-
-.spacer {
-  flex: 1;
-  border: 1px solid blue;
-}
-/*End of not in use code*/
