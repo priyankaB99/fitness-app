@@ -74,10 +74,10 @@ class SignUp extends React.Component {
           .then(() => {
             // Update successful. Go home.
             console.log("success adding user");
-            alert("Success! Please check your email to verify your account.")
+            alert("Success! Please check your email to verify your account.");
             // if(fire.auth().currentUser.emailVerified) {
-              this.setState({ warning: "" })
-              this.props.history.push("/");
+            this.setState({ warning: "" });
+            this.props.history.push("/");
             // }
             // else {
             //   this.props.history.push("/login");
@@ -138,67 +138,67 @@ class SignUp extends React.Component {
       <div>
         <h1 class="mb-4">Sign Up</h1>
         <div className="loginBox login">
+          <label htmlFor="firstName"> First Name: </label>
           <input
+            id="firstName"
             name="firstName"
             value={firstName}
             onChange={this.onChange}
             type="text"
-            placeholder="First Name"
           />{" "}
           <br></br>
+          <label htmlFor="firstName"> Last Name: </label>
           <input
+            id="lastName"
             name="lastName"
             value={lastName}
             onChange={this.onChange}
             type="text"
-            placeholder="Last Name"
           />{" "}
           <br></br>
+          <label htmlFor="bday"> Date of Birth:</label>
           <input
+            id="bday"
             name="bday"
             value={bday}
             onChange={this.onChange}
             type="date"
-            placeholder="Birth Date"
           />{" "}
           <br></br>
+          <label htmlFor="username"> Username:</label>
           <input
+            id="username"
             name="username"
             value={username}
             onChange={this.onChange}
             type="text"
-            placeholder="Username"
           />{" "}
-          {/* <br></br> */}
-          {/* <input
-            name="profpic"
-            onChange={this.profpicChange}
-            type="file"
-            accept="image/*"
-          /> */}
           <br></br>
+          <label htmlFor="email"> Email Address:</label>
           <input
+            id="email"
             name="email"
             value={email}
             onChange={this.onChange}
             type="text"
-            placeholder="Email Address"
           />{" "}
           <br></br>
+          <label htmlFor="password1"> Password:</label>
           <input
+            id="password1"
             name="password1"
             value={password1}
             onChange={this.onChange}
             type="password"
-            placeholder="Password"
           />{" "}
           <br></br>
+          <label htmlFor="password2"> Confirm Password:</label>
           <input
+            id="password2"
             name="password2"
             value={password2}
             onChange={this.onChange}
             type="password"
-            placeholder="Confirm Password"
           />{" "}
           <br></br>
           <button

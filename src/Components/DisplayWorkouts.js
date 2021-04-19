@@ -6,6 +6,7 @@ import { withRouter } from "react-router-dom";
 import "../CSS/workouts.css";
 import EditWorkout from "./EditWorkout";
 import ShareWorkout from "./ShareWorkout";
+import FavoriteButton from "./FavoriteButton";
 
 class DisplayWorkouts extends React.Component {
   constructor(props) {
@@ -13,18 +14,14 @@ class DisplayWorkouts extends React.Component {
     this.state = {
       myWorkouts: [],
       sharedWorkouts: [],
-      selectedWorkout: "", //workout ID 
+      selectedWorkout: "", //workout ID
       showEditPopup: false,
       showSharePopup: false,
       showFilter: false,
       filters: [],
-      favorites: []
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
-    this.retrieveFavorites = this.retrieveFavorites.bind(this);
     this.deleteWorkout = this.deleteWorkout.bind(this);
-    this.favorite = this.favorite.bind(this);
-    this.unfavorite = this.unfavorite.bind(this);
     this.toggleEditWorkout = this.toggleEditWorkout.bind(this);
     this.showFilter = this.showFilter.bind(this);
     this.filterChange = this.filterChange.bind(this);
@@ -41,11 +38,10 @@ class DisplayWorkouts extends React.Component {
 
   componentDidMount() {
     this.retrieveWorkouts();
-    this.retrieveFavorites();
   }
 
   retrieveWorkouts() {
-    fire.auth().onAuthStateChanged( (user) => {
+    fire.auth().onAuthStateChanged((user) => {
       if (user) {
         let currentUser = fire.auth().currentUser.uid;
         let workoutsRef = fire.database().ref("Workouts");
@@ -57,18 +53,29 @@ class DisplayWorkouts extends React.Component {
           //iterates through the returned json object
           for (const key in workoutsFromDatabase) {
             if (workoutsFromDatabase[key].creatorId === currentUser) {
-              let workout = this.createWorkoutDiv(workoutsFromDatabase, key, false);
+              let workout = this.createWorkoutDiv(
+                workoutsFromDatabase,
+                key,
+                false
+              );
               myWorkouts.push(workout);
             }
             //shared workouts
-            else if(workoutsFromDatabase[key].users.includes(currentUser)){
-              let workout = this.createWorkoutDiv(workoutsFromDatabase, key, true);
+            else if (
+              workoutsFromDatabase[key].users.includes(currentUser) &&
+              workoutsFromDatabase[key].creatorId !== currentUser
+            ) {
+              let workout = this.createWorkoutDiv(
+                workoutsFromDatabase,
+                key,
+                true
+              );
               sharedWorkouts.push(workout);
             }
           }
-          this.setState({ 
+          this.setState({
             myWorkouts: myWorkouts,
-            sharedWorkouts: sharedWorkouts
+            sharedWorkouts: sharedWorkouts,
           });
         });
       } else {
@@ -77,68 +84,59 @@ class DisplayWorkouts extends React.Component {
     });
   }
 
-  createWorkoutDiv(data, key, isShared){
-    return({
-      name: data[key].name,
-      workoutId: key,
-      exercises: data[key].exercises,
-      timeLength: data[key].timeLength,
-      notes: data[key].notes,
-      tags: data[key].tags,
-      shared: isShared
-    });
-  }
-  retrieveFavorites() {
-    let currentComponent = this;
-    let currentUser = fire.auth().currentUser.uid;
-    let favoritesRef = fire.database().ref("Favorites/" + currentUser + "/");
-    let favorites = []
-    favoritesRef.once("value", function (data) {
-        let favoriteWorkouts = data.val();
-        console.log("Favorites", favoriteWorkouts)
-        for (const key in favoriteWorkouts) {
-          favorites.push(favoriteWorkouts[key].workoutId)
-        }
-        currentComponent.setState({favorites: favorites})
-    }).then(() => {
-      console.log(currentComponent.state)
-    })
-  }
+  // retrieveFilteredWorkouts(isShared) {
+  //   fire.auth().onAuthStateChanged((user) => {
+  //     if (user) {
+  //       let currentUser = fire.auth().currentUser.uid;
+  //       let workoutsRef = fire.database().ref("Workouts");
+  //       let myWorkouts = [];
+  //       let sharedWorkouts = [];
+  //       workoutsRef.once("value", (data) => {
+  //         let workoutsFromDatabase = data.val();
 
-  favorite(event) {
-    let currentUser = fire.auth().currentUser.uid;
-    let workoutId = event.target.parentNode.parentNode.id;
-    console.log(workoutId);
-
-    let favoritesRef = fire.database().ref("Favorites/" + currentUser);
-    let newFavoritesRef = favoritesRef.push();
-    newFavoritesRef.set({ workoutId: workoutId }).then(() => {
-      console.log("Workout successfully favorited");
-    });
-    this.retrieveFavorites();
-  }
-
-  unfavorite(event) {
-    let currentUser = fire.auth().currentUser.uid;
-    let workoutId = event.target.parentNode.parentNode.id;
-    let favoritesRef = fire.database().ref("Favorites/" + currentUser + "/");
-    let deletedId = "";
-    favoritesRef.once("value", function (data) {
-        let favoriteWorkouts = data.val();
-        for (const key in favoriteWorkouts) {
-          if (favoriteWorkouts[key].workoutId === workoutId) {
-            deletedId = key;
-          }
-        }
-      })
-      .then(() => {
-        console.log(deletedId);
-        let deletedRef = fire.database().ref("Favorites/" + currentUser + "/" + deletedId);
-        deletedRef.remove().then(() => {
-          console.log("Successfully unfavorited");
-        });
-        this.retrieveFavorites();
-      });
+  //         //iterates through the returned json object
+  //         for (const key in workoutsFromDatabase) {
+  //           if (workoutsFromDatabase[key].creatorId === currentUser) {
+  //             let workout = this.createWorkoutDiv(
+  //               workoutsFromDatabase,
+  //               key,
+  //               false
+  //             );
+  //             myWorkouts.push(workout);
+  //           }
+  //         }
+  //         this.setState({
+  //           myWorkouts: myWorkouts,
+  //           sharedWorkouts: sharedWorkouts,
+  //         });
+  //       });
+  //     } else {
+  //       console.log("signed out");
+  //     }
+  //   });
+  // }
+  createWorkoutDiv(data, key, isShared) {
+    if (isShared === true) {
+      return {
+        name: data[key].name,
+        workoutId: key,
+        exercises: data[key].exercises,
+        timeLength: data[key].timeLength,
+        notes: data[key].notes,
+        tags: data[key].tags,
+        owner: data[key].creatorUsername,
+      };
+    } else {
+      return {
+        name: data[key].name,
+        workoutId: key,
+        exercises: data[key].exercises,
+        timeLength: data[key].timeLength,
+        notes: data[key].notes,
+        tags: data[key].tags,
+        owner: "Me",
+      };
+    }
   }
 
   deleteWorkout(event) {
@@ -170,12 +168,12 @@ class DisplayWorkouts extends React.Component {
     });
   }
 
-  toggleShareWorkout(event){
+  toggleShareWorkout(event) {
     let workoutId = event.target.parentNode.parentNode.id;
     this.setState({
       showSharePopup: !this.state.showSharePopup,
       selectedWorkout: workoutId,
-    });    
+    });
   }
 
   //Create pop up for filtering options
@@ -189,63 +187,62 @@ class DisplayWorkouts extends React.Component {
     if (event.target.value === "none") {
       this.retrieveWorkouts();
     } else if (event.target.value === "currentUser") {
-      let currentComponent = this;
-      fire.auth().onAuthStateChanged(function (user) {
+      fire.auth().onAuthStateChanged((user) => {
         if (user) {
           let currentUser = fire.auth().currentUser.uid;
           let workoutsRef = fire.database().ref("Workouts");
-          let workoutsData = [];
-          workoutsRef.once("value", function (data) {
+          let myWorkouts = [];
+          workoutsRef.once("value", (data) => {
             let workoutsFromDatabase = data.val();
-            //iterates through the returned json object and parses each workout
+
+            //iterates through the returned json object
             for (const key in workoutsFromDatabase) {
-              if (
-                workoutsFromDatabase[key].creatorId === currentUser &&
-                workoutsFromDatabase[key].users.includes(currentUser)
-              ) {
-                let workout = {
-                  name: workoutsFromDatabase[key].name,
-                  workoutId: key,
-                  exercises: workoutsFromDatabase[key].exercises,
-                  timeLength: workoutsFromDatabase[key].timeLength,
-                  notes: workoutsFromDatabase[key].notes,
-                };
-                workoutsData.push(workout);
+              if (workoutsFromDatabase[key].creatorId === currentUser) {
+                let workout = this.createWorkoutDiv(
+                  workoutsFromDatabase,
+                  key,
+                  false
+                );
+                myWorkouts.push(workout);
               }
+              //shared workouts
             }
-            currentComponent.setState({ myWorkouts: workoutsData });
+            this.setState({
+              myWorkouts: myWorkouts,
+              sharedWorkouts: [],
+            });
           });
         } else {
           console.log("signed out");
         }
       });
     } else if (event.target.value === "otherUser") {
-      let currentComponent = this;
-      fire.auth().onAuthStateChanged(function (user) {
-        console.log("check 17");
+      fire.auth().onAuthStateChanged((user) => {
         if (user) {
           let currentUser = fire.auth().currentUser.uid;
           let workoutsRef = fire.database().ref("Workouts");
-          let workoutsData = [];
-          workoutsRef.once("value", function (data) {
+          let sharedWorkouts = [];
+          workoutsRef.once("value", (data) => {
             let workoutsFromDatabase = data.val();
+
             //iterates through the returned json object
             for (const key in workoutsFromDatabase) {
               if (
-                workoutsFromDatabase[key].creatorId !== currentUser &&
-                workoutsFromDatabase[key].users.includes(currentUser)
+                workoutsFromDatabase[key].users.includes(currentUser) &&
+                workoutsFromDatabase[key].creatorId !== currentUser
               ) {
-                let workout = {
-                  name: workoutsFromDatabase[key].name,
-                  workoutId: key,
-                  exercises: workoutsFromDatabase[key].exercises,
-                  timeLength: workoutsFromDatabase[key].timeLength,
-                  notes: workoutsFromDatabase[key].notes
-                };
-                workoutsData.push(workout);
+                let workout = this.createWorkoutDiv(
+                  workoutsFromDatabase,
+                  key,
+                  true
+                );
+                sharedWorkouts.push(workout);
               }
             }
-            currentComponent.setState({ myWorkouts: workoutsData });
+            this.setState({
+              myWorkouts: [],
+              sharedWorkouts: sharedWorkouts,
+            });
           });
         } else {
           console.log("signed out");
@@ -254,97 +251,111 @@ class DisplayWorkouts extends React.Component {
     }
   }
 
-  renderHeader(data){
-    return(
-      <div className = "header">
-        <h3 className = "name">{data.name}</h3>
-        <p className = "length">
-          Workout Length: {data.timeLength} min
-        </p>
+  renderHeader(data) {
+    return (
+      <div className="header">
+        <h3 className="name">{data.name}</h3>
+        <p className="length">Workout Length: {data.timeLength} min</p>
+        <p className="owner"> Owner: {data.owner} </p>
       </div>
-    )
+    );
   }
 
-  renderExercises(data){
-    return(
+  renderExercises(data) {
+    return (
       <table className="exercises">
         <tbody>
-          {data.exercises && data.exercises.map((exercise, index) => ( //&& used to catch if exercises is empty
-            <tr key = {index}>
-              <td><strong>{(index+1) + ". " + exercise.exerciseName}</strong></td>
-              <td>{exercise.qty}</td>
-              <td> {exercise.unit}</td>
-            </tr>
-          ))}
+          {data.exercises &&
+            data.exercises.map((
+              exercise,
+              index //&& used to catch if exercises is empty
+            ) => (
+              <tr key={index}>
+                <td>
+                  <strong>{index + 1 + ". " + exercise.exerciseName}</strong>
+                </td>
+                <td>{exercise.qty}</td>
+                <td> {exercise.unit}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
-    )
+    );
   }
 
-  renderTagsAndNotes(data){
-    return(
+  renderTagsAndNotes(data) {
+    return (
       <div>
         <ul id="tags">
-            {data.tags && data.tags.map( (tag, index) => { //&& used to catch if tags is empty
-              <li key = {index} className = "tag">
-                <span className = "tag-title">{tag}</span>
+          {data.tags &&
+            data.tags.map((tag, index) => (
+              //&& used to catch if tags is empty
+              <li key={index} className="tag">
+                <span className="tag-title">{tag}</span>
               </li>
-            })}
+            ))}
         </ul>
         <p id="workoutNotes">Notes/Links: {data.notes}</p>
       </div>
-    )
+    );
   }
 
-  renderFavoriteFunctions(){
-    return(
-      <div className = "favoriteButtons">
-        <button type="button" className="btn btn-secondary" id="favoriteBtn" onClick={this.favorite}>
-          Favorite
-        </button>
-        <button type="button" className="btn btn-secondary" id="unfavoriteBtn" onClick={this.unfavorite}>
-          Unfavorite
-        </button>
-      </div>
-    )
+  renderFavoriteFunctions(workoutId) {
+    let favId = workoutId;
+    return <FavoriteButton favId={favId} />;
   }
 
-  renderAdminFunctions(){
-    return(
-      <div className = "adminButtons">
-        <button type="button" className="btn btn-secondary" id="deleteBtn" onClick={this.deleteWorkout}>
+  renderAdminFunctions() {
+    return (
+      <div className="adminButtons">
+        <button
+          type="button"
+          className="btn btn-secondary"
+          id="deleteBtn"
+          onClick={this.deleteWorkout}
+        >
           Delete
         </button>
-        <button type="button" className="btn btn-secondary" id="editBtn" onClick={this.toggleEditWorkout}>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          id="editBtn"
+          onClick={this.toggleEditWorkout}
+        >
           Edit
         </button>
-        <button type = "button" className="btn btn-secondary" id="shareBtn" onClick={this.toggleShareWorkout}>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          id="shareBtn"
+          onClick={this.toggleShareWorkout}
+        >
           Share
         </button>
       </div>
-    )
+    );
   }
 
-  displayMyWorkout(data, index){
-    return(
-      <div className = "workout owner" key={index} id={data.workoutId}>
+  displayMyWorkout(data, index) {
+    return (
+      <div className="workout owner" key={index} id={data.workoutId}>
         {this.renderHeader(data)}
         {this.renderExercises(data)}
         {this.renderTagsAndNotes(data)}
-        {this.renderFavoriteFunctions()}
+        {this.renderFavoriteFunctions(data.workoutId)}
         {this.renderAdminFunctions()}
       </div>
     );
   }
 
   //does not include edit, share, delete (only favorite and unfavorite)
-  displaySharedWorkout(data, index){
-    return(
-      <div className = "workout shared" key={index} id={data.workoutId}>
+  displaySharedWorkout(data, index) {
+    return (
+      <div className="workout shared" key={index} id={data.workoutId}>
         {this.renderHeader(data)}
         {this.renderExercises(data)}
         {this.renderTagsAndNotes(data)}
-        {this.renderFavoriteFunctions()}
+        {this.renderFavoriteFunctions(data.workoutId)}
       </div>
     );
   }
@@ -372,11 +383,11 @@ class DisplayWorkouts extends React.Component {
         ) : null}
 
         <div id="filter-box">
-          <button 
-          type="button" 
-          className="btn btn-secondary" 
-          id="filterBtn" 
-          onClick={this.showFilter}
+          <button
+            type="button"
+            className="btn btn-secondary"
+            id="filterBtn"
+            onClick={this.showFilter}
           >
             Filter
           </button>
@@ -411,19 +422,17 @@ class DisplayWorkouts extends React.Component {
                 value="otherUser"
               />
               <label htmlFor="otherUserFilter"> Other Users </label>
-             
             </form>
           ) : null}
         </div>
 
-        {this.state.myWorkouts.map((data, index) => (
+        {this.state.myWorkouts.map((data, index) =>
           this.displayMyWorkout(data, index)
-        ))}
+        )}
 
-        {this.state.sharedWorkouts.map((data, index) => (
+        {this.state.sharedWorkouts.map((data, index) =>
           this.displaySharedWorkout(data, index)
-        ))}
-         
+        )}
       </div>
     );
   }
