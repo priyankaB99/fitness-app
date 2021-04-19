@@ -108,8 +108,6 @@ class MyProfile extends React.Component {
               currentComponent.setState({ favorites: favoriteWorkouts });
             });
           });
-
-        //add fitness goal
       } else {
         console.log("signed out");
       }
@@ -210,20 +208,41 @@ class MyProfile extends React.Component {
         </div>
         <div id="goals" class="workout">
           <h3 className="mb-3"> Fitness Goals </h3>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            id="addGoal"
-            onClick={this.showGoalForm}
-          >
-            Add Goal
-          </button>
+
           {this.state.addGoalOpen ? (
-            <form onChange={this.changeHandler} onSubmit={this.submitHandler}>
-              <input type="text" name="goalToAdd" className="input-box" placeholder="Enter Goal" />
-              <input type="submit" className="my-2 btn btn-secondary" value="Add" />
-            </form>
-          ) : null}
+            <div>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                id="addGoal"
+                onClick={this.showGoalForm}
+              >
+                Close
+              </button>
+              <form onChange={this.changeHandler} onSubmit={this.submitHandler}>
+                <input
+                  type="text"
+                  name="goalToAdd"
+                  className="input-box"
+                  placeholder="Enter Goal"
+                />
+                <input
+                  type="submit"
+                  className="my-2 btn btn-secondary"
+                  value="Add"
+                />
+              </form>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              id="addGoal"
+              onClick={this.showGoalForm}
+            >
+              Add Goal
+            </button>
+          )}
           <ol>
             {this.state.goals.map((data, index) => (
               <li key={data.goalId} id={data.goalId}>
@@ -237,10 +256,7 @@ class MyProfile extends React.Component {
           <div>
             {this.state.favorites.map((data, index) => (
               <div key={data.workoutId} id={data.workoutId}>
-                <div
-                  className="workoutName"
-                  onClick={this.showFavorite}
-                >
+                <div className="workoutName" onClick={this.showFavorite}>
                   {data.name}
                 </div>
                 {this.state.showWorkout ? (

@@ -4,6 +4,8 @@ import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
 import "../CSS/profile.css";
+import ShowFavorite from "./ShowFavorite";
+
 class UserProfile extends React.Component {
   constructor(props) {
     super(props);
@@ -15,9 +17,12 @@ class UserProfile extends React.Component {
       location: "",
       pic: "",
       favorites: [],
-      goals: "",
+      goals: [],
       displayUserId: this.props.displayUserId,
+      showWorkout: false,
     };
+    this.showFavorite = this.showFavorite.bind(this);
+    this.retrieveGoals = this.retrieveGoals.bind(this);
   }
 
   componentDidMount() {
@@ -76,23 +81,30 @@ class UserProfile extends React.Component {
               currentComponent.setState({ favorites: favoriteWorkouts });
             });
           });
-        let goalsRef = fire.database().ref("FitnessGoals/" + friendUser);
-        let goalsData = [];
-        goalsRef.once("value", function (data) {
-          let goalsFromDatabase = data.val();
-          for (const key in goalsFromDatabase) {
-            let eachGoal = { goal: goalsFromDatabase[key].goal, goalId: key };
-            goalsData.push(eachGoal);
-          }
-          currentComponent.setState({ goals: goalsData });
-        });
+        currentComponent.retrieveGoals(currentComponent.state.displayUserId);
       } else {
         console.log("signed out");
       }
     });
   }
 
-  showGoalForm(event) {}
+  showFavorite() {
+    this.setState({ showWorkout: !this.state.showWorkout });
+  }
+
+  retrieveGoals(userId) {
+    let currentComponent = this;
+    let goalsRef = fire.database().ref("FitnessGoals/" + userId);
+    let goalsData = [];
+    goalsRef.once("value", function (data) {
+      let goalsFromDatabase = data.val();
+      for (const key in goalsFromDatabase) {
+        let eachGoal = { goal: goalsFromDatabase[key].goal, goalId: key };
+        goalsData.push(eachGoal);
+      }
+      currentComponent.setState({ goals: goalsData });
+    });
+  }
 
   render() {
     return (
@@ -114,15 +126,28 @@ class UserProfile extends React.Component {
         </div>
         <div id="goals" class="workout">
           <h2> Fitness Goals </h2>
+          <ol>
+            {this.state.goals.map((data, index) => (
+              <li key={data.goalId} id={data.goalId}>
+                {data.goal}
+              </li>
+            ))}
+          </ol>
         </div>
         <div id="favWorkouts" class="workout">
-          <h2> Favorite Workouts</h2>
+          <h3 className="mb-3"> Favorite Workouts</h3>
           <div>
             {this.state.favorites.map((data, index) => (
               <div key={data.workoutId} id={data.workoutId}>
-                <div className="workoutHeader">
-                  <h3 id="workoutName">{data.name}</h3>
+                <div className="workoutName" onClick={this.showFavorite}>
+                  {data.name}
                 </div>
+                {this.state.showWorkout ? (
+                  <ShowFavorite
+                    closePopup={this.showFavorite}
+                    favoriteId={data.workoutId}
+                  />
+                ) : null}
               </div>
             ))}
           </div>
