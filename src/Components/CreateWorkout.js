@@ -215,6 +215,8 @@ class CreateWorkout extends React.Component {
                     <option value="reps"> reps </option>
                     <option value="secs"> seconds</option>
                     <option value="min"> minutes </option>
+                    <option value="miles"> miles </option>
+                    <option value="km"> km </option>
                   </select>
                   <button class="deleteExercise" onClick={this.deleteExercise}>
                     X
