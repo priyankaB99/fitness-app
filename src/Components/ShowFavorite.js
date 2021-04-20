@@ -14,12 +14,13 @@ class ShowFavorite extends React.Component {
       timeLength: "",
       notes: "",
       tags: [],
+      favoriteId: this.props.favoriteId,
     };
   }
 
   componentDidMount() {
     let currentComponent = this;
-    const favoriteId = this.props.favoriteId;
+    let favoriteId = this.props.favoriteId;
     fire.auth().onAuthStateChanged(function (user) {
       if (user) {
         let currentUser = fire.auth().currentUser.uid;
@@ -72,4 +73,4 @@ class ShowFavorite extends React.Component {
     );
   }
 }
-export default withRouter(ShowFavorite);
+export default ShowFavorite;

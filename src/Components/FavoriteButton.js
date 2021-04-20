@@ -9,34 +9,32 @@ class FavoriteButton extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      favorited: "",
       favId: this.props.favId,
     };
     this.favorite = this.favorite.bind(this);
     this.unfavorite = this.unfavorite.bind(this);
-    this.checkFavorites = this.checkFavorites.bind(this);
+    // this.checkFavorites = this.checkFavorites.bind(this);
   }
-  componentDidMount() {
-    this.checkFavorites();
-  }
-  checkFavorites() {
-    let currentComponent = this;
-    let currentUser = fire.auth().currentUser.uid;
-    let favoritesRef = fire.database().ref("Favorites/" + currentUser + "/");
-    favoritesRef.once("value", function (data) {
-      let info = data.val();
-      for (const key in info) {
-        if (info[key].workoutId === currentComponent.state.favId) {
-          currentComponent.setState({ favorited: true });
-        } else {
-          currentComponent.setState({ favorited: false });
-        }
-      }
-    });
-  }
+  // componentDidMount() {
+  //   this.checkFavorites();
+  // }
+  // checkFavorites() {
+  //   let currentComponent = this;
+  //   let currentUser = fire.auth().currentUser.uid;
+  //   let favoritesRef = fire.database().ref("Favorites/" + currentUser);
+  //   favoritesRef.once("value", function (data) {
+  //     let info = data.val();
+  //     for (const key in info) {
+  //       if (info[key].workoutId === currentComponent.state.favId) {
+  //         currentComponent.setState({ favorited: true });
+  //       } else {
+  //         currentComponent.setState({ favorited: false });
+  //       }
+  //     }
+  //   });
+  // }
   favorite(event) {
     let currentComponent = this;
-
     this.setState({ favorited: true });
     let currentUser = fire.auth().currentUser.uid;
     let workoutId = this.state.favId;
@@ -46,7 +44,7 @@ class FavoriteButton extends React.Component {
     let newFavoritesRef = favoritesRef.push();
     newFavoritesRef.set({ workoutId: workoutId }).then(() => {
       console.log("Workout successfully favorited");
-      currentComponent.checkFavorites();
+      this.props.reload();
     });
     // this.props.retrieveFavorites();
   }
@@ -75,16 +73,15 @@ class FavoriteButton extends React.Component {
           .ref("Favorites/" + currentUser + "/" + deletedId);
         deletedRef.remove().then(() => {
           console.log("Successfully unfavorited");
-          currentComponent.checkFavorites();
+          this.props.reload();
         });
-        // this.props.retrieveFavorites();
       });
   }
 
   render() {
     return (
       <div className="favoriteButtons">
-        {this.state.favorited ? (
+        {this.props.isFavorite ? (
           <button
             type="button"
             className="btn btn-secondary"

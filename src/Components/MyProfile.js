@@ -22,6 +22,7 @@ class MyProfile extends React.Component {
       goalToAdd: "",
       editInfoOpen: false,
       showWorkout: false,
+      selectedFavorite: "",
     };
 
     this.showGoalForm = this.showGoalForm.bind(this);
@@ -164,8 +165,11 @@ class MyProfile extends React.Component {
     this.setState({ editInfoOpen: !this.state.editInfoOpen });
   }
 
-  showFavorite() {
-    this.setState({ showWorkout: !this.state.showWorkout });
+  showFavorite(event) {
+    this.setState({
+      showWorkout: !this.state.showWorkout,
+      selectedFavorite: event.target.parentNode.id,
+    });
   }
 
   // goalComplete(event) {
@@ -275,14 +279,14 @@ class MyProfile extends React.Component {
                 <div className="workoutName" onClick={this.showFavorite}>
                   {data.name}
                 </div>
-                {this.state.showWorkout ? (
-                  <ShowFavorite
-                    closePopup={this.showFavorite}
-                    favoriteId={data.workoutId}
-                  />
-                ) : null}
               </div>
             ))}
+            {this.state.showWorkout ? (
+              <ShowFavorite
+                closePopup={this.showFavorite}
+                favoriteId={this.state.selectedFavorite}
+              />
+            ) : null}
           </div>
         </div>
       </div>
