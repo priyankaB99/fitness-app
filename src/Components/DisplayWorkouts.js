@@ -19,6 +19,7 @@ class DisplayWorkouts extends React.Component {
       showSharePopup: false,
       showFilter: false,
       filters: [],
+      favorites: [],
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
     this.deleteWorkout = this.deleteWorkout.bind(this);
@@ -34,10 +35,29 @@ class DisplayWorkouts extends React.Component {
     this.renderFavoriteFunctions = this.renderFavoriteFunctions.bind(this);
     this.displayMyWorkout = this.displayMyWorkout.bind(this);
     this.displaySharedWorkout = this.displaySharedWorkout.bind(this);
+    this.retrieveFavorites = this.retrieveFavorites.bind(this);
   }
 
   componentDidMount() {
     this.retrieveWorkouts();
+    this.retrieveFavorites();
+  }
+  retrieveFavorites() {
+    fire.auth().onAuthStateChanged((user) => {
+      if (user) {
+        let currentComponent = this;
+        let currentUser = fire.auth().currentUser.uid;
+        let favoritesRef = fire.database().ref("Favorites/" + currentUser);
+        let favoritesData = [];
+        favoritesRef.once("value", function (data) {
+          let info = data.val();
+          for (const key in info) {
+            favoritesData.push(info[key].workoutId);
+          }
+          currentComponent.setState({ favorites: favoritesData });
+        });
+      }
+    });
   }
 
   retrieveWorkouts() {
@@ -84,37 +104,6 @@ class DisplayWorkouts extends React.Component {
     });
   }
 
-  // retrieveFilteredWorkouts(isShared) {
-  //   fire.auth().onAuthStateChanged((user) => {
-  //     if (user) {
-  //       let currentUser = fire.auth().currentUser.uid;
-  //       let workoutsRef = fire.database().ref("Workouts");
-  //       let myWorkouts = [];
-  //       let sharedWorkouts = [];
-  //       workoutsRef.once("value", (data) => {
-  //         let workoutsFromDatabase = data.val();
-
-  //         //iterates through the returned json object
-  //         for (const key in workoutsFromDatabase) {
-  //           if (workoutsFromDatabase[key].creatorId === currentUser) {
-  //             let workout = this.createWorkoutDiv(
-  //               workoutsFromDatabase,
-  //               key,
-  //               false
-  //             );
-  //             myWorkouts.push(workout);
-  //           }
-  //         }
-  //         this.setState({
-  //           myWorkouts: myWorkouts,
-  //           sharedWorkouts: sharedWorkouts,
-  //         });
-  //       });
-  //     } else {
-  //       console.log("signed out");
-  //     }
-  //   });
-  // }
   createWorkoutDiv(data, key, isShared) {
     if (isShared === true) {
       return {
@@ -302,7 +291,23 @@ class DisplayWorkouts extends React.Component {
 
   renderFavoriteFunctions(workoutId) {
     let favId = workoutId;
-    return <FavoriteButton favId={favId} />;
+    if (this.state.favorites.includes(workoutId)) {
+      return (
+        <FavoriteButton
+          favId={favId}
+          isFavorite={true}
+          reload={this.retrieveFavorites}
+        />
+      );
+    } else {
+      return (
+        <FavoriteButton
+          favId={favId}
+          isFavorite={false}
+          reload={this.retrieveFavorites}
+        />
+      );
+    }
   }
 
   renderAdminFunctions() {

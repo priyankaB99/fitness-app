@@ -20,6 +20,7 @@ class UserProfile extends React.Component {
       goals: [],
       displayUserId: this.props.displayUserId,
       showWorkout: false,
+      selectedFavorite: "",
     };
     this.showFavorite = this.showFavorite.bind(this);
     this.retrieveGoals = this.retrieveGoals.bind(this);
@@ -88,8 +89,11 @@ class UserProfile extends React.Component {
     });
   }
 
-  showFavorite() {
-    this.setState({ showWorkout: !this.state.showWorkout });
+  showFavorite(event) {
+    this.setState({
+      showWorkout: !this.state.showWorkout,
+      selectedFavorite: event.target.parentNode.id,
+    });
   }
 
   retrieveGoals(userId) {
@@ -145,7 +149,7 @@ class UserProfile extends React.Component {
                 {this.state.showWorkout ? (
                   <ShowFavorite
                     closePopup={this.showFavorite}
-                    favoriteId={data.workoutId}
+                    favoriteId={this.state.selectedFavorite}
                   />
                 ) : null}
               </div>
