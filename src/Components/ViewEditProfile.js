@@ -98,7 +98,7 @@ class ViewEditProfile extends React.Component {
 
   render() {
     return (
-      <div className="popup" id="editProfile">
+      <div className="popup" id="editProfBox">
         <p className="close" onClick={this.props.closePopup}>
           x
         </p>

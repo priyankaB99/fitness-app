@@ -26,9 +26,14 @@ class FriendsList extends React.Component {
     this.rejectRequest = this.rejectRequest.bind(this);
     this.openCalendar = this.openCalendar.bind(this);
     this.openProfile = this.openProfile.bind(this);
+    this.load = this.load.bind(this);
   }
 
   componentDidMount() {
+    this.load();
+  }
+
+  load() {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
       if (user) {
@@ -80,7 +85,6 @@ class FriendsList extends React.Component {
       }
     });
   }
-
   changeHandler(event) {
     event.preventDefault();
     this.setState({ [event.target.name]: event.target.value });
@@ -261,6 +265,7 @@ class FriendsList extends React.Component {
           });
           alert("Friend has been added!");
           this.setState(this.state);
+          this.load();
         });
       })
       .catch((error) => {
@@ -293,6 +298,7 @@ class FriendsList extends React.Component {
         otherUserRef.remove();
         alert("Friend request was deleted!");
         this.setState(this.state);
+        this.load();
       })
       .catch((error) => {
         console.log("Accept Request:", error);
@@ -303,7 +309,8 @@ class FriendsList extends React.Component {
     let index = event.target.parentNode.dataset.index;
     let currentFriendList = this.state.friendList;
     currentFriendList[index].profileOpen = false;
-    currentFriendList[index].calendarOpen = !currentFriendList[index].calendarOpen;
+    currentFriendList[index].calendarOpen = !currentFriendList[index]
+      .calendarOpen;
     this.setState({
       friendList: currentFriendList,
     });
@@ -313,7 +320,8 @@ class FriendsList extends React.Component {
     let index = event.target.parentNode.dataset.index;
     let currentFriendList = this.state.friendList;
     currentFriendList[index].calendarOpen = false;
-    currentFriendList[index].profileOpen = !currentFriendList[index].profileOpen;
+    currentFriendList[index].profileOpen = !currentFriendList[index]
+      .profileOpen;
     this.setState({
       friendList: currentFriendList,
     });
@@ -330,8 +338,9 @@ class FriendsList extends React.Component {
         <div className="row">
           <div className="pl-0 col-8">
             <div className="friends-box workout">
-              {(this.state.friendList.length == 0) &&
-              <h5>Send a friend request to share workouts and events!</h5>}
+              {this.state.friendList.length == 0 && (
+                <h5>Send a friend request to share workouts and events!</h5>
+              )}
               {this.state.friendList.map((data, index) => (
                 <div data-index={index}>
                   <p key={data.key}>
