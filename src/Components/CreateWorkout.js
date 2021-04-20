@@ -213,6 +213,8 @@ class CreateWorkout extends React.Component {
                     <option value="reps"> reps </option>
                     <option value="secs"> seconds</option>
                     <option value="min"> minutes </option>
+                    <option value="miles"> miles </option>
+                    <option value="km"> km </option>
                   </select>
                   <button class="deleteExercise" onClick={this.deleteExercise}>
                     X
@@ -232,7 +234,7 @@ class CreateWorkout extends React.Component {
 
           {/* "Tags" Source: https://dev.to/prvnbist/create-a-tags-input-component-in-reactjs-ki */}
           <label htmlFor="tags"> Tags: </label>
-          <p> Group each workout using tags (ex. "easy", "abs", "cardio")</p>
+          <p> Group each workout using tags (ex. easy, abs, cardio)</p>
           <div className="tags-input">
             <ul id="tags">
               {this.state.tags.map((tag, index) => (

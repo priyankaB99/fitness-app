@@ -6,6 +6,7 @@ import { withRouter } from "react-router-dom";
 import "../CSS/workouts.css";
 import EditWorkout from "./EditWorkout";
 import ShareWorkout from "./ShareWorkout";
+import DeleteWorkout from "./DeleteWorkout";
 import FavoriteButton from "./FavoriteButton";
 
 class DisplayWorkouts extends React.Component {
@@ -18,11 +19,12 @@ class DisplayWorkouts extends React.Component {
       showEditPopup: false,
       showSharePopup: false,
       showFilter: false,
+      showConfirmDelete: false,
       filters: [],
       favorites: [],
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
-    this.deleteWorkout = this.deleteWorkout.bind(this);
+    // this.deleteWorkout = this.deleteWorkout.bind(this);
     this.toggleEditWorkout = this.toggleEditWorkout.bind(this);
     this.showFilter = this.showFilter.bind(this);
     this.filterChange = this.filterChange.bind(this);
@@ -36,6 +38,7 @@ class DisplayWorkouts extends React.Component {
     this.displayMyWorkout = this.displayMyWorkout.bind(this);
     this.displaySharedWorkout = this.displaySharedWorkout.bind(this);
     this.retrieveFavorites = this.retrieveFavorites.bind(this);
+    this.toggleDeleteWorkout = this.toggleDeleteWorkout.bind(this);
   }
 
   componentDidMount() {
@@ -128,21 +131,31 @@ class DisplayWorkouts extends React.Component {
     }
   }
 
-  deleteWorkout(event) {
-    let workoutsRef = fire.database().ref("Workouts/");
-    workoutsRef.off("value");
+  //should add remove workout option for shared workouts
+  // deleteWorkout(event) {
+  //   let workoutsRef = fire.database().ref("Workouts/");
+  //   workoutsRef.off("value");
+  //   let workoutId = event.target.parentNode.parentNode.parentNode.id;
+  //   console.log(workoutId);
+  //   let deleteWorkoutRef = fire.database().ref("Workouts/" + workoutId);
+  //   deleteWorkoutRef.remove();
+  //   let changedWorkouts = this.state.myWorkouts;
+  //   let deletedWorkoutIndex = "";
+  //   for (const key in changedWorkouts) {
+  //     if (changedWorkouts[key].workoutId === workoutId) {
+  //       deletedWorkoutIndex = key;
+  //     }
+  //   }
+  //   changedWorkouts.splice(deletedWorkoutIndex, 1);
+  //   this.setState({ myWorkouts: changedWorkouts });
+  // }
+
+  toggleDeleteWorkout(event) {
     let workoutId = event.target.parentNode.parentNode.id;
-    let deleteWorkoutRef = fire.database().ref("Workouts/" + workoutId);
-    deleteWorkoutRef.remove();
-    let changedWorkouts = this.state.myWorkouts;
-    let deletedWorkoutIndex = "";
-    for (const key in changedWorkouts) {
-      if (changedWorkouts[key].workoutId === workoutId) {
-        deletedWorkoutIndex = key;
-      }
-    }
-    changedWorkouts.splice(deletedWorkoutIndex, 1);
-    this.setState({ myWorkouts: changedWorkouts });
+    this.setState({
+      showConfirmDelete: !this.state.showConfirmDelete,
+      selectedWorkout: workoutId,
+    });
   }
 
   //Create pop-up of event details
@@ -317,10 +330,11 @@ class DisplayWorkouts extends React.Component {
           type="button"
           className="btn btn-secondary"
           id="deleteBtn"
-          onClick={this.deleteWorkout}
+          onClick={this.toggleDeleteWorkout}
         >
           Delete
         </button>
+
         <button
           type="button"
           className="btn btn-secondary"
@@ -382,6 +396,14 @@ class DisplayWorkouts extends React.Component {
         {this.state.showSharePopup ? (
           <ShareWorkout
             closePopup={this.toggleShareWorkout}
+            retrieveWorkouts={this.retrieveWorkouts}
+            selectedWorkout={this.state.selectedWorkout}
+          />
+        ) : null}
+
+        {this.state.showConfirmDelete ? (
+          <DeleteWorkout
+            closePopup={this.toggleDeleteWorkout}
             retrieveWorkouts={this.retrieveWorkouts}
             selectedWorkout={this.state.selectedWorkout}
           />
