@@ -5,7 +5,6 @@ import "firebase/database";
 import "../CSS/ShareWorkout.css";
 import { keyframes } from "styled-components";
 
-
 //Code Resources
 // -https://codepen.io/bastianalbers/pen/PWBYvz?editors=0110
 
@@ -22,7 +21,7 @@ class ShareWorkout extends React.Component {
       notSharedFriends: [], //people have not yet shared workout with
       toShareWith: "", //user ID of friend that has been selected to share with
       eventKey: this.props.selectedWorkout.eventKey,
-      warning: false
+      warning: false,
     };
     this.parseWorkoutData = this.parseWorkoutData.bind(this);
     this.parseFriends = this.parseFriends.bind(this);
@@ -38,7 +37,7 @@ class ShareWorkout extends React.Component {
       // User is signed in
       if (user) {
         this.setState({
-          uid: user.uid
+          uid: user.uid,
         });
         this.parseWorkoutData();
       } else {
@@ -57,7 +56,7 @@ class ShareWorkout extends React.Component {
       if (workoutData) {
         this.setState({
           workoutName: workoutData.name,
-          workoutUsers: Object.values(workoutData.users)
+          workoutUsers: Object.values(workoutData.users),
         });
       } else {
         console.log("Workout No Longer Exists");
@@ -67,88 +66,111 @@ class ShareWorkout extends React.Component {
   }
 
   //finds user's current friends
-  parseFriends(){    
-    let friendListRef = fire.database().ref("FriendList/" + this.state.uid + "/Friends");
+  parseFriends() {
+    let friendListRef = fire
+      .database()
+      .ref("FriendList/" + this.state.uid + "/Friends");
     let allFriends = [];
     friendListRef.once("value", (data) => {
-      data.forEach(function(friend) {
+      data.forEach(function (friend) {
         let currentFriend = friend.val();
         let friendToPush = {
           id: currentFriend.friendId,
-          username: currentFriend.friendUsername
+          username: currentFriend.friendUsername,
         };
         allFriends.push(friendToPush);
-      });  
-      this.setState({
-        friends: allFriends,
-        toShareWith: allFriends[0].id //set default to first option on dropdown menu
       });
+      if (allFriends.length === 0) {
+        this.setState({ friends: allFriends });
+      } else {
+        this.setState({
+          friends: allFriends,
+          toShareWith: allFriends[0].id, //set default to first option on dropdown menu
+        });
+      }
+
       this.determineShareList();
     });
   }
 
-   //FINISH FUNCTIONALITY
+  //FINISH FUNCTIONALITY
   //goes through friends list to see who workout has been shared with and who hasn't
-  determineShareList(){
-    let notSharedList = []; 
-    let alreadySharedList = []; 
-    this.state.friends.forEach( (friend) => {
-      this.state.workoutUsers.includes(friend.id) ? 
-        alreadySharedList.push(friend.username) 
+  determineShareList() {
+    let notSharedList = [];
+    let alreadySharedList = [];
+    this.state.friends.forEach((friend) => {
+      this.state.workoutUsers.includes(friend.id)
+        ? alreadySharedList.push(friend.username)
         : notSharedList.push(friend.username);
     });
     this.setState({
       sharedFriends: alreadySharedList,
-      notSharedFriends: notSharedList
-    })
-  }
-  
-  //allows user to select which friend to share with and option to submit
-  toShareList(){
-    
-    return(
-      <div>
-        <select name="toShare" onChange={this.changeHandler}>
-          {this.state.friends.map((friend, index) => 
-            <option  value={friend.id} key={index}>{friend.username}</option>
-          )}
-        </select>
-      </div>
-    );   
+      notSharedFriends: notSharedList,
+    });
   }
 
-   //users who have already been shared with
-  sharedList(){
-    return(
+  //allows user to select which friend to share with and option to submit
+  toShareList() {
+    return (
+      <div>
+        {this.state.friends.length > 0 ? (
+          <div>
+            <select name="toShare" onChange={this.changeHandler}>
+              {this.state.friends.map((friend, index) => (
+                <option value={friend.id} key={index}>
+                  {friend.username}
+                </option>
+              ))}
+            </select>
+            <input
+              type="button"
+              value="Share"
+              onClick={this.shareHandler}
+            ></input>
+          </div>
+        ) : (
+          <strong>
+            {" "}
+            You currently have no friends. Add some friends to begin sharing!{" "}
+          </strong>
+        )}
+      </div>
+    );
+  }
+
+  //users who have already been shared with
+  sharedList() {
+    return (
       <div>
         <ul>
-          {this.state.sharedFriends.map( (friend, index) =>
+          {this.state.sharedFriends.map((friend, index) => (
             <li key={index}>{friend}</li>
-          )}
+          ))}
         </ul>
       </div>
     );
   }
 
   //sets state whenever dropdown option is selected
-  changeHandler(event){
+  changeHandler(event) {
     this.setState({
-      toShareWith: event.target.value
-    })
+      toShareWith: event.target.value,
+    });
   }
 
-  //updates "shared with" list under the specified workout in Firebase w/selected user 
-  shareHandler(){
-    if(this.state.workoutUsers.includes(this.state.toShareWith)){
-      this.setState({warning: true})
-    }
-    else{
-      this.setState({warning: false})
-      let shareRef = fire.database().ref("Workouts/" + this.state.workout + "/users");
+  //updates "shared with" list under the specified workout in Firebase w/selected user
+  shareHandler() {
+    if (this.state.workoutUsers.includes(this.state.toShareWith)) {
+      this.setState({ warning: true });
+    } else {
+      this.setState({ warning: false });
+      let shareRef = fire
+        .database()
+        .ref("Workouts/" + this.state.workout + "/users");
       shareRef.once("value", (data) => {
-          let sharedUsers = data.val();
-          sharedUsers.push(this.state.toShareWith); //add new user to shared list
-          shareRef.set(sharedUsers);
+        let sharedUsers = data.val();
+        sharedUsers.push(this.state.toShareWith); //add new user to shared list
+        shareRef.set(sharedUsers);
       });
       this.parseWorkoutData();
     }
@@ -161,26 +183,25 @@ class ShareWorkout extends React.Component {
           <p className="close" onClick={this.props.closePopup}>
             x
           </p>
-        </div>    
+        </div>
 
         <h2>Share "{this.state.workoutName}"</h2>
-        <p>Shared with:</p>    
+        <p>Shared with:</p>
 
-        {this.sharedList()} 
+        {this.sharedList()}
 
-        <p>Share with:</p>       
+        <p>Share with:</p>
         {this.toShareList()}
 
         <br></br>
 
-        <input type="button" value="Share" onClick={this.shareHandler}></input>
-
-        {this.state.warning == true ? 
-          <p className="warning">Workout has already been shared with this user</p>  
-        :
+        {this.state.warning == true ? (
+          <p className="warning">
+            Workout has already been shared with this user
+          </p>
+        ) : (
           <p className="warning"></p>
-        }
-
+        )}
       </div>
     );
   }

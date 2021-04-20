@@ -3,6 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
+import "../CSS/profile.css";
 
 class ShowFavorite extends React.Component {
   constructor(props) {
@@ -38,7 +39,7 @@ class ShowFavorite extends React.Component {
   }
   render() {
     return (
-      <div id={this.state.workoutId} class="popup">
+      <div id={this.state.workoutId} class="popup" id="eachFavorite">
         <p className="close" onClick={this.props.closePopup}>
           x
         </p>
