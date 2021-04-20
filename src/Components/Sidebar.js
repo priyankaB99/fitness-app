@@ -134,7 +134,7 @@ class Sidebar extends React.Component {
         {this.state.loggedIn && (
           <div>
             <div className="sidebar-box">
-              <p>Welcome{" " + this.state.username}!</p>
+              <p>Welcome{this.state.username ? " " + this.state.username: ""}!</p>
               <button
                 type="button"
                 className="btn btn-light btn-sm"

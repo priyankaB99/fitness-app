@@ -374,16 +374,16 @@ class FriendsList extends React.Component {
               {this.state.friendRequests.map((data, index) => (
                 <div key={data.key} data-index={index}>
                   <p>
-                    {index} - {data.requestorUsername}
+                    {index + 1} - {data.requestorUsername}
                   </p>
                   <button
-                    className="btn btn-secondary"
+                    className="btn btn-secondary displayButtons"
                     onClick={(event) => this.acceptRequest(event)}
                   >
                     Accept
                   </button>
                   <button
-                    className="btn btn-secondary"
+                    className="btn btn-secondary displayButtons"
                     onClick={(event) => this.rejectRequest(event)}
                   >
                     Reject
