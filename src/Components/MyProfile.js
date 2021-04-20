@@ -30,6 +30,7 @@ class MyProfile extends React.Component {
     this.submitHandler = this.submitHandler.bind(this);
     this.retrieveGoals = this.retrieveGoals.bind(this);
     this.showFavorite = this.showFavorite.bind(this);
+    // this.goalComplete = this.goalComplete.bind(this);
   }
 
   componentDidMount() {
@@ -132,6 +133,7 @@ class MyProfile extends React.Component {
     newGoalRef
       .set({
         goal: this.state.goalToAdd,
+        // completed: "incomplete",
       })
       .then(() => {
         this.setState({ addGoalOpen: !this.state.addGoalOpen });
@@ -141,14 +143,17 @@ class MyProfile extends React.Component {
 
   retrieveGoals() {
     let currentComponent = this;
-
     let currentUser = fire.auth().currentUser.uid;
     let goalsRef = fire.database().ref("FitnessGoals/" + currentUser);
     let goalsData = [];
     goalsRef.once("value", function (data) {
       let goalsFromDatabase = data.val();
       for (const key in goalsFromDatabase) {
-        let eachGoal = { goal: goalsFromDatabase[key].goal, goalId: key };
+        let eachGoal = {
+          goal: goalsFromDatabase[key].goal,
+          goalId: key,
+          // completed: goalsFromDatabase[key].completed,
+        };
         goalsData.push(eachGoal);
       }
       currentComponent.setState({ goals: goalsData });
@@ -163,6 +168,17 @@ class MyProfile extends React.Component {
     this.setState({ showWorkout: !this.state.showWorkout });
   }
 
+  // goalComplete(event) {
+  //   let goal = event.target.id;
+  //   let currentUser = fire.auth().currentUser.uid;
+  //   let goalsRef = fire
+  //     .database()
+  //     .ref("FitnessGoals/" + currentUser + "/" + goal);
+  //   goalsRef.update({ completed: "complete" }).then(() => {
+  //     this.retrieveGoals();
+  //   });
+  // }
+
   render() {
     return (
       <div id="myProfile">
@@ -176,7 +192,6 @@ class MyProfile extends React.Component {
               closePopup={this.showEditInfo}
             />
           ) : null}
-
           <img
             id="profPic"
             src={this.state.pic}
@@ -246,7 +261,8 @@ class MyProfile extends React.Component {
           <ol>
             {this.state.goals.map((data, index) => (
               <li key={data.goalId} id={data.goalId}>
-                {data.goal}
+                <p>{data.goal}</p>
+                {/* <button onClick={this.goalComplete}> Done </button> */}
               </li>
             ))}
           </ol>
