@@ -78,9 +78,10 @@ class ShareEvent extends React.Component {
         };
         allFriends.push(friendToPush);
       });  
+      let shareWithName = allFriends.length > 0 ? allFriends[0].id : "" //set default to first option on dropdown menu
       this.setState({
         friends: allFriends,
-        toShareWith: allFriends[0].id //set default to first option on dropdown menu
+        toShareWith: shareWithName
       });
       this.determineShareList();
     });

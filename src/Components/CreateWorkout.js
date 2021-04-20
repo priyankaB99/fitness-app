@@ -52,6 +52,7 @@ class CreateWorkout extends React.Component {
   }
 
   deleteExercise(event) {
+    console.log("ENTERING delete exercise")
     event.preventDefault();
     let arrayIdx = event.target.parentNode.getAttribute("data-arrayidx");
     let exercisesArray = [...this.state.exercises];
@@ -140,17 +141,18 @@ class CreateWorkout extends React.Component {
       event.target.value = "";
       console.log(this.state.tags);
       console.log(this.state);
-    } else if (event.target.className !== "tags") {
+    } else if (event.target.className !== "tags" && event.key !== "Enter") {
       this.setState({ [event.target.name]: event.target.value });
     }
   }
 
   render() {
     let { name, timeLength, exercises, notes } = this.state;
+    console.log("exercises", exercises);
     return (
       <div>
         <h2>Create a New Workout</h2>
-        <form id="createForm" onSubmit={this.submitHandler}>
+        <div id="createForm">
           <label htmlFor="name"> Workout Name: </label>
           <input
             type="text"
@@ -231,8 +233,7 @@ class CreateWorkout extends React.Component {
           </button>
 
           {/* "Tags" Source: https://dev.to/prvnbist/create-a-tags-input-component-in-reactjs-ki */}
-          <label htmlFor="tags"> Tags: </label>
-          <p> Group each workout using tags (ex. "easy", "abs", "cardio")</p>
+          <label htmlFor="tags"> Group each workout using tags (ex. "easy", "abs", "cardio"): </label>
           <div className="tags-input">
             <ul id="tags">
               {this.state.tags.map((tag, index) => (
@@ -252,7 +253,7 @@ class CreateWorkout extends React.Component {
               name="tags"
               className="tags"
               onKeyUp={this.changeHandler}
-              placeholder="Double click for tag options or enter your own"
+              placeholder='Double click for tag options or type in your own and hit "Enter"'
               list="tag-options"
             />
             <datalist id="tag-options">
@@ -278,10 +279,10 @@ class CreateWorkout extends React.Component {
             id="createBtn"
             className="btn btn-secondary"
             type="submit"
-            // onClick={this.submitHandler}
+            onClick={this.submitHandler}
             value="Create New Workout"
           />
-        </form>
+        </div>
       </div>
     );
   }

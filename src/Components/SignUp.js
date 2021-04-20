@@ -53,9 +53,11 @@ class SignUp extends React.Component {
       .auth()
       .createUserWithEmailAndPassword(this.state.email, this.state.password1)
       .then((authUser) => {
-        //send email to verify
+        // Update profile with display name
         authUser.user
-          .sendEmailVerification()
+          .updateProfile({
+            displayName: this.state.username,
+          })
           .then(() => {
             console.log("Email verification sent");
           })
@@ -66,18 +68,16 @@ class SignUp extends React.Component {
         // User has been logged in
         console.log(authUser);
 
-        // Update profile with display name
+        //send email to verify
         authUser.user
-          .updateProfile({
-            displayName: this.state.username,
-          })
+          .sendEmailVerification()
           .then(() => {
             // Update successful. Go home.
             console.log("success adding user");
+            this.props.history.push("/");
             alert("Success! Please check your email to verify your account.");
             // if(fire.auth().currentUser.emailVerified) {
-            this.setState({ warning: "" });
-            this.props.history.push("/");
+            // this.setState({ warning: "" });
             // }
             // else {
             //   this.props.history.push("/login");

@@ -84,7 +84,7 @@ class FavoriteButton extends React.Component {
         {this.props.isFavorite ? (
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-secondary displayButtons"
             id="unfavoriteBtn"
             onClick={this.unfavorite}
           >
@@ -93,7 +93,7 @@ class FavoriteButton extends React.Component {
         ) : (
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-secondary displayButtons"
             id="favoriteBtn"
             onClick={this.favorite}
           >

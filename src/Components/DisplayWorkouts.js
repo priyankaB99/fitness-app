@@ -315,7 +315,7 @@ class DisplayWorkouts extends React.Component {
       <div className="adminButtons">
         <button
           type="button"
-          className="btn btn-secondary"
+          className="btn btn-secondary displayButtons"
           id="deleteBtn"
           onClick={this.deleteWorkout}
         >
@@ -323,7 +323,7 @@ class DisplayWorkouts extends React.Component {
         </button>
         <button
           type="button"
-          className="btn btn-secondary"
+          className="btn btn-secondary displayButtons"
           id="editBtn"
           onClick={this.toggleEditWorkout}
         >
@@ -331,7 +331,7 @@ class DisplayWorkouts extends React.Component {
         </button>
         <button
           type="button"
-          className="btn btn-secondary"
+          className="btn btn-secondary displayButtons"
           id="shareBtn"
           onClick={this.toggleShareWorkout}
         >
