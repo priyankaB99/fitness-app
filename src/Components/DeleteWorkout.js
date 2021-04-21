@@ -47,7 +47,7 @@ class DeleteWorkout extends React.Component {
           </p>
         </div>
         <p> Are you sure you want to delete this workout? </p>
-        <button className="btn btn-secondary" onClick={this.deleteWorkout}>
+        <button className="btn btn-secondary mb-3" onClick={this.deleteWorkout}>
           Yes
         </button>
         <button className="btn btn-secondary" onClick={this.props.closePopup}>

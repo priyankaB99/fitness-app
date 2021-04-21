@@ -258,7 +258,7 @@ class DisplayWorkouts extends React.Component {
       <div className="header">
         <h3 className="name">{data.name}</h3>
         <p className="length">Workout Length: {data.timeLength} min</p>
-        <p className="owner"> Owner: {data.owner} </p>
+        <p className="owner">Owner: {data.owner} </p>
       </div>
     );
   }
@@ -297,7 +297,9 @@ class DisplayWorkouts extends React.Component {
               </li>
             ))}
         </ul>
-        <p id="workoutNotes">Notes/Links: {data.notes}</p>
+        {data.notes && 
+          <p id="workoutNotes">Notes/Links: {data.notes}</p>
+        }
       </div>
     );
   }

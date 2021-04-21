@@ -11,3 +11,9 @@
     margin: 0 auto;
     text-align: center;
 }
+/* p {
+    margin-bottom: 5px !important;
+} */
+ol {
+    padding: 0 18px;
+}

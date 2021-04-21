@@ -45,7 +45,7 @@ class ShowFavorite extends React.Component {
           x
         </p>
         <h4> {this.state.name}</h4>
-        <p> Total Time: {this.state.timeLength} </p>
+        <p>Workout Length: {this.state.timeLength} </p>
         <table className="exercises">
           <tbody>
             {this.state.exercises &&
@@ -68,7 +68,9 @@ class ShowFavorite extends React.Component {
               </li>
             ))}
         </ul>
-        <p id="workoutNotes"> Notes/Links: {this.state.notes}</p>
+        {this.state.notes && 
+          <p id="workoutNotes"> Notes/Links: {this.state.notes}</p>
+        }
       </div>
     );
   }

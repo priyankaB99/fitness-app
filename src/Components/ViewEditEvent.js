@@ -122,8 +122,10 @@ class ViewEditEvent extends React.Component {
   displayNonEdit(){
     return(
       <div>
-        {this.formatDate() + " | " + this.formatTime()}
-        <div className="notes"> Notes: {this.state.workoutNotes}</div>
+        <p>{this.formatDate() + " | " + this.formatTime()}</p>
+        {this.state.workoutNotes &&
+          <div className="notes"> Notes: {this.state.workoutNotes}</div>
+        }
         {this.props.deleteEvent ? (
           <div>
             <button
@@ -213,7 +215,6 @@ class ViewEditEvent extends React.Component {
         <div className="name">
           <h2>{this.state.workoutName}</h2>
         </div>
-
         {this.state.editToggled ? this.displayEdit() : this.displayNonEdit()}
       </div>
     );
@@ -225,8 +226,10 @@ class ViewEditEvent extends React.Component {
         <div className="name">
           <h2>{this.state.workoutName}</h2>
         </div>
-        {this.formatDate() + " | " + this.formatTime()}
-        <div className="notes"> Notes: {this.state.workoutNotes}</div>
+        <p>{this.formatDate() + " | " + this.formatTime()}</p>
+        {this.state.workoutNotes &&
+          <div className="notes"> Notes: {this.state.workoutNotes}</div>
+        }
       </div>
     );
   }
@@ -282,7 +285,8 @@ class ViewEditEvent extends React.Component {
   formatExercises() {
     let exercises = this.state.workoutExercises;
     let formattedExercises = [];
-    formattedExercises = exercises.map((exercise, index) => (
+    if (exercises) {
+      formattedExercises = exercises.map((exercise, index) => (
       <div className="exercise">
         <div className="viewExerciseName">
           <b>{index + 1 + ". " + exercise.exerciseName}</b>
@@ -291,7 +295,9 @@ class ViewEditEvent extends React.Component {
           {exercise.qty} {exercise.unit}
         </div>
       </div>
-    ));
+      ));
+    }
+    
     return formattedExercises;
   }
 

@@ -138,24 +138,60 @@ class SignUp extends React.Component {
       <div>
         <h1 class="mb-4">Sign Up</h1>
         <div className="loginBox login">
-          <label htmlFor="firstName"> First Name: </label>
           <input
             id="firstName"
             name="firstName"
+            placeholder="First Name"
             value={firstName}
             onChange={this.onChange}
             type="text"
-          />{" "}
-          <br></br>
-          <label htmlFor="firstName"> Last Name: </label>
+            className="input-box"
+          />
           <input
             id="lastName"
             name="lastName"
+            placeholder="Last Name"
             value={lastName}
             onChange={this.onChange}
             type="text"
-          />{" "}
-          <br></br>
+            className="input-box"
+          />
+          <input
+            id="username"
+            name="username"
+            placeholder="Username"
+            value={username}
+            onChange={this.onChange}
+            type="text"
+            className="input-box"
+          />
+          <input
+            id="email"
+            name="email"
+            placeholder="Email Address"
+            value={email}
+            onChange={this.onChange}
+            type="text"
+            className="input-box"
+          />
+          <input
+            id="password1"
+            name="password1"
+            placeholder="Password"
+            value={password1}
+            onChange={this.onChange}
+            type="password"
+            className="input-box"
+          />
+          <input
+            id="password2"
+            name="password2"
+            placeholder="Confirm Password"
+            value={password2}
+            onChange={this.onChange}
+            type="password"
+            className="input-box"
+          />
           <label htmlFor="bday"> Date of Birth:</label>
           <input
             id="bday"
@@ -163,44 +199,8 @@ class SignUp extends React.Component {
             value={bday}
             onChange={this.onChange}
             type="date"
-          />{" "}
-          <br></br>
-          <label htmlFor="username"> Username:</label>
-          <input
-            id="username"
-            name="username"
-            value={username}
-            onChange={this.onChange}
-            type="text"
-          />{" "}
-          <br></br>
-          <label htmlFor="email"> Email Address:</label>
-          <input
-            id="email"
-            name="email"
-            value={email}
-            onChange={this.onChange}
-            type="text"
-          />{" "}
-          <br></br>
-          <label htmlFor="password1"> Password:</label>
-          <input
-            id="password1"
-            name="password1"
-            value={password1}
-            onChange={this.onChange}
-            type="password"
-          />{" "}
-          <br></br>
-          <label htmlFor="password2"> Confirm Password:</label>
-          <input
-            id="password2"
-            name="password2"
-            value={password2}
-            onChange={this.onChange}
-            type="password"
-          />{" "}
-          <br></br>
+            className="input-box text-left"
+          />
           <button
             className="btn btn-secondary"
             disabled={isInvalid}
@@ -211,7 +211,7 @@ class SignUp extends React.Component {
           {warning !== "" && <p>{warning}</p>}
           <br></br>
           {error && <p>{error.message}</p>}
-          <Link to="/login"> Log In </Link>
+          Back to <Link to="/login"> Log In </Link>
         </div>
       </div>
     );

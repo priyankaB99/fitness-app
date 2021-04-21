@@ -136,16 +136,16 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   color: #fff;
-  padding: 0 8px;
+  padding: 0 10px;
   font-size: 14px;
   list-style: none;
   border-radius: 6px;
   margin: 0 8px 8px 0;
   background: #0e0066;
 }
-.tag-title {
+/* .tag-title {
   margin-top: 3px;
-}
+} */
 
 .tag-close-icon {
   display: block;

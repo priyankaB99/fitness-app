@@ -238,7 +238,7 @@ class MyProfile extends React.Component {
               >
                 Close
               </button>
-              <form onChange={this.changeHandler} onSubmit={this.submitHandler}>
+              <form className="py-3" onChange={this.changeHandler} onSubmit={this.submitHandler}>
                 <input
                   type="text"
                   name="goalToAdd"

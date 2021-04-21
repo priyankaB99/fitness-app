@@ -113,8 +113,7 @@ class UserProfile extends React.Component {
   render() {
     return (
       <div>
-        <div id="profileBox" class="workout">
-          <h2> My Info</h2>
+        <div className="mt-3" id="profileBox">
           <img
             id="profPic"
             src={this.state.pic}
@@ -128,8 +127,8 @@ class UserProfile extends React.Component {
           <p> Birthday: {this.state.bday}</p>
           <p> Username: {this.state.username}</p>
         </div>
-        <div id="goals" class="workout">
-          <h2> Fitness Goals </h2>
+        <div id="goals">
+          <h3 className="mb-3">Fitness Goals</h3>
           <ol>
             {this.state.goals.map((data, index) => (
               <li key={data.goalId} id={data.goalId}>
@@ -138,7 +137,7 @@ class UserProfile extends React.Component {
             ))}
           </ol>
         </div>
-        <div id="favWorkouts" class="workout">
+        <div id="favWorkouts">
           <h3 className="mb-3"> Favorite Workouts</h3>
           <div>
             {this.state.favorites.map((data, index) => (

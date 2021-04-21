@@ -66,16 +66,16 @@ class Login extends React.Component {
             onChange={this.changeHandler}
             type="email"
             placeholder="Email"
-          />{" "}
-          <br></br>
+            className="input-box"
+          />
           <input
             name="password"
             value={password}
             onChange={this.changeHandler}
             type="password"
             placeholder="Password"
-          />{" "}
-          <br></br>
+            className="input-box"
+          />
           <button
             className="btn btn-secondary"
             disabled={isInvalid}
