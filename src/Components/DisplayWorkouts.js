@@ -9,6 +9,8 @@ import ShareWorkout from "./ShareWorkout";
 import DeleteWorkout from "./DeleteWorkout";
 import FavoriteButton from "./FavoriteButton";
 
+import CreateWorkout from "./CreateWorkout";
+
 class DisplayWorkouts extends React.Component {
   constructor(props) {
     super(props);
@@ -474,7 +476,7 @@ class DisplayWorkouts extends React.Component {
 
         {/**https://medium.com/@daniela.sandoval/creating-a-popup-window-using-js-and-react-4c4bd125da57 */}
         {this.state.showEditPopup ? (
-          <EditWorkout
+          <CreateWorkout
             closePopup={this.toggleEditWorkout}
             retrieveWorkouts={this.retrieveWorkouts}
             selectedWorkout={this.state.selectedWorkout}

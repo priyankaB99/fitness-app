@@ -26,6 +26,7 @@ class FriendsList extends React.Component {
     this.rejectRequest = this.rejectRequest.bind(this);
     this.openCalendar = this.openCalendar.bind(this);
     this.openProfile = this.openProfile.bind(this);
+    this.deleteFriend = this.deleteFriend.bind(this);
     this.load = this.load.bind(this);
   }
 
@@ -82,6 +83,7 @@ class FriendsList extends React.Component {
           });
       } else {
         // No user is signed in
+        currentComponent.props.history.push('/login');
       }
     });
   }
@@ -305,6 +307,40 @@ class FriendsList extends React.Component {
       });
   }
 
+  deleteFriend(event) {
+    let index = event.target.parentNode.dataset.index;
+    let currentFriendList = this.state.friendList;
+    let friendId = currentFriendList[index].friendId;
+    let friendKey = currentFriendList[index].key;
+    let currentComponent = this;
+
+    let currentUserRef = fire
+      .database()
+      .ref(
+        "FriendList/" +
+          currentComponent.state.uid +
+          "/Friends/" +
+          friendKey
+      );
+    console.log(friendId);
+    console.log(friendKey)
+    currentUserRef
+      .remove()
+      .then(() => {
+        console.log("should be removed");
+        let otherUserRef = fire
+          .database()
+          .ref("FriendList/" + friendId + "/Friends/" + friendKey);
+        otherUserRef.remove();
+        alert("Friend was deleted!");
+        this.setState(this.state);
+        this.load();
+      })
+      .catch((error) => {
+        console.log("Delete Friend:", error);
+      });
+  }
+
   openCalendar(event) {
     let index = event.target.parentNode.dataset.index;
     let currentFriendList = this.state.friendList;
@@ -342,10 +378,11 @@ class FriendsList extends React.Component {
                 <h5>Send a friend request to share workouts and events!</h5>
               )}
               {this.state.friendList.map((data, index) => (
-                <div data-index={index}>
-                  <p key={data.key}>
-                    {index + 1} - {data.friendUsername}
-                  </p>
+                <div className="listItemBox" data-index={index}>
+                  <strong key={data.key}>
+                    {data.friendUsername}
+                  </strong>
+                  <br></br>
                   <button
                     className="btn btn-secondary mr-2"
                     onClick={(event) => this.openCalendar(event)}
@@ -358,6 +395,12 @@ class FriendsList extends React.Component {
                   >
                     See Profile
                   </button>
+                  <button
+                    className="btn btn-secondary mr-2"
+                    onClick={(event) => this.deleteFriend(event)}
+                  >
+                    Delete Friend
+                  </button>
                   {data.profileOpen ? (
                     <UserProfile displayUserId={data.friendId} />
                   ) : null}
@@ -369,13 +412,14 @@ class FriendsList extends React.Component {
             </div>
           </div>
           <div className="pl-0 col">
-            <div className="workout">
+            <div id="friendRequestsList" className="workout">
               <h5>Requests</h5>
               {this.state.friendRequests.map((data, index) => (
-                <div key={data.key} data-index={index}>
-                  <p>
-                    {index + 1} - {data.requestorUsername}
-                  </p>
+                <div className="listItemBox" key={data.key} data-index={index}>
+                  <strong>
+                    {data.requestorUsername}
+                  </strong>
+                  <br></br>
                   <button
                     className="btn btn-secondary displayButtons"
                     onClick={(event) => this.acceptRequest(event)}
@@ -391,7 +435,7 @@ class FriendsList extends React.Component {
                 </div>
               ))}
             </div>
-            <div className="workout">
+            <div id="friendRequestBox" className="workout">
               <h5>Add Friend</h5>
               <div className="loginBox login">
                 <input

@@ -12,22 +12,29 @@ class CreateWorkout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      key: "",
       name: "",
       timeLength: "",
       exercises: [{ exerciseName: "", qty: "", unit: "reps" }],
       notes: "",
       tags: [],
       tagOptions: [],
+      popup: false
     };
     this.addExercise = this.addExercise.bind(this);
     this.removeTag = this.removeTag.bind(this);
     this.deleteExercise = this.deleteExercise.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
+    this.submitEdits = this.submitEdits.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
+    this.parseWorkoutData = this.parseWorkoutData.bind(this);
   }
 
   componentDidMount() {
     var currentComponent = this;
+
+    
+
     //retrieve current list of tags
     let tagRef = fire.database().ref("Tags/").orderByKey();
     tagRef.once("value", function (snapshot) {
@@ -37,6 +44,36 @@ class CreateWorkout extends React.Component {
         currentComponent.setState({
           tagOptions: keys,
         });
+      }
+    });
+
+    if (currentComponent.props) {
+      console.log(currentComponent.props.selectedWorkout)
+      this.parseWorkoutData()
+    }
+  }
+
+  parseWorkoutData() {
+    let workoutKey = this.props.selectedWorkout;
+    let workoutRef = fire.database().ref("Workouts/" + workoutKey);
+
+    workoutRef.once("value", (data) => {
+      //using arrow function => instead of function (data) preserves use of 'this' inside function
+      let workoutData = data.val();
+      if (workoutData) {
+        console.log(workoutData.exercises)
+        console.log(workoutData.tags)
+        this.setState({
+          key: workoutKey,
+          name: workoutData.name,
+          timeLength: workoutData.timeLength,
+          exercises: workoutData.exercises,
+          notes: workoutData.notes,
+          tags: workoutData.tags,
+          popup: true
+        });
+      } else {
+        console.log("Workout No Longer Exists");
       }
     });
   }
@@ -68,6 +105,27 @@ class CreateWorkout extends React.Component {
         ),
       ],
     }));
+  }
+
+  //submit edits to FireBase
+  submitEdits(event) {
+    event.preventDefault();
+    //reference to existing workout
+    let workoutRef = fire.database().ref("Workouts/" + this.state.key);
+    console.log(workoutRef);
+
+    workoutRef.update({
+      name: this.state.name,
+      timeLength: this.state.timeLength,
+      notes: this.state.notes,
+      exercises: this.state.exercises,
+      tags: this.state.tags
+    });
+    this.props.retrieveWorkouts();
+    console.log("successfully edited workout in database");
+    alert(
+      "Your workout has been edited!"
+    );
   }
 
   submitHandler(event) {
@@ -151,8 +209,14 @@ class CreateWorkout extends React.Component {
     let { name, timeLength, exercises, notes } = this.state;
     console.log("exercises", exercises);
     return (
-      <div>
-        <h2>Create a New Workout</h2>
+      <div className={this.state.popup ? "popup" : ""}>
+        {this.state.popup &&
+          <div>
+            <p className="close" onClick={this.props.closePopup}>
+              x
+            </p>
+          </div> 
+        }
         <div id="createForm">
           <label htmlFor="name"> Workout Name: </label>
           <input
@@ -285,8 +349,8 @@ class CreateWorkout extends React.Component {
             id="createBtn"
             className="btn btn-secondary"
             type="submit"
-            onClick={this.submitHandler}
-            value="Create New Workout"
+            onClick={this.state.popup ? this.submitEdits : this.submitHandler}
+            value={this.state.popup ? "Edit Workout" : "Create New Workout"}
           />
         </div>
       </div>

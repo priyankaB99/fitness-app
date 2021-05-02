@@ -51,6 +51,7 @@ class EditWorkout extends React.Component {
           workoutLength: workoutData.timeLength,
           workoutExercises: workoutData.exercises,
           workoutNotes: workoutData.notes,
+          workoutTags: workoutData.tags
         });
       } else {
         console.log("Workout No Longer Exists");
@@ -125,6 +126,7 @@ class EditWorkout extends React.Component {
           <input
             type="text"
             name="workoutName"
+            className="input-box"
             value={workoutName}
             onChange={this.changeHandler}
             required
@@ -133,6 +135,7 @@ class EditWorkout extends React.Component {
           <input
             type="number"
             name="workoutLength"
+            className="input-box"
             value={workoutLength}
             onChange={this.changeHandler}
             min="0"
@@ -202,6 +205,7 @@ class EditWorkout extends React.Component {
           <textarea
             type="textarea"
             name="workoutNotes"
+            className="input-box"
             value={workoutNotes}
             onChange={this.changeHandler}
           ></textarea>
