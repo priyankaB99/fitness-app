@@ -52,7 +52,7 @@ class CreateWorkout extends React.Component {
   }
 
   deleteExercise(event) {
-    console.log("ENTERING delete exercise")
+    console.log("ENTERING delete exercise");
     event.preventDefault();
     let arrayIdx = event.target.parentNode.getAttribute("data-arrayidx");
     let exercisesArray = [...this.state.exercises];
@@ -105,6 +105,7 @@ class CreateWorkout extends React.Component {
       newTagRef.set({
         workoutId: newWorkoutId,
         workoutName: workoutName,
+        users: [currentUserId],
       });
       console.log("should have added tag");
     }
@@ -235,7 +236,10 @@ class CreateWorkout extends React.Component {
           </button>
 
           {/* "Tags" Source: https://dev.to/prvnbist/create-a-tags-input-component-in-reactjs-ki */}
-          <label htmlFor="tags"> Group each workout using tags (ex. "easy", "abs", "cardio"): </label>
+          <label htmlFor="tags">
+            {" "}
+            Group each workout using tags (ex. "easy", "abs", "cardio"):{" "}
+          </label>
           <div className="tags-input">
             <ul id="tags">
               {this.state.tags.map((tag, index) => (

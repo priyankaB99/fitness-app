@@ -20,14 +20,15 @@ class DisplayWorkouts extends React.Component {
       showSharePopup: false,
       showFilter: false,
       showConfirmDelete: false,
-      filters: [],
+      filterBy: "",
       favorites: [],
+      tags: [],
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
     // this.deleteWorkout = this.deleteWorkout.bind(this);
     this.toggleEditWorkout = this.toggleEditWorkout.bind(this);
     this.showFilter = this.showFilter.bind(this);
-    this.filterChange = this.filterChange.bind(this);
+    this.filterByUser = this.filterByUser.bind(this);
     this.toggleShareWorkout = this.toggleShareWorkout.bind(this);
     this.createWorkoutDiv = this.createWorkoutDiv.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
@@ -39,6 +40,8 @@ class DisplayWorkouts extends React.Component {
     this.displaySharedWorkout = this.displaySharedWorkout.bind(this);
     this.retrieveFavorites = this.retrieveFavorites.bind(this);
     this.toggleDeleteWorkout = this.toggleDeleteWorkout.bind(this);
+    this.renderRemoveFunction = this.renderRemoveFunction.bind(this);
+    this.removeShared = this.removeShared.bind(this);
   }
 
   componentDidMount() {
@@ -185,7 +188,7 @@ class DisplayWorkouts extends React.Component {
 
   //CAN MAKE THIS MORE EFFICIENT with "shared" attribute (see createWorkoutDiv function)
   //retrieve filtered creator element
-  filterChange(event) {
+  filterByUser(event) {
     if (event.target.value === "none") {
       this.retrieveWorkouts();
     } else if (event.target.value === "currentUser") {
@@ -297,9 +300,7 @@ class DisplayWorkouts extends React.Component {
               </li>
             ))}
         </ul>
-        {data.notes && 
-          <p id="workoutNotes">Notes/Links: {data.notes}</p>
-        }
+        {data.notes && <p id="workoutNotes">Notes/Links: {data.notes}</p>}
       </div>
     );
   }
@@ -357,6 +358,90 @@ class DisplayWorkouts extends React.Component {
     );
   }
 
+  renderRemoveFunction() {
+    return (
+      <div className="removeBtn">
+        <button
+          type="button"
+          className="btn btn-secondary displayButtons"
+          onClick={this.removeShared}
+        >
+          Remove
+        </button>
+      </div>
+    );
+  }
+
+  removeShared(event) {
+    let workoutId = event.target.parentNode.parentNode.id;
+    fire.auth().onAuthStateChanged((user) => {
+      if (user) {
+        let currentComponent = this;
+        let currentUser = fire.auth().currentUser.uid;
+        let users = [];
+        let workoutsRef = fire.database().ref("Workouts/" + workoutId);
+        workoutsRef.once("value", function (data) {
+          users = data.val().users;
+          //search through old array for current user
+          let index = 0;
+          console.log(currentUser);
+          console.log(users);
+          for (let i in users) {
+            if (users[i] === currentUser) {
+              index = i;
+            }
+          }
+          users.splice(index, 1);
+          console.log(users);
+          workoutsRef.update({ users: users }).then(() => {
+            console.log("You have removed this shared workout.");
+            currentComponent.retrieveWorkouts();
+          });
+        });
+      }
+    });
+  }
+
+  onFilterChange = (event) => {
+    this.setState({ filterBy: event.target.value });
+  };
+
+  renderFilter = () => {
+    if (this.state.filterBy === "byUser") {
+      return (
+        <form onChange={this.filterByUser}>
+          <br></br>
+          <input
+            type="radio"
+            name="filter"
+            id="noFilter"
+            value="none"
+            defaultChecked
+          />
+          <label htmlFor="currentUserFilter"> None </label>
+          <br></br>
+
+          <input
+            type="radio"
+            name="filter"
+            id="currentUserFilter"
+            value="currentUser"
+          />
+          <label htmlFor="currentUserFilter"> Me </label>
+          <br></br>
+
+          <input
+            type="radio"
+            name="filter"
+            id="otherUserFilter"
+            value="otherUser"
+          />
+          <label htmlFor="otherUserFilter"> Other Users </label>
+        </form>
+      );
+    }
+  };
+
   displayMyWorkout(data, index) {
     return (
       <div className="workout owner" key={index} id={data.workoutId}>
@@ -376,6 +461,7 @@ class DisplayWorkouts extends React.Component {
         {this.renderHeader(data)}
         {this.renderExercises(data)}
         {this.renderTagsAndNotes(data)}
+        {this.renderRemoveFunction()}
         {this.renderFavoriteFunctions(data.workoutId)}
       </div>
     );
@@ -422,36 +508,21 @@ class DisplayWorkouts extends React.Component {
           </button>
 
           {this.state.showFilter ? (
-            <form onChange={this.filterChange}>
-              <strong> Filter by Creator:</strong>
-              <br></br>
-              <input
-                type="radio"
-                name="filter"
-                id="noFilter"
-                value="none"
-                defaultChecked
-              />
-              <label htmlFor="currentUserFilter"> None </label>
-              <br></br>
-
-              <input
-                type="radio"
-                name="filter"
-                id="currentUserFilter"
-                value="currentUser"
-              />
-              <label htmlFor="currentUserFilter"> Me </label>
-              <br></br>
-
-              <input
-                type="radio"
-                name="filter"
-                id="otherUserFilter"
-                value="otherUser"
-              />
-              <label htmlFor="otherUserFilter"> Other Users </label>
-            </form>
+            <div>
+              <strong> Filter by:</strong>
+              <select
+                type="select"
+                name="filterBy"
+                onChange={this.onFilterChange}
+              >
+                <option value="" hidden>
+                  Select a filter
+                </option>
+                <option value="byUser"> Creator </option>
+                <option value="byTag"> Tags </option>
+              </select>
+              {this.renderFilter()}
+            </div>
           ) : null}
         </div>
 
