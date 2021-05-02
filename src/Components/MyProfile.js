@@ -6,6 +6,8 @@ import { withRouter } from "react-router-dom";
 import "../CSS/profile.css";
 import ViewEditProfile from "./ViewEditProfile";
 import ShowFavorite from "./ShowFavorite";
+import ListGoal from "./ListGoal";
+
 class MyProfile extends React.Component {
   constructor(props) {
     super(props);
@@ -134,6 +136,7 @@ class MyProfile extends React.Component {
     newGoalRef
       .set({
         goal: this.state.goalToAdd,
+        completed: false,
         // completed: "incomplete",
       })
       .then(() => {
@@ -153,7 +156,7 @@ class MyProfile extends React.Component {
         let eachGoal = {
           goal: goalsFromDatabase[key].goal,
           goalId: key,
-          // completed: goalsFromDatabase[key].completed,
+          completed: goalsFromDatabase[key].completed,
         };
         goalsData.push(eachGoal);
       }
@@ -171,17 +174,6 @@ class MyProfile extends React.Component {
       selectedFavorite: event.target.parentNode.id,
     });
   }
-
-  // goalComplete(event) {
-  //   let goal = event.target.id;
-  //   let currentUser = fire.auth().currentUser.uid;
-  //   let goalsRef = fire
-  //     .database()
-  //     .ref("FitnessGoals/" + currentUser + "/" + goal);
-  //   goalsRef.update({ completed: "complete" }).then(() => {
-  //     this.retrieveGoals();
-  //   });
-  // }
 
   render() {
     return (
@@ -238,7 +230,11 @@ class MyProfile extends React.Component {
               >
                 Close
               </button>
-              <form className="py-3" onChange={this.changeHandler} onSubmit={this.submitHandler}>
+              <form
+                className="py-3"
+                onChange={this.changeHandler}
+                onSubmit={this.submitHandler}
+              >
                 <input
                   type="text"
                   name="goalToAdd"
@@ -264,10 +260,13 @@ class MyProfile extends React.Component {
           )}
           <ol>
             {this.state.goals.map((data, index) => (
-              <li key={data.goalId} id={data.goalId}>
-                <p>{data.goal}</p>
-                {/* <button onClick={this.goalComplete}> Done </button> */}
-              </li>
+              <ListGoal
+                key={data.goalId}
+                goalId={data.goalId}
+                goalText={data.goal}
+                reload={this.retrieveGoals}
+                completed={data.completed}
+              />
             ))}
           </ol>
         </div>

@@ -37,9 +37,7 @@
   bottom: 40%;
 }
 
-/* .complete {
+.completedGoal {
   text-decoration: line-through;
+  font-weight: bolder;
 }
-.incomplete {
-  text-decoration: none;
-} */
