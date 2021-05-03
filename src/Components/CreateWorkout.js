@@ -19,7 +19,7 @@ class CreateWorkout extends React.Component {
       notes: "",
       tags: [],
       tagOptions: [],
-      popup: false
+      popup: false,
     };
     this.addExercise = this.addExercise.bind(this);
     this.removeTag = this.removeTag.bind(this);
@@ -32,8 +32,6 @@ class CreateWorkout extends React.Component {
 
   componentDidMount() {
     var currentComponent = this;
-
-    
 
     //retrieve current list of tags
     let tagRef = fire.database().ref("Tags/").orderByKey();
@@ -48,8 +46,8 @@ class CreateWorkout extends React.Component {
     });
 
     if (currentComponent.props) {
-      console.log(currentComponent.props.selectedWorkout)
-      this.parseWorkoutData()
+      console.log(currentComponent.props.selectedWorkout);
+      this.parseWorkoutData();
     }
   }
 
@@ -61,8 +59,8 @@ class CreateWorkout extends React.Component {
       //using arrow function => instead of function (data) preserves use of 'this' inside function
       let workoutData = data.val();
       if (workoutData) {
-        console.log(workoutData.exercises)
-        console.log(workoutData.tags)
+        console.log(workoutData.exercises);
+        console.log(workoutData.tags);
         this.setState({
           key: workoutKey,
           name: workoutData.name,
@@ -70,7 +68,7 @@ class CreateWorkout extends React.Component {
           exercises: workoutData.exercises,
           notes: workoutData.notes,
           tags: workoutData.tags,
-          popup: true
+          popup: true,
         });
       } else {
         console.log("Workout No Longer Exists");
@@ -119,13 +117,11 @@ class CreateWorkout extends React.Component {
       timeLength: this.state.timeLength,
       notes: this.state.notes,
       exercises: this.state.exercises,
-      tags: this.state.tags
+      tags: this.state.tags,
     });
     this.props.retrieveWorkouts();
     console.log("successfully edited workout in database");
-    alert(
-      "Your workout has been edited!"
-    );
+    alert("Your workout has been edited!");
   }
 
   submitHandler(event) {
@@ -158,13 +154,13 @@ class CreateWorkout extends React.Component {
     for (let i = 0; i < tags.length; i++) {
       let newTagRef = fire
         .database()
-        .ref("Tags/" + tags[i])
+        .ref("Tags/" + tags[i] + "/" + currentUserId)
         .push();
       newTagRef.set({
         workoutId: newWorkoutId,
         workoutName: workoutName,
-        users: [currentUserId],
       });
+
       console.log("should have added tag");
     }
 
@@ -210,13 +206,13 @@ class CreateWorkout extends React.Component {
     console.log("exercises", exercises);
     return (
       <div className={this.state.popup ? "popup" : ""}>
-        {this.state.popup &&
+        {this.state.popup && (
           <div>
             <p className="close" onClick={this.props.closePopup}>
               x
             </p>
-          </div> 
-        }
+          </div>
+        )}
         <div id="createForm">
           <label htmlFor="name"> Workout Name: </label>
           <input
