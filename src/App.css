@@ -5,3 +5,8 @@
   margin-left: 225px;
   padding: 20px;
 }
+@media screen and (max-width: 550px) {
+  .main-content {
+      margin-left: 0 !important;
+    }
+}

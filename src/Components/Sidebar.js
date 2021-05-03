@@ -49,6 +49,7 @@ class Sidebar extends React.Component {
     super(props);
     this.state = {
       activePath: props.location.pathname,
+      showLinks: false,
       items: [
         {
           path:
@@ -82,6 +83,7 @@ class Sidebar extends React.Component {
       ],
     };
     this.logout = this.logout.bind(this);
+    this.toggleHamburgerLinks = this.toggleHamburgerLinks.bind(this);
   }
 
   onItemClick = (path) => {
@@ -112,6 +114,11 @@ class Sidebar extends React.Component {
     });
   }
 
+  toggleHamburgerLinks() {
+    this.setState({ showLinks: !this.state.showLinks });
+    console.log(this.state.showLinks);
+  }
+
   logout() {
     fire
       .auth()
@@ -129,40 +136,79 @@ class Sidebar extends React.Component {
   render() {
     const { items, activePath } = this.state;
     return (
-      <div className="sidebar">
-        <h3>Fitness App</h3>
-        {this.state.loggedIn && (
-          <div>
-            <div className="sidebar-box">
-              <p>Welcome{this.state.username ? " " + this.state.username: ""}!</p>
-              <button
-                type="button"
-                className="btn btn-light btn-sm"
-                onClick={this.logout}
-              >
-                {" "}
-                Sign Out{" "}
-              </button>
+      <div>
+        <div className="sidebar">
+          <h3>Fitness App</h3>
+          {this.state.loggedIn && (
+            <div>
+              <div className="sidebar-box">
+                <p>Welcome{this.state.username ? " " + this.state.username: ""}!</p>
+                <button
+                  type="button"
+                  className="btn btn-light btn-sm"
+                  onClick={this.logout}
+                >
+                  {" "}
+                  Sign Out{" "}
+                </button>
+              </div>
+              {items.map((item) => {
+                return (
+                  <NavItem
+                    path={item.path}
+                    name={item.name}
+                    css={item.css}
+                    onItemClick={this.onItemClick}
+                    active={item.path === activePath}
+                    key={item.key}
+                  />
+                );
+              })}
             </div>
-            {items.map((item) => {
-              return (
-                <NavItem
-                  path={item.path}
-                  name={item.name}
-                  css={item.css}
-                  onItemClick={this.onItemClick}
-                  active={item.path === activePath}
-                  key={item.key}
-                />
-              );
-            })}
+          )}
+          {(this.state.loggedIn && !this.state.isVerified) && (
+            <div id="verify-reminder-box">
+              Verify your email to finish setting up your account.
+            </div>
+          )}
+        </div>
+
+        <div id="hamburgerMenu">
+          <div class="topnav">
+          <h4 className="m-2">Fitness App</h4>
+            {this.state.showLinks ? 
+              <div>
+                  <button
+                    type="button"
+                    className="btn btn-light mx-2"
+                    onClick={this.logout}
+                    >{" "}
+                    Sign Out{" "}
+                  </button>
+                <div id="myLinks">
+                {items.map((item) => {
+                  return (
+                    <NavItem
+                      path={item.path}
+                      name={item.name}
+                      css={item.css}
+                      onItemClick={this.onItemClick}
+                      active={item.path === activePath}
+                      key={item.key}
+                    />
+                  );
+                })}
+                </div>
+              </div>
+              : 
+              null 
+            }
+            <a href="javascript:void(0);" class="icon" onClick={this.toggleHamburgerLinks}>
+              MENU
+            </a>
           </div>
-        )}
-        {(this.state.loggedIn && !this.state.isVerified) && (
-          <div id="verify-reminder-box">
-            Verify your email to finish setting up your account.
-          </div>
-        )}
+        </div>
+
       </div>
     );
   }

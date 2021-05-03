@@ -372,7 +372,7 @@ class FriendsList extends React.Component {
       <div>
         <h2>My Friends</h2>
         <div className="row">
-          <div className="pl-0 col-8">
+          <div className="pl-0 col-8-lg">
             <div className="friends-box workout">
               {this.state.friendList.length == 0 && (
                 <h5>Send a friend request to share workouts and events!</h5>
@@ -411,7 +411,7 @@ class FriendsList extends React.Component {
               ))}
             </div>
           </div>
-          <div className="pl-0 col">
+          <div className="pl-0 pr-0 col">
             <div id="friendRequestsList" className="workout">
               <h5>Requests</h5>
               {this.state.friendRequests.map((data, index) => (

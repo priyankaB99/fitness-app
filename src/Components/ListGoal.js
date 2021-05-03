@@ -75,15 +75,15 @@ class ListGoal extends React.Component {
           //if goal completed
           <div>
             <p className="completed"> {this.state.goalText}</p>
-            <button onClick={this.uncheckGoal}> Uncheck </button>
-            <button onClick={this.deleteGoal}> Delete </button>
+            <button className="btn btn-secondary mr-2 btn-sm" onClick={this.uncheckGoal}> Uncheck </button>
+            <button className="btn btn-secondary btn-sm" onClick={this.deleteGoal}> Delete </button>
           </div>
         ) : (
           //if goal incomplete
           <div>
             <p> {this.state.goalText}</p>
-            <button onClick={this.completeGoal}> Complete </button>
-            <button onClick={this.deleteGoal}> Delete </button>
+            <button className="btn btn-secondary mr-2 btn-sm" onClick={this.completeGoal}> Complete </button>
+            <button className="btn btn-secondary btn-sm" onClick={this.deleteGoal}> Delete </button>
           </div>
         )}
       </li>

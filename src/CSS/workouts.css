@@ -157,3 +157,8 @@ input[type="number"] {
 .tag-close-icon:focus {
   cursor: hover;
 }
+
+
+@media screen and (max-width: 550px) {
+  
+}

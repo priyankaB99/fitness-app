@@ -510,7 +510,7 @@ class DisplayWorkouts extends React.Component {
           </button>
 
           {this.state.showFilter ? (
-            <div>
+            <div className="py-3">
               <strong> Filter by:</strong>
               <select
                 type="select"

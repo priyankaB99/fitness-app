@@ -1,4 +1,5 @@
 .sidebar {
+    display: block;
     width: 225px;
     position: fixed;
     top: 0;
@@ -23,4 +24,60 @@
     margin: 15px 0;
     font-size: smaller;
     color: black;
+}
+
+#hamburgerMenu {
+    display: none;
+}
+ /* Style the navigation menu */
+ .topnav {
+    overflow: hidden;
+    background-color: #0e0066;
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: min-content;
+    min-height: 45.5px;
+
+    color: white;
+  }
+  
+  /* Hide the links inside the navigation menu (except for logo/home) */
+  /* .topnav #myLinks {
+    display: none;
+  } */
+  
+  /* Style navigation menu links */
+  .topnav a {
+    color: white;
+    padding: 10px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    display: block;
+  }
+  
+  /* Style the hamburger menu */
+  .topnav a.icon {
+    background: black;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  
+  /* Add a grey background color on mouse-over */
+  .topnav a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+
+
+@media screen and (max-width: 550px) {
+    #hamburgerMenu {
+        display: block;
+    }  
+    .sidebar{
+        display: none;
+    }
 }

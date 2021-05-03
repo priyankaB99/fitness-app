@@ -70,3 +70,10 @@
   margin-left: 10px;
   vertical-align: baseline;
 }
+
+
+@media screen and (max-width: 550px) {
+  .home-banner {
+    width: unset;
+  }
+}
