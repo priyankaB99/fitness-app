@@ -176,36 +176,40 @@ class Sidebar extends React.Component {
         <div id="hamburgerMenu">
           <div class="topnav">
           <h4 className="m-2">Fitness App</h4>
-            {this.state.showLinks ? 
-              <div>
-                  <button
-                    type="button"
-                    className="btn btn-light mx-2"
-                    onClick={this.logout}
-                    >{" "}
-                    Sign Out{" "}
-                  </button>
-                <div id="myLinks">
-                {items.map((item) => {
-                  return (
-                    <NavItem
-                      path={item.path}
-                      name={item.name}
-                      css={item.css}
-                      onItemClick={this.onItemClick}
-                      active={item.path === activePath}
-                      key={item.key}
-                    />
-                  );
-                })}
+          {this.state.loggedIn &&
+            <div>
+              {(this.state.showLinks) ? 
+                <div>
+                    <button
+                      type="button"
+                      className="btn btn-light mx-2"
+                      onClick={this.logout}
+                      >{" "}
+                      Sign Out{" "}
+                    </button>
+                  <div id="myLinks">
+                  {items.map((item) => {
+                    return (
+                      <NavItem
+                        path={item.path}
+                        name={item.name}
+                        css={item.css}
+                        onItemClick={this.onItemClick}
+                        active={item.path === activePath}
+                        key={item.key}
+                      />
+                    );
+                  })}
+                  </div>
                 </div>
-              </div>
-              : 
-              null 
-            }
-            <a href="javascript:void(0);" class="icon" onClick={this.toggleHamburgerLinks}>
-              MENU
-            </a>
+                : 
+                null 
+              }
+              <a href="javascript:void(0);" class="icon" onClick={this.toggleHamburgerLinks}>
+                MENU
+              </a>
+            </div>
+          }
           </div>
         </div>
 
