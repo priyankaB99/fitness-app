@@ -37,7 +37,7 @@
   bottom: 40%;
 }
 
-.completedGoal {
+.completed {
   text-decoration: line-through;
   font-weight: bolder;
 }

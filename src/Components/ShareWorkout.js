@@ -163,6 +163,7 @@ class ShareWorkout extends React.Component {
     if (this.state.workoutUsers.includes(this.state.toShareWith)) {
       this.setState({ warning: true });
     } else {
+      let currentComponent = this;
       this.setState({ warning: false });
       let shareRef = fire
         .database()
@@ -171,6 +172,24 @@ class ShareWorkout extends React.Component {
         let sharedUsers = data.val();
         sharedUsers.push(this.state.toShareWith); //add new user to shared list
         shareRef.set(sharedUsers);
+      });
+      //retrieve tags
+      let shareTagRef = fire
+        .database()
+        .ref("Workouts/" + this.state.workout + "/tags");
+      shareTagRef.once("value", function (data) {
+        let tags = data.val();
+        for (let i = 0; i < tags.length; i++) {
+          //make sure tags from shared workouts are set in database
+          let newTagRef = fire
+            .database()
+            .ref("Tags/" + tags[i] + "/" + currentComponent.state.toShareWith)
+            .push();
+          newTagRef.set({
+            workoutId: currentComponent.state.workout,
+            workoutName: currentComponent.state.workoutName,
+          });
+        }
       });
       this.parseWorkoutData();
     }

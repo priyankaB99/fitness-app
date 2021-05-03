@@ -25,6 +25,7 @@ class DisplayWorkouts extends React.Component {
       filterBy: "",
       favorites: [],
       tags: [],
+      filterTags: [],
     };
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
     // this.deleteWorkout = this.deleteWorkout.bind(this);
@@ -44,11 +45,13 @@ class DisplayWorkouts extends React.Component {
     this.toggleDeleteWorkout = this.toggleDeleteWorkout.bind(this);
     this.renderRemoveFunction = this.renderRemoveFunction.bind(this);
     this.removeShared = this.removeShared.bind(this);
+    this.retrieveTags = this.retrieveTags.bind(this);
   }
 
   componentDidMount() {
     this.retrieveWorkouts();
     this.retrieveFavorites();
+    this.retrieveTags();
   }
   retrieveFavorites() {
     fire.auth().onAuthStateChanged((user) => {
@@ -68,6 +71,27 @@ class DisplayWorkouts extends React.Component {
     });
   }
 
+  retrieveTags() {
+    fire.auth().onAuthStateChanged((user) => {
+      if (user) {
+        let currentComponent = this;
+        let currentUser = fire.auth().currentUser.uid;
+        let tagsRef = fire.database().ref("Tags/");
+        let tagsData = [];
+        tagsRef.once("value", function (data) {
+          let info = data.val();
+          for (const key in info) {
+            for (const name in info[key]) {
+              if (currentUser === name && !tagsData.includes(key)) {
+                tagsData.push(key);
+              }
+            }
+          }
+          currentComponent.setState({ tags: tagsData });
+        });
+      }
+    });
+  }
   retrieveWorkouts() {
     fire.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -441,6 +465,142 @@ class DisplayWorkouts extends React.Component {
           <label htmlFor="otherUserFilter"> Other Users </label>
         </form>
       );
+    } else if (this.state.filterBy === "byTag") {
+      return (
+        <form onChange={this.filterTagChange}>
+          {this.state.tags.map((tag, index) => (
+            <span key={index}>
+              <label>
+                <input
+                  type="checkbox"
+                  name="filterByTag"
+                  value={tag}
+                  id={tag}
+                />
+                {tag}
+              </label>
+            </span>
+          ))}
+        </form>
+      );
+    }
+  };
+
+  filterTagChange = (event) => {
+    if (
+      event.target.checked === true &&
+      !this.state.filterTags.includes(event.target.value)
+    ) {
+      this.setState(
+        {
+          filterTags: [...this.state.filterTags, event.target.value],
+        },
+        this.filterByTag
+      );
+    } else if (
+      event.target.checked === false &&
+      this.state.filterTags.includes(event.target.value)
+    ) {
+      let tags = this.state.filterTags;
+      let index = 0;
+      for (let i in tags) {
+        if (tags[i] === event.target.value) {
+          index = i;
+        }
+      }
+      tags.splice(index, 1);
+      this.setState({ filterTags: tags }, this.filterByTag);
+    }
+  };
+
+  filterByTag = () => {
+    if (this.state.filterTags.length === 0) {
+      this.retrieveWorkouts();
+    } else {
+      fire.auth().onAuthStateChanged((user) => {
+        if (user) {
+          let currentUser = fire.auth().currentUser.uid;
+          let workoutsRef = fire.database().ref("Workouts");
+          let myWorkouts = [];
+          let workoutIds = [];
+          let sharedWorkouts = [];
+          let tags = this.state.filterTags;
+          workoutsRef.once("value", (data) => {
+            let workoutsFromDatabase = data.val();
+
+            //iterates through the returned json object
+            for (const key in workoutsFromDatabase) {
+              if (workoutsFromDatabase[key].creatorId === currentUser) {
+                //create workout object
+                let workout = this.createWorkoutDiv(
+                  workoutsFromDatabase,
+                  key,
+                  false
+                );
+                //iterate through each workout's tags
+                for (let i in workoutsFromDatabase[key].tags) {
+                  if (tags.includes(workoutsFromDatabase[key].tags[i])) {
+                    workoutIds.push(workout.workoutId);
+                    //check for duplicate
+                    if (
+                      this.checkforDuplicates(workoutIds, workout.workoutId) ===
+                      false
+                    ) {
+                      myWorkouts.push(workout);
+                    }
+                  }
+                }
+              }
+              //shared workouts
+              else if (
+                workoutsFromDatabase[key].users.includes(currentUser) &&
+                workoutsFromDatabase[key].creatorId !== currentUser
+              ) {
+                //create workout object
+                let workout = this.createWorkoutDiv(
+                  workoutsFromDatabase,
+                  key,
+                  false
+                );
+                //iterate through each workout's tags
+                for (let i in workoutsFromDatabase[key].tags) {
+                  if (tags.includes(workoutsFromDatabase[key].tags[i])) {
+                    workoutIds.push(workout.workoutId);
+                    //check for duplicate
+                    if (
+                      this.checkforDuplicates(workoutIds, workout.workoutId) ===
+                      false
+                    ) {
+                      sharedWorkouts.push(workout);
+                    }
+                  }
+                }
+              }
+            }
+
+            this.setState({
+              myWorkouts: myWorkouts,
+              sharedWorkouts: sharedWorkouts,
+            });
+          });
+        } else {
+          console.log("signed out");
+        }
+      });
+    }
+  };
+
+  checkforDuplicates = (array, checkValue) => {
+    let count = 0;
+    for (let i in array) {
+      if (checkValue === array[i]) {
+        count++;
+      }
+    }
+    if (count <= 1) {
+      return false;
+    } else {
+      return true;
     }
   };
 
