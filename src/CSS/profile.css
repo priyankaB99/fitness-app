@@ -41,3 +41,7 @@
   text-decoration: line-through;
   font-weight: bolder;
 }
+
+li {
+  margin-bottom: 10px;
+}
