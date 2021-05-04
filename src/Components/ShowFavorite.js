@@ -38,6 +38,15 @@ class ShowFavorite extends React.Component {
       }
     });
   }
+
+  checkStringEmpty = (string) => {
+    if (string === "") {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   render() {
     return (
       <div id={this.state.workoutId} class="popup" id="eachFavorite">
@@ -54,8 +63,16 @@ class ShowFavorite extends React.Component {
                   <td>
                     <strong>{index + 1}:</strong> {exercise.exerciseName}{" "}
                   </td>
-                  <td>{exercise.qty}</td>
-                  <td> {exercise.unit}</td>
+                  {this.checkStringEmpty(exercise.sets) ? null : (
+                    <td>{exercise.sets} sets </td>
+                  )}
+                  <td>
+                    {exercise.qty} {exercise.unit}
+                  </td>
+
+                  {this.checkStringEmpty(exercise.weight) ? null : (
+                    <td>{exercise.sets} lbs </td>
+                  )}
                 </tr>
               ))}
           </tbody>
@@ -68,9 +85,9 @@ class ShowFavorite extends React.Component {
               </li>
             ))}
         </ul>
-        {this.state.notes && 
+        {this.state.notes && (
           <p id="workoutNotes"> Notes/Links: {this.state.notes}</p>
-        }
+        )}
       </div>
     );
   }

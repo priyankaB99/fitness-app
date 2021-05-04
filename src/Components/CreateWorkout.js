@@ -15,7 +15,9 @@ class CreateWorkout extends React.Component {
       key: "",
       name: "",
       timeLength: "",
-      exercises: [{ exerciseName: "", qty: "", unit: "reps" }],
+      exercises: [
+        { exerciseName: "", qty: "", unit: "reps", weight: "", sets: "" },
+      ],
       notes: "",
       tags: [],
       tagOptions: [],
@@ -81,7 +83,7 @@ class CreateWorkout extends React.Component {
     this.setState((prevState) => ({
       exercises: [
         ...prevState.exercises,
-        { exerciseName: "", qty: "", unit: "reps" },
+        { exerciseName: "", qty: "", unit: "reps", weight: "", sets: "" },
       ],
     }));
   }
@@ -175,7 +177,11 @@ class CreateWorkout extends React.Component {
   }
 
   changeHandler(event) {
-    if (["exerciseName", "qty", "unit"].includes(event.target.className)) {
+    if (
+      ["exerciseName", "qty", "unit", "weight", "sets"].includes(
+        event.target.className
+      )
+    ) {
       let exercises = [...this.state.exercises];
       exercises[event.target.dataset.id][event.target.className] =
         event.target.value;
@@ -237,6 +243,8 @@ class CreateWorkout extends React.Component {
             let exerciseId = `exerciseName-${idx}`;
             let qtyId = `qty-${idx}`;
             let unitId = `unit-${idx}`;
+            let weightId = `weight-${idx}`;
+            let setsId = `sets-${idx}`;
             return (
               <div key={idx} class="exercise-list">
                 <div className="eachExercise" data-arrayidx={idx}>
@@ -279,6 +287,29 @@ class CreateWorkout extends React.Component {
                     <option value="miles"> miles </option>
                     <option value="km"> km </option>
                   </select>
+                  <label htmlFor={weightId}> Weight (optional) in lbs: </label>
+                  <input
+                    type="number"
+                    name={weightId}
+                    data-id={idx}
+                    id={weightId}
+                    value={exercises[idx].weight}
+                    className="weight"
+                    onChange={this.changeHandler}
+                    min="0"
+                  />
+
+                  <label htmlFor={setsId}> Sets (optional): </label>
+                  <input
+                    type="number"
+                    name={setsId}
+                    data-id={idx}
+                    id={setsId}
+                    value={exercises[idx].sets}
+                    className="sets"
+                    onChange={this.changeHandler}
+                    min="0"
+                  />
                   <button class="deleteExercise" onClick={this.deleteExercise}>
                     X
                   </button>

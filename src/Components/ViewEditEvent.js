@@ -6,7 +6,6 @@ import "../CSS/ViewEditEvent.css";
 import { format, parse } from "date-fns";
 import ShareEvent from "./ShareEvent";
 
-
 //Code Resources
 // -https://codepen.io/bastianalbers/pen/PWBYvz?editors=0110
 
@@ -76,7 +75,7 @@ class ViewEditEvent extends React.Component {
           workoutExercises: workoutData.exercises,
           workoutNotes: workoutData.notes,
           warning: "",
-          workoutTags: workoutData.tags
+          workoutTags: workoutData.tags,
         });
       } else {
         if (this.state.otherUserEvent) {
@@ -84,8 +83,7 @@ class ViewEditEvent extends React.Component {
             warning:
               "The workout assigned to this event has been deleted by the owner.",
           });
-        }
-        else {
+        } else {
           this.setState({
             warning:
               "The workout assigned to this event has been deleted. Edit and choose a different workout or delete this event.",
@@ -112,20 +110,20 @@ class ViewEditEvent extends React.Component {
     }
   }
 
-  toggleShareEvent(){
+  toggleShareEvent() {
     this.setState({
       showSharePopup: !this.state.showSharePopup,
-    });    
+    });
   }
 
   //view when edit is not clicked
-  displayNonEdit(){
-    return(
+  displayNonEdit() {
+    return (
       <div>
         <p>{this.formatDate() + " | " + this.formatTime()}</p>
-        {this.state.workoutNotes &&
+        {this.state.workoutNotes && (
           <div className="notes"> Notes: {this.state.workoutNotes}</div>
-        }
+        )}
         {this.props.deleteEvent ? (
           <div>
             <button
@@ -148,69 +146,85 @@ class ViewEditEvent extends React.Component {
             >
               Share Event
             </button>
-          </div> ) : null}
-      </div>);
-  }
-
-  //view when edit is clicked
-  displayEdit(){
-    return(
-      <div>
-          <label htmlFor="workoutDate"> Date: </label>
-          <input
-            type="date"
-            name="workoutDate"
-            value={this.state.workoutDate}
-            onChange={this.changeHandler}
-            required
-          />
-          <br></br>
-          <label htmlFor="startTime"> Start Time: </label>
-          <input
-            type="time"
-            name="workoutStart"
-            value={this.state.workoutStart}
-            onChange={this.changeHandler}
-            required
-          />
-          <label htmlFor="workoutEnd"> End Time: </label>
-          <input
-            type="time"
-            name="workoutEnd"
-            value={this.state.workoutEnd}
-            onChange={this.changeHandler}
-            required
-          />
-
-          <button onClick={ () => {this.submitHandler()} }>Save</button>
-          <button onClick={ () => {this.toggleEditEvent()} }>Cancel</button>
+          </div>
+        ) : null}
       </div>
     );
   }
 
-  displayTags(){
-    return(
+  //view when edit is clicked
+  displayEdit() {
+    return (
+      <div>
+        <label htmlFor="workoutDate"> Date: </label>
+        <input
+          type="date"
+          name="workoutDate"
+          value={this.state.workoutDate}
+          onChange={this.changeHandler}
+          required
+        />
+        <br></br>
+        <label htmlFor="startTime"> Start Time: </label>
+        <input
+          type="time"
+          name="workoutStart"
+          value={this.state.workoutStart}
+          onChange={this.changeHandler}
+          required
+        />
+        <label htmlFor="workoutEnd"> End Time: </label>
+        <input
+          type="time"
+          name="workoutEnd"
+          value={this.state.workoutEnd}
+          onChange={this.changeHandler}
+          required
+        />
+
+        <button
+          onClick={() => {
+            this.submitHandler();
+          }}
+        >
+          Save
+        </button>
+        <button
+          onClick={() => {
+            this.toggleEditEvent();
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    );
+  }
+
+  displayTags() {
+    return (
       <ul className="displayTags" id="tags">
-        {this.state.workoutTags && this.state.workoutTags.map((tag, index) => (
+        {this.state.workoutTags &&
+          this.state.workoutTags.map((tag, index) => (
             <li key={index} className="tag">
-                <span className='tag-title'>{tag}</span>
+              <span className="tag-title">{tag}</span>
             </li>
-        ))}
+          ))}
       </ul>
     );
   }
 
-  displayWorkout(){
-    if(this.state.warning === ""){
-      return(this.state.isShared  ? this.displaySharedWorkout() : this.displayMyWorkout());
-    }
-    else{
-      return(this.displayWarning());
+  displayWorkout() {
+    if (this.state.warning === "") {
+      return this.state.isShared
+        ? this.displaySharedWorkout()
+        : this.displayMyWorkout();
+    } else {
+      return this.displayWarning();
     }
   }
 
-  displayMyWorkout(){
-    return(
+  displayMyWorkout() {
+    return (
       <div className="workoutInfo owner" id={this.state.eventKey}>
         <div className="name">
           <h2>{this.state.workoutName}</h2>
@@ -220,22 +234,22 @@ class ViewEditEvent extends React.Component {
     );
   }
 
-  displaySharedWorkout(){
-    return(
+  displaySharedWorkout() {
+    return (
       <div className="workoutInfo shared" id={this.state.eventKey}>
         <div className="name">
           <h2>{this.state.workoutName}</h2>
         </div>
         <p>{this.formatDate() + " | " + this.formatTime()}</p>
-        {this.state.workoutNotes &&
+        {this.state.workoutNotes && (
           <div className="notes"> Notes: {this.state.workoutNotes}</div>
-        }
+        )}
       </div>
     );
   }
 
-  displayWarning(){
-    return(
+  displayWarning() {
+    return (
       <div class="warning">
         <strong>{this.state.warning}</strong>
         <br></br>
@@ -261,7 +275,7 @@ class ViewEditEvent extends React.Component {
   }
 
   changeHandler(event) {
-      this.setState({ [event.target.name]: event.target.value });
+    this.setState({ [event.target.name]: event.target.value });
   }
 
   //submit edits to FireBase
@@ -277,9 +291,15 @@ class ViewEditEvent extends React.Component {
     });
     this.toggleEditEvent();
     this.props.reloadCal();
-    console.log(
-      "Your event has been edited!"
-    );
+    console.log("Your event has been edited!");
+  }
+
+  checkStringEmpty(string) {
+    if (string === "") {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   formatExercises() {
@@ -287,23 +307,31 @@ class ViewEditEvent extends React.Component {
     let formattedExercises = [];
     if (exercises) {
       formattedExercises = exercises.map((exercise, index) => (
-      <div className="exercise">
-        <div className="viewExerciseName">
-          <b>{index + 1 + ". " + exercise.exerciseName}</b>
+        <div className="exercise">
+          <div className="viewExerciseName">
+            <b>{index + 1 + ". " + exercise.exerciseName}</b>
+          </div>
+          <div className="sets">
+            {exercise.sets}
+            {this.checkStringEmpty(exercise.sets) ? null : <p>sets</p>}
+          </div>
+          <div className="qty">
+            {exercise.qty} {exercise.unit}
+          </div>
+          <div className="weight">
+            {exercise.weight}
+            {this.checkStringEmpty(exercise.weight) ? null : <p>lbs </p>}
+          </div>
         </div>
-        <div className="qty">
-          {exercise.qty} {exercise.unit}
-        </div>
-      </div>
       ));
     }
-    
+
     return formattedExercises;
   }
 
   toggleEditEvent() {
     this.setState({
-      editToggled: !this.state.editToggled
+      editToggled: !this.state.editToggled,
     });
   }
 

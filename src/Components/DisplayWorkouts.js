@@ -46,6 +46,7 @@ class DisplayWorkouts extends React.Component {
     this.renderRemoveFunction = this.renderRemoveFunction.bind(this);
     this.removeShared = this.removeShared.bind(this);
     this.retrieveTags = this.retrieveTags.bind(this);
+    this.checkStringEmpty = this.checkStringEmpty.bind(this);
   }
 
   componentDidMount() {
@@ -292,6 +293,14 @@ class DisplayWorkouts extends React.Component {
     );
   }
 
+  checkStringEmpty(string) {
+    if (string === "") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   renderExercises(data) {
     return (
       <table className="exercises">
@@ -305,8 +314,16 @@ class DisplayWorkouts extends React.Component {
                 <td>
                   <strong>{index + 1 + ". " + exercise.exerciseName}</strong>
                 </td>
-                <td>{exercise.qty}</td>
-                <td> {exercise.unit}</td>
+                {this.checkStringEmpty(exercise.sets) ? null : (
+                  <td>{exercise.sets} sets </td>
+                )}
+                <td>
+                  {exercise.qty + " "}
+                  {exercise.unit}
+                </td>
+                {this.checkStringEmpty(exercise.weight) ? null : (
+                  <td>{exercise.sets} lbs </td>
+                )}
               </tr>
             ))}
         </tbody>
