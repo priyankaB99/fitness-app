@@ -16,6 +16,7 @@ class FriendsList extends React.Component {
     this.state = {
       uid: "",
       friendList: [],
+      pendingRequests: [],
       friendRequests: [],
       requestedUsername: "",
     };
@@ -38,6 +39,7 @@ class FriendsList extends React.Component {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
       if (user) {
+        let currentUser = fire.auth().currentUser.uid;
         // User is signed in
         console.log(user.email);
         console.log(user.displayName);
@@ -64,7 +66,7 @@ class FriendsList extends React.Component {
               .database()
               .ref("FriendList/" + user.uid + "/ReceivedRequests");
             let requestsData = [];
-            requestsRef.once("value", function (data) {
+            requestsRef.on("value", function (data) {
               let requestsFromDatabase = data.val();
               for (const key in requestsFromDatabase) {
                 requestsData.push({
@@ -79,6 +81,26 @@ class FriendsList extends React.Component {
                 friendList: friendsData,
                 friendRequests: requestsData,
               });
+            });
+
+            let pendingRequestsRef = fire
+              .database()
+              .ref("FriendList/" + currentUser + "/SentRequests");
+            let pendingRequestsData = [];
+            pendingRequestsRef.on("value", function (data) {
+              let pendingReqFromDatabase = data.val();
+              console.log(data.val());
+              for (const key in pendingReqFromDatabase) {
+                pendingRequestsData.push({
+                  key: key,
+                  requestedId: pendingReqFromDatabase[key].requestedId,
+                  requestedUsername:
+                    pendingReqFromDatabase[key].requestedUsername,
+                });
+                currentComponent.setState({
+                  pendingRequests: pendingRequestsData,
+                });
+              }
             });
           });
       } else {
@@ -425,6 +447,15 @@ class FriendsList extends React.Component {
                   >
                     Reject
                   </button>
+                </div>
+              ))}
+            </div>
+            <div id="sentRequestsList" className="workout">
+              <h5>Pending Friend Requests</h5>
+              {this.state.pendingRequests.map((data, index) => (
+                <div className="listItemBox" key={data.key} data-index={index}>
+                  <strong>{data.requestedUsername}</strong>
+                  <br></br>
                 </div>
               ))}
             </div>
