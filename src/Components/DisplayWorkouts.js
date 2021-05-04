@@ -322,7 +322,7 @@ class DisplayWorkouts extends React.Component {
                   {exercise.unit}
                 </td>
                 {this.checkStringEmpty(exercise.weight) ? null : (
-                  <td>{exercise.sets} lbs </td>
+                  <td>{exercise.weight} lbs </td>
                 )}
               </tr>
             ))}
