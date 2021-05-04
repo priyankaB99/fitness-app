@@ -369,7 +369,7 @@ class FriendsList extends React.Component {
       <div>
         <h2>Friends</h2>
         <div className="row">
-          <div className="pl-0 col-8-lg">
+          <div className="pl-0 col-md-8">
             <div className="friends-box workout">
               {this.state.friendList.length == 0 && (
                 <h5>Send a friend request to share workouts and events!</h5>

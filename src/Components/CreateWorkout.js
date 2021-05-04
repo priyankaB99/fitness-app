@@ -61,6 +61,10 @@ class CreateWorkout extends React.Component {
       //using arrow function => instead of function (data) preserves use of 'this' inside function
       let workoutData = data.val();
       if (workoutData) {
+        let tags = []
+        if (workoutData.tags) {
+          tags = workoutData.tags;
+        }
         console.log(workoutData.exercises);
         console.log(workoutData.tags);
         this.setState({
@@ -69,7 +73,7 @@ class CreateWorkout extends React.Component {
           timeLength: workoutData.timeLength,
           exercises: workoutData.exercises,
           notes: workoutData.notes,
-          tags: workoutData.tags,
+          tags: tags,
           popup: true,
         });
       } else {
@@ -124,11 +128,14 @@ class CreateWorkout extends React.Component {
     let workoutId = this.state.key;
     let workoutName = this.state.name;
 
-    for (let i = 0; i < this.state.tags.length; i++) {
+    if (this.state.tags) {
+      for (let i = 0; i < this.state.tags.length; i++) {
       let newTagRef = fire
         .database()
-        .ref("Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + workoutId);
-        newTagRef.once("value", (data) => {
+        .ref(
+          "Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + workoutId
+        );
+      newTagRef.once("value", (data) => {
           if (!data.val()) {
             newTagRef.set({
               workoutName: workoutName,
@@ -136,8 +143,10 @@ class CreateWorkout extends React.Component {
             console.log("should have updated tag");
           }
         });
+      }
     }
     
+
     this.props.retrieveWorkouts();
     console.log("successfully edited workout in database");
     alert("Your workout has been edited!");
@@ -347,17 +356,18 @@ class CreateWorkout extends React.Component {
           </label>
           <div className="tags-input">
             <ul id="tags">
-              {this.state.tags.map((tag, index) => (
-                <li key={index} className="tag">
-                  <span className="tag-title">{tag}</span>
-                  <i
-                    className="tag-close-icon"
-                    onClick={() => this.removeTag(index)}
-                  >
-                    X
-                  </i>
-                </li>
-              ))}
+              {this.state.tags &&
+                this.state.tags.map((tag, index) => (
+                  <li key={index} className="tag">
+                    <span className="tag-title">{tag}</span>
+                    <i
+                      className="tag-close-icon"
+                      onClick={() => this.removeTag(index)}
+                    >
+                      X
+                    </i>
+                  </li>
+                ))}
             </ul>
             <input
               type="text"
