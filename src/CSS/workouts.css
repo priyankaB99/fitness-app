@@ -159,6 +159,17 @@ input[type="number"] {
 }
 
 
-@media screen and (max-width: 550px) {
-  
+@media screen and (max-width: 1000px) {
+  .eachExercise {
+    height: unset;
+    display: unset;
+    margin-left: 20px;
+  }
+  .exerciseName, .qty, .unit {
+    display: unset;
+    vertical-align:top;
+  }
+  .eachExercise > * {
+    margin-top: 5px;
+  }
 }

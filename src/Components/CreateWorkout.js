@@ -47,9 +47,9 @@ class CreateWorkout extends React.Component {
       }
     });
 
-    if (currentComponent.props) {
-      console.log(currentComponent.props.selectedWorkout);
-      this.parseWorkoutData();
+    if (currentComponent.props.selectedWorkout) {
+      console.log(currentComponent.props.selectedWorkout)
+      this.parseWorkoutData()
     }
   }
 
