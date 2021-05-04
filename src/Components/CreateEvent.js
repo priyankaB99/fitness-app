@@ -146,12 +146,13 @@ class CreateEvent extends React.Component {
             name="date"
             value={this.state.date}
             onChange={this.changeHandler}
+            min="2000-01-01"
+            max="2500-12-31"
             required
           />
           <label htmlFor="startTime"> Start Time: </label>
           <input
             type="time" 
-            step="3600000"
             name="startTime"
             value={this.state.startTime}
             onChange={this.changeHandler}
