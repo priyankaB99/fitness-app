@@ -5,6 +5,7 @@ import "firebase/database";
 import "../CSS/ViewEditEvent.css";
 import { format, parse } from "date-fns";
 import ShareEvent from "./ShareEvent";
+import { Redirect } from "react-router-dom";
 
 //Code Resources
 // -https://codepen.io/bastianalbers/pen/PWBYvz?editors=0110
@@ -15,7 +16,7 @@ class ViewEditEvent extends React.Component {
     this.state = {
       otherUserEvent: this.props.otherUserEvent,
       workout: this.props.selectedWorkout, //includes workoutId, workoutName, date, start, end
-      scheduleId: this.props.scheduleId,
+      scheduleId: this.props.scheduleId, //basically the uid
       workoutId: "",
       workoutName: "",
       workoutExercises: [],
@@ -29,6 +30,8 @@ class ViewEditEvent extends React.Component {
       editToggled: false, //if edit button has been clicked
       isShared: this.props.selectedWorkout.shared, //is this user's event or someone else's?
       showSharePopup: false,
+      ownerUsername: "", //null if user is owner, username of owner if is shared
+      redirect: false, //true if username of shared event sharer is clicked --> friendsList
     };
     this.parseWorkoutData = this.parseWorkoutData.bind(this);
     this.toggleEditEvent = this.toggleEditEvent.bind(this);
@@ -46,6 +49,8 @@ class ViewEditEvent extends React.Component {
     this.displaySharedWorkout = this.displaySharedWorkout.bind(this);
     this.displayWarning = this.displayWarning.bind(this);
     this.toggleShareEvent = this.toggleShareEvent.bind(this);
+    this.findOwnerUsername = this.findOwnerUsername.bind(this);
+    this.redirectFriends = this.redirectFriends.bind(this);
   }
 
   componentDidMount() {
@@ -53,6 +58,7 @@ class ViewEditEvent extends React.Component {
       if (user) {
         // User is signed in
         this.parseWorkoutData();
+        this.findOwnerUsername();
       } else {
         // No user is signed in
         // this.props.history.push("/login");
@@ -302,6 +308,24 @@ class ViewEditEvent extends React.Component {
     }
   }
 
+  findOwnerUsername(){
+    //if is shared workout
+    if(this.state.workout.creatorId !== this.state.scheduleId){
+      let ownerRef = fire.database().ref('Users/' + this.state.workout.creatorId + '/Username');
+      ownerRef.get().then((username) => {
+        this.setState({
+          ownerUsername: username.val()
+        })
+      });
+    }
+  }
+
+  redirectFriends(){
+    this.setState({
+      redirect: true
+    })
+  }
+
   formatExercises() {
     let exercises = this.state.workoutExercises;
     let formattedExercises = [];
@@ -341,6 +365,11 @@ class ViewEditEvent extends React.Component {
   }
 
   render() {
+    //if username of workout owner is clicked
+    if (this.state.redirect === true) {
+      return <Redirect to="/myfriends" />;
+    }
+
     return (
       <div className="popup">
         <div>
@@ -357,6 +386,14 @@ class ViewEditEvent extends React.Component {
         ) : null}
 
         {this.displayWorkout()}
+        
+        {this.state.ownerUsername ? 
+          <p>
+            Shared by <b onClick={this.redirectFriends}>{this.state.ownerUsername}</b>
+          </p> 
+        
+          : null}
+
         {this.displayTags()}
 
         <div className="exerciseBox">{this.formatExercises()}</div>

@@ -243,7 +243,8 @@ class Home extends React.Component {
           if (!event.shared) {
             //if user is owner of event
             todayEvents.push(this.displayMyEvent(event));
-          } else if (event.shared) {
+          } 
+          else if (event.shared) {
             todayEvents.push(this.displaySharedEvent(event));
           }
         }
@@ -304,9 +305,11 @@ class Home extends React.Component {
               isSameMonth(formattedDate, thisMonth) &&
               isSameYear(formattedDate, thisMonth)
             ) {
+              //own event
               if (eventsFromDatabase[key].creatorId === currentUser) {
                 let event = this.createEvent(eventsFromDatabase, key, false);
                 events.push(event);
+              //shared event
               } else if (eventsFromDatabase[key].users.includes(currentUser)) {
                 let event = this.createEvent(eventsFromDatabase, key, true);
                 events.push(event);

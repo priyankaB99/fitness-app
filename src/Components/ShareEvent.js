@@ -3,6 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import "../CSS/ShareEvent.css";
+import { Redirect } from "react-router-dom";
 import { keyframes } from "styled-components";
 
 
@@ -20,7 +21,8 @@ class ShareEvent extends React.Component {
       sharedFriends: [], //people have already shared workout with
       notSharedFriends: [], //people have not yet shared workout with
       toShareWith: "", //user ID of friend that has been selected to share with
-      warning: false
+      warning: false,
+      redirect: false, //true if "Add Friends" button is clicked, redirects to Friends component
     };
     this.parseEventData = this.parseEventData.bind(this);
     this.parseFriends = this.parseFriends.bind(this);
@@ -29,6 +31,7 @@ class ShareEvent extends React.Component {
     this.toShareList = this.toShareList.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
     this.shareHandler = this.shareHandler.bind(this);
+    this.redirectFriends = this.redirectFriends.bind(this);
   }
 
   componentDidMount() {
@@ -87,7 +90,6 @@ class ShareEvent extends React.Component {
     });
   }
 
-   //FINISH FUNCTIONALITY
   //goes through friends list to see who workout has been shared with and who hasn't
   determineShareList(){
     let notSharedList = []; 
@@ -102,25 +104,11 @@ class ShareEvent extends React.Component {
       notSharedFriends: notSharedList
     })
   }
-  
-  //allows user to select which friend to share with and option to submit
-  toShareList(){
-    
-    return(
-      <div>
-        <select name="toShare" onChange={this.changeHandler}>
-          {this.state.friends.map((friend, index) => 
-            <option  value={friend.id} key={index}>{friend.username}</option>
-          )}
-        </select>
-      </div>
-    );   
-  }
-
-   //users who have already been shared with
+  //users who have already been shared with
   sharedList(){
     return(
       <div>
+        <p>Shared with: </p>
         <ul>
           {this.state.sharedFriends.map( (friend, index) =>
             <li key={index}>{friend}</li>
@@ -128,6 +116,21 @@ class ShareEvent extends React.Component {
         </ul>
       </div>
     );
+  }
+
+  //allows user to select which friend to share with and option to submit
+  toShareList(){
+  
+    return(
+      <div>
+        <p>Share with:</p>       
+        <select name="toShare" onChange={this.changeHandler}>
+          {this.state.friends.map((friend, index) => 
+            <option  value={friend.id} key={index}>{friend.username}</option>
+          )}
+        </select>
+      </div>
+    );   
   }
 
   //sets state whenever dropdown option is selected
@@ -154,7 +157,17 @@ class ShareEvent extends React.Component {
     }
   }
 
+  redirectFriends(){
+    this.setState({
+      redirect: true
+    })
+  }
+
   render() {
+    //if "Add Friends" button clicked
+    if (this.state.redirect === true) {
+      return <Redirect to="/myfriends" />;
+    }
     return (
       <div className="popup">
         <div>
@@ -164,16 +177,24 @@ class ShareEvent extends React.Component {
         </div>    
 
         <h2>Share "{this.state.eventName}" Event</h2>
-        <p>Shared with:</p>    
 
-        {this.sharedList()} 
-
-        <p>Share with:</p>       
-        {this.toShareList()}
+        {this.state.friends.length !== 0 ? 
+        (<div> 
+          {this.sharedList()} 
+          {this.toShareList()}
+          <input type="button" value="Share" onClick={this.shareHandler}></input>
+        </div>) : 
+        (<div>
+          <p>You currently have no friends. Add some friends to begin sharing!</p>
+          <button onClick={this.redirectFriends}>Add Friends</button>
+        </div>)
+        }
+        
+ 
 
         <br></br>
 
-        <input type="button" value="Share" onClick={this.shareHandler}></input>
+        {/* <input type="button" value="Share" onClick={this.shareHandler}></input> */}
 
         {this.state.warning == true ? 
           <p className="warning">Event has already been shared with this user</p>  

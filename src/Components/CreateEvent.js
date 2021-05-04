@@ -12,7 +12,7 @@ class CreateEvent extends React.Component {
       currentUserId: "",
       date: "",
       startTime: "12:00",
-      endTime: "",
+      endTime: "13:00",
       workout: "",
       workoutName: "",
       workoutNames: [],
@@ -146,11 +146,13 @@ class CreateEvent extends React.Component {
             name="date"
             value={this.state.date}
             onChange={this.changeHandler}
+            min="2000-01-01"
+            max="2500-12-31"
             required
           />
           <label htmlFor="startTime"> Start Time: </label>
           <input
-            type="time"
+            type="time" 
             name="startTime"
             value={this.state.startTime}
             onChange={this.changeHandler}
