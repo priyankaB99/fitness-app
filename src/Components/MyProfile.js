@@ -15,7 +15,6 @@ class MyProfile extends React.Component {
       username: "",
       firstName: "",
       lastName: "",
-      bday: "",
       location: "",
       pic: "",
       favorites: [],
@@ -67,7 +66,6 @@ class MyProfile extends React.Component {
             username: info.Username,
             firstName: info.firstName,
             lastName: info.lastName,
-            bday: info.bday,
             pic: info.pic,
           });
           console.log(info);
@@ -183,7 +181,6 @@ class MyProfile extends React.Component {
           {this.state.editInfoOpen ? (
             <ViewEditProfile
               username={this.state.username}
-              bday={this.state.bday}
               pic={this.state.pic}
               closePopup={this.showEditInfo}
             />
@@ -198,10 +195,6 @@ class MyProfile extends React.Component {
             <p>
               {this.state.firstName} {this.state.lastName}
             </p>
-          </div>
-          <div className="align-middle mx-4 d-inline-block">
-            <p className="profileLabel"> Birthday: </p>
-            <p>{this.state.bday}</p>
           </div>
           <div className="align-middle mx-4 d-inline-block">
             <p className="profileLabel"> Username: </p>

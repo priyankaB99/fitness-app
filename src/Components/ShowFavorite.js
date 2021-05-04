@@ -71,7 +71,7 @@ class ShowFavorite extends React.Component {
                   </td>
 
                   {this.checkStringEmpty(exercise.weight) ? null : (
-                    <td>{exercise.sets} lbs </td>
+                    <td>{exercise.weight} lbs </td>
                   )}
                 </tr>
               ))}
