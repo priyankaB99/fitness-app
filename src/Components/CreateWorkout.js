@@ -121,6 +121,17 @@ class CreateWorkout extends React.Component {
       exercises: this.state.exercises,
       tags: this.state.tags,
     });
+
+    // for (let i = 0; i < this.state.tags.length; i++) {
+    //   let newTagRef = fire
+    //     .database()
+    //     .ref("Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + newWorkoutId);
+    //   newTagRef.update({
+    //     workoutName: workoutName,
+    //   });
+    //   console.log("should have updated tag");
+    // }
+    
     this.props.retrieveWorkouts();
     console.log("successfully edited workout in database");
     alert("Your workout has been edited!");
@@ -156,13 +167,10 @@ class CreateWorkout extends React.Component {
     for (let i = 0; i < tags.length; i++) {
       let newTagRef = fire
         .database()
-        .ref("Tags/" + tags[i] + "/" + currentUserId)
-        .push();
+        .ref("Tags/" + tags[i] + "/" + currentUserId + "/" + newWorkoutId);
       newTagRef.set({
-        workoutId: newWorkoutId,
         workoutName: workoutName,
       });
-
       console.log("should have added tag");
     }
 

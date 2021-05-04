@@ -406,7 +406,7 @@ class FriendsList extends React.Component {
               ))}
             </div>
           </div>
-          <div className="pl-0 pr-0 col">
+          <div className="px-3 col">
             <div id="friendRequestsList" className="workout">
               <h5>Requests</h5>
               {this.state.friendRequests.map((data, index) => (
