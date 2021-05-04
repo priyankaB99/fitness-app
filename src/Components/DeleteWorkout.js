@@ -11,6 +11,8 @@ class DeleteWorkout extends React.Component {
     super(props);
     this.state = {
       workout: this.props.selectedWorkout,
+      uid: "",
+      tags: this.props.tags,
     };
     this.deleteWorkout = this.deleteWorkout.bind(this);
     // this.deleteAndClose = this.deleteAndClose.bind(this);
@@ -19,6 +21,15 @@ class DeleteWorkout extends React.Component {
   //     this.deleteWorkout();
   //     // this.props.closePopup();
   //   }
+  componentDidMount() {
+    fire.auth().onAuthStateChanged((user) => {
+      if (user) {
+        let currentComponent = this;
+        let currentUser = fire.auth().currentUser.uid;
+        currentComponent.setState({ uid: currentUser });
+      }
+    });
+  }
   deleteWorkout() {
     let workoutsRef = fire.database().ref("Workouts/");
     workoutsRef.off("value");
@@ -26,6 +37,26 @@ class DeleteWorkout extends React.Component {
       .database()
       .ref("Workouts/" + this.state.workout);
     deleteWorkoutRef.remove();
+
+    //delete from tags
+    if (this.state.tags) {
+      for (let i in this.state.tags) {
+        let tagsRef = fire
+          .database()
+          .ref(
+            "Tags/" +
+              this.state.tags[i] +
+              "/" +
+              this.state.uid +
+              "/" +
+              this.state.workout
+          );
+        tagsRef.remove().then(() => {
+          this.props.retrieveTags();
+        });
+      }
+    }
+
     // let changedWorkouts = this.state.myWorkouts;
     // let deletedWorkoutIndex = "";
     // for (const key in changedWorkouts) {

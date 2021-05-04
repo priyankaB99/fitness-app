@@ -8,7 +8,11 @@ import EditWorkout from "./EditWorkout";
 import ShareWorkout from "./ShareWorkout";
 import DeleteWorkout from "./DeleteWorkout";
 import FavoriteButton from "./FavoriteButton";
-import { BsPencilSquare, BsFillTrashFill, BsFillPersonPlusFill } from 'react-icons/bs';
+import {
+  BsPencilSquare,
+  BsFillTrashFill,
+  BsFillPersonPlusFill,
+} from "react-icons/bs";
 
 import CreateWorkout from "./CreateWorkout";
 
@@ -294,7 +298,7 @@ class DisplayWorkouts extends React.Component {
     return (
       <div className="header">
         <div className="nameFavoriteBox">
-          <h3 className="name">{data.name}</h3>         
+          <h3 className="name">{data.name}</h3>
           {this.renderFavoriteFunctions(data.workoutId)}
         </div>
         <p className="length">Workout Length: {data.timeLength} min</p>
@@ -383,13 +387,25 @@ class DisplayWorkouts extends React.Component {
     return (
       <div className="adminButtons">
         <div className="iconBox">
-          <BsPencilSquare size={40} onClick={this.toggleEditWorkout} className="icon"/>
+          <BsPencilSquare
+            size={40}
+            onClick={this.toggleEditWorkout}
+            className="icon"
+          />
         </div>
         <div className="iconBox">
-          <BsFillTrashFill size={40} className="icon"  onClick={this.toggleDeleteWorkout}/>
+          <BsFillTrashFill
+            size={40}
+            className="icon"
+            onClick={this.toggleDeleteWorkout}
+          />
         </div>
         <div className="iconBox">
-          <BsFillPersonPlusFill size={40} onClick={this.toggleShareWorkout} className="icon"/>
+          <BsFillPersonPlusFill
+            size={40}
+            onClick={this.toggleShareWorkout}
+            className="icon"
+          />
         </div>
       </div>
     );
@@ -665,6 +681,8 @@ class DisplayWorkouts extends React.Component {
             closePopup={this.toggleDeleteWorkout}
             retrieveWorkouts={this.retrieveWorkouts}
             selectedWorkout={this.state.selectedWorkout}
+            tags={this.state.tags}
+            retrieveTags={this.retrieveTags}
           />
         ) : null}
 
