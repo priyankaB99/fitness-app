@@ -61,6 +61,10 @@ class CreateWorkout extends React.Component {
       //using arrow function => instead of function (data) preserves use of 'this' inside function
       let workoutData = data.val();
       if (workoutData) {
+        let tags = []
+        if (workoutData.tags) {
+          tags = workoutData.tags;
+        }
         console.log(workoutData.exercises);
         console.log(workoutData.tags);
         this.setState({
@@ -69,7 +73,7 @@ class CreateWorkout extends React.Component {
           timeLength: workoutData.timeLength,
           exercises: workoutData.exercises,
           notes: workoutData.notes,
-          tags: workoutData.tags,
+          tags: tags,
           popup: true,
         });
       } else {
@@ -124,21 +128,24 @@ class CreateWorkout extends React.Component {
     let workoutId = this.state.key;
     let workoutName = this.state.name;
 
-    for (let i = 0; i < this.state.tags.length; i++) {
+    if (this.state.tags) {
+      for (let i = 0; i < this.state.tags.length; i++) {
       let newTagRef = fire
         .database()
         .ref(
           "Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + workoutId
         );
       newTagRef.once("value", (data) => {
-        if (!data.val()) {
-          newTagRef.set({
-            workoutName: workoutName,
-          });
-          console.log("should have updated tag");
-        }
-      });
+          if (!data.val()) {
+            newTagRef.set({
+              workoutName: workoutName,
+            });
+            console.log("should have updated tag");
+          }
+        });
+      }
     }
+    
 
     this.props.retrieveWorkouts();
     console.log("successfully edited workout in database");
