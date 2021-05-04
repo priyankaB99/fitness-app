@@ -127,17 +127,19 @@ class CreateWorkout extends React.Component {
     for (let i = 0; i < this.state.tags.length; i++) {
       let newTagRef = fire
         .database()
-        .ref("Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + workoutId);
-        newTagRef.once("value", (data) => {
-          if (!data.val()) {
-            newTagRef.set({
-              workoutName: workoutName,
-            });
-            console.log("should have updated tag");
-          }
-        });
+        .ref(
+          "Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + workoutId
+        );
+      newTagRef.once("value", (data) => {
+        if (!data.val()) {
+          newTagRef.set({
+            workoutName: workoutName,
+          });
+          console.log("should have updated tag");
+        }
+      });
     }
-    
+
     this.props.retrieveWorkouts();
     console.log("successfully edited workout in database");
     alert("Your workout has been edited!");
@@ -347,17 +349,18 @@ class CreateWorkout extends React.Component {
           </label>
           <div className="tags-input">
             <ul id="tags">
-              {this.state.tags.map((tag, index) => (
-                <li key={index} className="tag">
-                  <span className="tag-title">{tag}</span>
-                  <i
-                    className="tag-close-icon"
-                    onClick={() => this.removeTag(index)}
-                  >
-                    X
-                  </i>
-                </li>
-              ))}
+              {this.state.tags &&
+                this.state.tags.map((tag, index) => (
+                  <li key={index} className="tag">
+                    <span className="tag-title">{tag}</span>
+                    <i
+                      className="tag-close-icon"
+                      onClick={() => this.removeTag(index)}
+                    >
+                      X
+                    </i>
+                  </li>
+                ))}
             </ul>
             <input
               type="text"
