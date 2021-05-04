@@ -114,7 +114,7 @@ class Home extends React.Component {
   deleteWorkoutEvent(event) {
     let workoutsRef = fire.database().ref("Events/");
     workoutsRef.off("value");
-    let eventId = event.target.parentNode.parentNode.parentNode.id;
+    let eventId = event.currentTarget.parentNode.parentNode.parentNode.parentNode.id;
     let deleteEventRef = fire.database().ref("Events/" + eventId);
     deleteEventRef.remove();
     this.findThisMonthEvents();

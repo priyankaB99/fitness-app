@@ -15,15 +15,31 @@
   box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5);
 }
 
-.close {
+.actions {
   margin-top: 10px !important;
-  text-align: right !important;
-  margin: 5px 5px;
-}
-.close:hover {
-  cursor: pointer;
+  text-align: left !important;
+  
+  display: flex;
+  flex-direction: row;
 }
 
+.close{
+  margin-left: 20px;
+}
+
+.iconBox{
+  margin-right: 10px;
+  z-index: 1;
+  height: 25px;
+  width: 25px;
+}
+  .icon:hover {
+    cursor: pointer;
+    color: darkgray;
+  }
+  .icon{
+    z-index: 0;
+  }
 .workoutInfo > *,
 .warning > *,
 .displayTags {
