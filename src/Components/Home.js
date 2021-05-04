@@ -114,7 +114,7 @@ class Home extends React.Component {
   deleteWorkoutEvent(event) {
     let workoutsRef = fire.database().ref("Events/");
     workoutsRef.off("value");
-    let eventId = event.target.parentNode.id;
+    let eventId = event.target.parentNode.parentNode.parentNode.id;
     let deleteEventRef = fire.database().ref("Events/" + eventId);
     deleteEventRef.remove();
     this.findThisMonthEvents();
@@ -310,7 +310,8 @@ class Home extends React.Component {
                 let event = this.createEvent(eventsFromDatabase, key, false);
                 events.push(event);
               //shared event
-              } else if (eventsFromDatabase[key].users.includes(currentUser)) {
+              } 
+              else if (eventsFromDatabase[key].users.includes(currentUser)) {
                 let event = this.createEvent(eventsFromDatabase, key, true);
                 events.push(event);
               }

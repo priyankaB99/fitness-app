@@ -254,6 +254,7 @@ class ViewEditEvent extends React.Component {
     );
   }
 
+  //when there is conflict with backend
   displayWarning() {
     return (
       <div class="warning">
@@ -372,10 +373,13 @@ class ViewEditEvent extends React.Component {
 
     return (
       <div className="popup">
-        <div>
+        <div className="actions">
           <p className="close" onClick={this.props.closePopup}>
             x
           </p>
+          Edit
+          delete
+          Share
         </div>
 
         {this.state.showSharePopup ? (
