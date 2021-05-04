@@ -175,7 +175,7 @@ class ShareWorkout extends React.Component {
         .ref("Workouts/" + this.state.workout + "/tags");
       shareTagRef.once("value", function (data) {
         let tags = data.val();
-        if(tags.length > 0){
+        if(tags){
           for (let i = 0; i < tags.length; i++) {
             //make sure tags from shared workouts are set in database
             let newTagRef = fire
