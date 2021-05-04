@@ -16,6 +16,7 @@
   background-color: #0e0066;
   max-width: 300px;
   color: white;
+  margin: 5px;
 }
 
 .workoutName:hover {

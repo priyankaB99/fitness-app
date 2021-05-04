@@ -37,20 +37,20 @@
   margin-right: 10px;
 }
 
-.nameFavoriteBox{
+.nameFavoriteBox {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-.adminButtons{
+.adminButtons {
   display: flex;
   margin-top: 20px;
   margin-bottom: 20px;
 }
-  .iconBox{
-    margin-right: 30px;
-  }
+.iconBox {
+  margin-right: 30px;
+}
 
 /* Create workout event component */
 #createEventForm {
@@ -119,7 +119,9 @@ input[type="number"] {
 .tags-input,
 .exerciseName,
 .qty,
-.unit {
+.unit,
+.sets,
+.weight {
   display: flex;
   align-items: flex-start;
   flex-wrap: wrap;
@@ -183,7 +185,6 @@ input[type="number"] {
 .tag-close-icon:focus {
   cursor: hover;
 }
-
 
 @media screen and (max-width: 1000px) {
   .eachExercise {
