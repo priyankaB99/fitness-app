@@ -2,13 +2,30 @@
 
 #profPic {
   border-radius: 70px;
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
 }
 
 .profileLabel {
-  font-weight: bolder;
+  /* font-weight: bolder; */
 }
+
+.profileContent{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileBox{
+  display: flex;
+  flex-direction: column;
+}
+  .iconBox{
+    float: right; 
+    height: 30px;
+    width: 30px;
+  }
 
 .workoutName {
   padding: 15px;
@@ -21,6 +38,14 @@
 .workoutName:hover {
   cursor: pointer;
 }
+
+#editProfile{
+  margin-left: 50%;
+}
+  #editProfile:hover{
+    color: darkgray;
+    cursor: pointer;
+  }
 
 /* editProfile */
 .editBox {
