@@ -51,7 +51,7 @@ class EditWorkout extends React.Component {
           workoutLength: workoutData.timeLength,
           workoutExercises: workoutData.exercises,
           workoutNotes: workoutData.notes,
-          workoutTags: workoutData.tags
+          workoutTags: workoutData.tags,
         });
       } else {
         console.log("Workout No Longer Exists");
@@ -59,13 +59,13 @@ class EditWorkout extends React.Component {
     });
   }
 
-   //function to produce dynamic form input for each exercise
-   addExercise(event) {
+  //function to produce dynamic form input for each exercise
+  addExercise(event) {
     event.preventDefault();
     this.setState((prevState) => ({
       workoutExercises: [
         ...prevState.workoutExercises,
-        { exerciseName: "", qty: "", unit: "reps" },
+        { exerciseName: "", qty: "", unit: "reps", weight: "", sets: "" },
       ],
     }));
   }
@@ -93,9 +93,7 @@ class EditWorkout extends React.Component {
     });
     this.props.retrieveWorkouts();
     console.log("successfully edited workout in database");
-    alert(
-      "Your workout has been edited!"
-    );
+    alert("Your workout has been edited!");
   }
 
   changeHandler(event) {
@@ -103,122 +101,134 @@ class EditWorkout extends React.Component {
       let exercises = [...this.state.workoutExercises];
       exercises[event.target.dataset.id][event.target.className] =
         event.target.value;
-      this.setState({ exercises }, () => console.log(this.state.workoutExercises));
+      this.setState({ exercises }, () =>
+        console.log(this.state.workoutExercises)
+      );
     } else {
       this.setState({ [event.target.name]: event.target.value });
     }
   }
 
   render() {
-    let { workoutName, workoutLength, workoutExercises, workoutNotes } = this.state;
+    let {
+      workoutName,
+      workoutLength,
+      workoutExercises,
+      workoutNotes,
+    } = this.state;
     return (
       <div className="popup">
         <div>
           <p className="close" onClick={this.props.closePopup}>
             x
           </p>
-        </div>    
+        </div>
 
-      <div>
-        <h2>Edit Workout</h2>
-        <form id="createForm" onSubmit={this.submitHandler}>
-          <label htmlFor="workoutName"> Workout Name: </label>
-          <input
-            type="text"
-            name="workoutName"
-            className="input-box"
-            value={workoutName}
-            onChange={this.changeHandler}
-            required
-          />
-          <label htmlFor="workoutLength"> Total Workout Length (Minutes): </label>
-          <input
-            type="number"
-            name="workoutLength"
-            className="input-box"
-            value={workoutLength}
-            onChange={this.changeHandler}
-            min="0"
-            required
-          />
-          {workoutExercises.map((val, index) => {
-            let exerciseId = `exerciseName-${index}`;
-            let qtyId = `qty-${index}`;
-            let unitId = `unit-${index}`;
-            return (
-              <div key={index} class="exercise-list">
-                <div className="eachExercise" data-arrayidx={index}>
-                  <p> {`Exercise #${index + 1}`}</p>
-                  <label htmlFor={exerciseId}>Name:</label>
-                  <input
-                    type="text"
-                    name={exerciseId}
-                    data-id={index}
-                    id={exerciseId}
-                    value={workoutExercises[index].exerciseName}
-                    className="exerciseName"
-                    onChange={this.changeHandler}
-                    required
-                  />
-                  <label htmlFor={qtyId}> Quantity: </label>
-                  <input
-                    type="number"
-                    name={qtyId}
-                    data-id={index}
-                    id={qtyId}
-                    value={workoutExercises[index].qty}
-                    className="qty"
-                    onChange={this.changeHandler}
-                    min="0"
-                    required
-                  />
-                  <select
-                    name={unitId}
-                    data-id={index}
-                    id={unitId}
-                    className="unit"
-                    onChange={this.changeHandler}
-                    required
-                    value={workoutExercises[index].unit}
-                  >
-                    <option value="reps"> reps </option>
-                    <option value="secs"> seconds</option>
-                    <option value="min"> minutes </option>
-                  </select>
-                  <button class="deleteExercise" onClick={this.deleteExercise}>
-                    X
-                  </button>
+        <div>
+          <h2>Edit Workout</h2>
+          <form id="createForm" onSubmit={this.submitHandler}>
+            <label htmlFor="workoutName"> Workout Name: </label>
+            <input
+              type="text"
+              name="workoutName"
+              className="input-box"
+              value={workoutName}
+              onChange={this.changeHandler}
+              required
+            />
+            <label htmlFor="workoutLength">
+              {" "}
+              Total Workout Length (Minutes):{" "}
+            </label>
+            <input
+              type="number"
+              name="workoutLength"
+              className="input-box"
+              value={workoutLength}
+              onChange={this.changeHandler}
+              min="0"
+              required
+            />
+            {workoutExercises.map((val, index) => {
+              let exerciseId = `exerciseName-${index}`;
+              let qtyId = `qty-${index}`;
+              let unitId = `unit-${index}`;
+              return (
+                <div key={index} class="exercise-list">
+                  <div className="eachExercise" data-arrayidx={index}>
+                    <p> {`Exercise #${index + 1}`}</p>
+                    <label htmlFor={exerciseId}>Name:</label>
+                    <input
+                      type="text"
+                      name={exerciseId}
+                      data-id={index}
+                      id={exerciseId}
+                      value={workoutExercises[index].exerciseName}
+                      className="exerciseName"
+                      onChange={this.changeHandler}
+                      required
+                    />
+                    <label htmlFor={qtyId}> Quantity: </label>
+                    <input
+                      type="number"
+                      name={qtyId}
+                      data-id={index}
+                      id={qtyId}
+                      value={workoutExercises[index].qty}
+                      className="qty"
+                      onChange={this.changeHandler}
+                      min="0"
+                      required
+                    />
+                    <select
+                      name={unitId}
+                      data-id={index}
+                      id={unitId}
+                      className="unit"
+                      onChange={this.changeHandler}
+                      required
+                      value={workoutExercises[index].unit}
+                    >
+                      <option value="reps"> reps </option>
+                      <option value="secs"> seconds</option>
+                      <option value="min"> minutes </option>
+                    </select>
+                    <button
+                      class="deleteExercise"
+                      onClick={this.deleteExercise}
+                    >
+                      X
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-          <button
-            type="button"
-            id="add-exercise"
-            className="btn btn-secondary"
-            onClick={this.addExercise}
-          >
-            Add Another Exercise
-          </button>
+              );
+            })}
+            <button
+              type="button"
+              id="add-exercise"
+              className="btn btn-secondary"
+              onClick={this.addExercise}
+            >
+              Add Another Exercise
+            </button>
 
-          <label htmlFor="workoutNotes"> Notes/Links: </label>
-          <textarea
-            type="textarea"
-            name="workoutNotes"
-            className="input-box"
-            value={workoutNotes}
-            onChange={this.changeHandler}
-          ></textarea>
+            <label htmlFor="workoutNotes"> Notes/Links: </label>
+            <textarea
+              type="textarea"
+              name="workoutNotes"
+              className="input-box"
+              value={workoutNotes}
+              onChange={this.changeHandler}
+            ></textarea>
 
-          <input
-            id="createBtn"
-            className="btn btn-secondary"
-            type="submit"
-            value="Finish Editing Workout"
-          />
-        </form>
-      </div>
-
+            <input
+              id="createBtn"
+              className="btn btn-secondary"
+              type="submit"
+              value="Finish Editing Workout"
+            />
+          </form>
+        </div>
       </div>
     );
   }
