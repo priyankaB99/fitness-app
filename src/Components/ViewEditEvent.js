@@ -6,6 +6,8 @@ import "../CSS/ViewEditEvent.css";
 import { format, parse } from "date-fns";
 import ShareEvent from "./ShareEvent";
 import { Redirect } from "react-router-dom";
+import { BsPencilSquare, BsFillTrashFill, BsFillPersonPlusFill } from 'react-icons/bs';
+
 
 //Code Resources
 // -https://codepen.io/bastianalbers/pen/PWBYvz?editors=0110
@@ -131,27 +133,16 @@ class ViewEditEvent extends React.Component {
           <div className="notes"> Notes: {this.state.workoutNotes}</div>
         )}
         {this.props.deleteEvent ? (
-          <div>
-            <button
-              className="btn btn-secondary popup-buttons btn-sm"
-              onClick={this.toggleEditEvent}
-            >
-              Edit Event
-            </button>
-
-            <button
-              className="btn btn-secondary popup-buttons btn-sm"
-              onClick={this.deleteEvent}
-            >
-              Delete Event
-            </button>
-
-            <button
-              className="btn btn-secondary popup-buttons btn-sm"
-              onClick={this.toggleShareEvent}
-            >
-              Share Event
-            </button>
+          <div className="actions">
+            <div className="iconBox">
+              <BsPencilSquare size={25} onClick={this.toggleEditEvent} className="icon"/>
+            </div>
+            <div className="iconBox">
+              <BsFillTrashFill size={25} className="icon"  onClick={this.deleteEvent}/>
+            </div>
+            <div className="iconBox">
+              <BsFillPersonPlusFill size={25} onClick={this.toggleShareEvent} className="icon"/>
+            </div>
           </div>
         ) : null}
       </div>
@@ -373,13 +364,10 @@ class ViewEditEvent extends React.Component {
 
     return (
       <div className="popup">
-        <div className="actions">
+        <div>
           <p className="close" onClick={this.props.closePopup}>
             x
           </p>
-          Edit
-          delete
-          Share
         </div>
 
         {this.state.showSharePopup ? (

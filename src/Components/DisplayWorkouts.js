@@ -8,6 +8,7 @@ import EditWorkout from "./EditWorkout";
 import ShareWorkout from "./ShareWorkout";
 import DeleteWorkout from "./DeleteWorkout";
 import FavoriteButton from "./FavoriteButton";
+import { BsPencilSquare, BsFillTrashFill, BsFillPersonPlusFill } from 'react-icons/bs';
 
 import CreateWorkout from "./CreateWorkout";
 
@@ -181,7 +182,7 @@ class DisplayWorkouts extends React.Component {
   // }
 
   toggleDeleteWorkout(event) {
-    let workoutId = event.target.parentNode.parentNode.id;
+    let workoutId = event.currentTarget.parentNode.parentNode.parentNode.id;
     this.setState({
       showConfirmDelete: !this.state.showConfirmDelete,
       selectedWorkout: workoutId,
@@ -192,7 +193,7 @@ class DisplayWorkouts extends React.Component {
   //Should be able to edit times, workout, etc.
   //https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
   toggleEditWorkout(event) {
-    let workoutId = event.target.parentNode.parentNode.id;
+    let workoutId = event.currentTarget.parentNode.parentNode.parentNode.id;
     console.log(workoutId);
     this.setState({
       showEditPopup: !this.state.showEditPopup,
@@ -201,7 +202,7 @@ class DisplayWorkouts extends React.Component {
   }
 
   toggleShareWorkout(event) {
-    let workoutId = event.target.parentNode.parentNode.id;
+    let workoutId = event.currentTarget.parentNode.parentNode.parentNode.id;
     this.setState({
       showSharePopup: !this.state.showSharePopup,
       selectedWorkout: workoutId,
@@ -290,7 +291,10 @@ class DisplayWorkouts extends React.Component {
   renderHeader(data) {
     return (
       <div className="header">
-        <h3 className="name">{data.name}</h3>
+        <div className="nameFavoriteBox">
+          <h3 className="name">{data.name}</h3>         
+          {this.renderFavoriteFunctions(data.workoutId)}
+        </div>
         <p className="length">Workout Length: {data.timeLength} min</p>
         <p className="owner">Owner: {data.owner} </p>
       </div>
@@ -376,31 +380,15 @@ class DisplayWorkouts extends React.Component {
   renderAdminFunctions() {
     return (
       <div className="adminButtons">
-        <button
-          type="button"
-          className="btn btn-secondary displayButtons"
-          id="deleteBtn"
-          onClick={this.toggleDeleteWorkout}
-        >
-          Delete
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-secondary displayButtons"
-          id="editBtn"
-          onClick={this.toggleEditWorkout}
-        >
-          Edit
-        </button>
-        <button
-          type="button"
-          className="btn btn-secondary displayButtons"
-          id="shareBtn"
-          onClick={this.toggleShareWorkout}
-        >
-          Share
-        </button>
+        <div className="iconBox">
+          <BsPencilSquare size={40} onClick={this.toggleEditWorkout} className="icon"/>
+        </div>
+        <div className="iconBox">
+          <BsFillTrashFill size={40} className="icon"  onClick={this.toggleDeleteWorkout}/>
+        </div>
+        <div className="iconBox">
+          <BsFillPersonPlusFill size={40} onClick={this.toggleShareWorkout} className="icon"/>
+        </div>
       </div>
     );
   }
@@ -631,7 +619,6 @@ class DisplayWorkouts extends React.Component {
         {this.renderHeader(data)}
         {this.renderExercises(data)}
         {this.renderTagsAndNotes(data)}
-        {this.renderFavoriteFunctions(data.workoutId)}
         {this.renderAdminFunctions()}
       </div>
     );
@@ -645,7 +632,6 @@ class DisplayWorkouts extends React.Component {
         {this.renderExercises(data)}
         {this.renderTagsAndNotes(data)}
         {this.renderRemoveFunction()}
-        {this.renderFavoriteFunctions(data.workoutId)}
       </div>
     );
   }

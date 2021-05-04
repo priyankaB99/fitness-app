@@ -4,6 +4,7 @@ import "firebase/auth";
 import "firebase/database";
 import { withRouter } from "react-router-dom";
 import "../CSS/profile.css";
+import {BsHeart, BsHeartFill} from "react-icons/bs";
 
 class FavoriteButton extends React.Component {
   constructor(props) {
@@ -82,23 +83,25 @@ class FavoriteButton extends React.Component {
     return (
       <div className="favoriteButtons">
         {this.props.isFavorite ? (
-          <button
-            type="button"
-            className="btn btn-secondary displayButtons"
-            id="unfavoriteBtn"
-            onClick={this.unfavorite}
-          >
-            Unfavorite
-          </button>
+          // <button
+          //   type="button"
+          //   className="btn btn-secondary displayButtons"
+          //   id="unfavoriteBtn"
+          //   onClick={this.unfavorite}
+          // >
+          //   Unfavorite
+          // </button>
+          <BsHeartFill size={40} color="lightcoral" id="unfavoriteBtn" onClick={this.unfavorite}/>
         ) : (
-          <button
-            type="button"
-            className="btn btn-secondary displayButtons"
-            id="favoriteBtn"
-            onClick={this.favorite}
-          >
-            Favorite
-          </button>
+          // <button
+          //   type="button"
+          //   className="btn btn-secondary displayButtons"
+          //   id="favoriteBtn"
+          //   onClick={this.favorite}
+          // >
+          //   Favorite
+          // </button>
+          <BsHeart size={40} id="favoriteBtn" onClick={this.favorite}/>
         )}
       </div>
     );

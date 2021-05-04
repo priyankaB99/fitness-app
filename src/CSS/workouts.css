@@ -37,6 +37,21 @@
   margin-right: 10px;
 }
 
+.nameFavoriteBox{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.adminButtons{
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+  .iconBox{
+    margin-right: 30px;
+  }
+
 /* Create workout event component */
 #createEventForm {
   /* background-color: #e1edf2; */
@@ -168,6 +183,7 @@ input[type="number"] {
 .tag-close-icon:focus {
   cursor: hover;
 }
+
 
 @media screen and (max-width: 1000px) {
   .eachExercise {
