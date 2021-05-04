@@ -33,8 +33,6 @@ class CreateWorkout extends React.Component {
   componentDidMount() {
     var currentComponent = this;
 
-    
-
     //retrieve current list of tags
     let tagRef = fire.database().ref("Tags/").orderByKey();
     tagRef.once("value", function (snapshot) {
@@ -47,7 +45,7 @@ class CreateWorkout extends React.Component {
       }
     });
 
-    if (currentComponent.props) {
+    if (currentComponent.props.selectedWorkout) {
       console.log(currentComponent.props.selectedWorkout)
       this.parseWorkoutData()
     }

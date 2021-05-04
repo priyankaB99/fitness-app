@@ -67,13 +67,35 @@
   /* border: 1px solid white;
   border-radius: 3px;
   background-color: #e1edf2; */
-  margin-left: 10px;
+  margin-left: 15px;
   vertical-align: baseline;
 }
 
+.responsive {
+  display: none;
+}
+.eventListBox {
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 15px;
+}
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 1000px) {
   .home-banner {
     width: unset;
+    text-align: center;
+  }
+  #calendar {
+    display: none;
+  }
+  .responsive {
+    display: block;
+  }
+  #addEventBtn {
+    margin-top: 10px;
+    margin-left: unset;
+  }
+  .eventBox {
+    margin: 10px 0;
   }
 }

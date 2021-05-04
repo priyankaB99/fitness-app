@@ -88,6 +88,7 @@ class Sidebar extends React.Component {
 
   onItemClick = (path) => {
     this.setState({ activePath: path });
+    this.toggleHamburgerLinks();
   };
 
   componentDidMount() {

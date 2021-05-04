@@ -54,6 +54,7 @@ class Home extends React.Component {
     this.createEvent = this.createEvent.bind(this);
     this.displayMyEvent = this.displayMyEvent.bind(this);
     this.displaySharedEvent = this.displaySharedEvent.bind(this);
+    this.createListOfEvents = this.createListOfEvents.bind(this);
   }
 
   componentDidMount() {
@@ -224,7 +225,7 @@ class Home extends React.Component {
       //go through events
       for (let i = 0; i < this.state.events.length; i++) {
         let event = this.state.events[i];
-        let formattedDate = new Date(format(parseISO(event.date), "MM/dd/yyyy") );
+        let formattedDate = new Date(format(parseISO(event.date), "MM/dd/yyyy"));
         if (isSameDay(formattedDate, dayToAdd) && isSameWeek(formattedDate, dayToAdd)) {
           if(!event.shared){ //if user is owner of event
             todayEvents.push(this.displayMyEvent(event));
@@ -322,6 +323,36 @@ class Home extends React.Component {
     )
   }
 
+  createListOfEvents() {
+    let eventsRender = [];
+    let events = this.state.events;
+    let today = new Date();
+    events.map((data, index) => {
+      let isToday = false;
+      let cellDivClass = "eventListBox"
+      if (
+        isSameDay(today, new Date(format(parseISO(data.date), "MM/dd/yyyy"))) &&
+        isSameWeek(today, new Date(format(parseISO(data.date), "MM/dd/yyyy"))) &&
+        isSameYear(today, new Date(format(parseISO(data.date), "MM/dd/yyyy")))
+      ) {
+        cellDivClass += " today";
+        isToday = true;
+      }
+
+      if (data.shared) {
+        cellDivClass += " shared";
+      }
+  
+      eventsRender.push(
+        <div class={cellDivClass} key={index}>
+          <strong>{format(parseISO(data.date), "MM/dd/yyyy")} {isToday && <span>- Today</span>}</strong>
+          {this.displayMyEvent(data)}
+        </div>
+      )
+    });
+    return eventsRender;
+  }
+
   render() {
     return (
       <div>
@@ -331,6 +362,7 @@ class Home extends React.Component {
         <h5 className="home-banner">
           Create a workout event by clicking on a date in your
           calendar or here
+          <br className="responsive"></br>
           <button type="button" id="addEventBtn" className="btn btn-secondary" onClick={this.toggleAddEvent}>
             Add Event
           </button>
@@ -353,33 +385,41 @@ class Home extends React.Component {
           />
         ) : null}
         {/**Inspiration from https://medium.com/@moodydev/create-a-custom-calendar-in-react-3df1bfd0b728 */}
-        <div className="calendar">
+        <div className="calEvents">
           {this.renderMonth()}
 
-          <div className="row calHeader">
-            <div className="col">
-              <strong>Sunday</strong>
+          <div id="calendar">
+            <div className="row calHeader">
+              <div className="col">
+                <strong>Sunday</strong>
+              </div>
+              <div className="col">
+                <strong>Monday</strong>
+              </div>
+              <div className="col">
+                <strong>Tuesday</strong>
+              </div>
+              <div className="col">
+                <strong>Wednesday</strong>
+              </div>
+              <div className="col">
+                <strong>Thursday</strong>
+              </div>
+              <div className="col">
+                <strong>Friday</strong>
+              </div>
+              <div className="col">
+                <strong>Saturday</strong>
+              </div>
             </div>
-            <div className="col">
-              <strong>Monday</strong>
-            </div>
-            <div className="col">
-              <strong>Tuesday</strong>
-            </div>
-            <div className="col">
-              <strong>Wednesday</strong>
-            </div>
-            <div className="col">
-              <strong>Thursday</strong>
-            </div>
-            <div className="col">
-              <strong>Friday</strong>
-            </div>
-            <div className="col">
-              <strong>Saturday</strong>
-            </div>
+            {this.createMonthCells()}
           </div>
-          {this.createMonthCells()}
+
+          <div id="listOfEvents" className="responsive">
+            <h5 className="text-center">Workout Events for this Month</h5>
+            {this.createListOfEvents()}
+          </div>
+
         </div>
       </div>
     );
