@@ -115,16 +115,18 @@ class DisplayWorkouts extends React.Component {
               myWorkouts.push(workout);
             }
             //shared workouts
-            else if (
-              workoutsFromDatabase[key].users.includes(currentUser) &&
-              workoutsFromDatabase[key].creatorId !== currentUser
-            ) {
-              let workout = this.createWorkoutDiv(
-                workoutsFromDatabase,
-                key,
-                true
-              );
-              sharedWorkouts.push(workout);
+            else if (workoutsFromDatabase[key].users) {
+              if (
+                workoutsFromDatabase[key].users.includes(currentUser) &&
+                workoutsFromDatabase[key].creatorId !== currentUser
+              ) {
+                let workout = this.createWorkoutDiv(
+                  workoutsFromDatabase,
+                  key,
+                  true
+                );
+                sharedWorkouts.push(workout);
+              }
             }
           }
           this.setState({
