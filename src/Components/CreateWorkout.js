@@ -112,8 +112,6 @@ class CreateWorkout extends React.Component {
     event.preventDefault();
     //reference to existing workout
     let workoutRef = fire.database().ref("Workouts/" + this.state.key);
-    console.log(workoutRef);
-
     workoutRef.update({
       name: this.state.name,
       timeLength: this.state.timeLength,
@@ -122,15 +120,23 @@ class CreateWorkout extends React.Component {
       tags: this.state.tags,
     });
 
-    // for (let i = 0; i < this.state.tags.length; i++) {
-    //   let newTagRef = fire
-    //     .database()
-    //     .ref("Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + newWorkoutId);
-    //   newTagRef.update({
-    //     workoutName: workoutName,
-    //   });
-    //   console.log("should have updated tag");
-    // }
+    let currentUserId = fire.auth().currentUser.uid;
+    let workoutId = this.state.key;
+    let workoutName = this.state.name;
+
+    for (let i = 0; i < this.state.tags.length; i++) {
+      let newTagRef = fire
+        .database()
+        .ref("Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + workoutId);
+        newTagRef.once("value", (data) => {
+          if (!data.val()) {
+            newTagRef.set({
+              workoutName: workoutName,
+            });
+            console.log("should have updated tag");
+          }
+        });
+    }
     
     this.props.retrieveWorkouts();
     console.log("successfully edited workout in database");
