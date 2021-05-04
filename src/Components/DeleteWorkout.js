@@ -15,12 +15,8 @@ class DeleteWorkout extends React.Component {
       tags: this.props.tags,
     };
     this.deleteWorkout = this.deleteWorkout.bind(this);
-    // this.deleteAndClose = this.deleteAndClose.bind(this);
   }
-  //   deleteAndClose() {
-  //     this.deleteWorkout();
-  //     // this.props.closePopup();
-  //   }
+
   componentDidMount() {
     fire.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -67,6 +63,7 @@ class DeleteWorkout extends React.Component {
     // changedWorkouts.splice(deletedWorkoutIndex, 1);
     // this.setState({ myWorkouts: changedWorkouts });
     this.props.retrieveWorkouts();
+    this.props.closePopup();
   }
 
   render() {

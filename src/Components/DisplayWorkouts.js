@@ -188,11 +188,17 @@ class DisplayWorkouts extends React.Component {
   // }
 
   toggleDeleteWorkout(event) {
-    let workoutId = event.currentTarget.parentNode.parentNode.parentNode.id;
-    this.setState({
-      showConfirmDelete: !this.state.showConfirmDelete,
-      selectedWorkout: workoutId,
-    });
+    if (event) {
+      let workoutId = event.currentTarget.parentNode.parentNode.parentNode.id;
+      this.setState({
+        showConfirmDelete: !this.state.showConfirmDelete,
+        selectedWorkout: workoutId,
+      });
+    } else {
+      this.setState({
+        showConfirmDelete: !this.state.showConfirmDelete,
+      });
+    }
   }
 
   //Create pop-up of event details
