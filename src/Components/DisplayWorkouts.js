@@ -79,7 +79,7 @@ class DisplayWorkouts extends React.Component {
         let currentUser = fire.auth().currentUser.uid;
         let tagsRef = fire.database().ref("Tags/");
         let tagsData = [];
-        tagsRef.once("value", function (data) {
+        tagsRef.on("value", function (data) {
           let info = data.val();
           for (const key in info) {
             for (const name in info[key]) {
