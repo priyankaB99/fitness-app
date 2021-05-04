@@ -48,8 +48,8 @@ class CreateWorkout extends React.Component {
     });
 
     if (currentComponent.props.selectedWorkout) {
-      console.log(currentComponent.props.selectedWorkout)
-      this.parseWorkoutData()
+      console.log(currentComponent.props.selectedWorkout);
+      this.parseWorkoutData();
     }
   }
 
@@ -287,18 +287,6 @@ class CreateWorkout extends React.Component {
                     <option value="miles"> miles </option>
                     <option value="km"> km </option>
                   </select>
-                  <label htmlFor={weightId}> Weight (optional) in lbs: </label>
-                  <input
-                    type="number"
-                    name={weightId}
-                    data-id={idx}
-                    id={weightId}
-                    value={exercises[idx].weight}
-                    className="weight"
-                    onChange={this.changeHandler}
-                    min="0"
-                  />
-
                   <label htmlFor={setsId}> Sets (optional): </label>
                   <input
                     type="number"
@@ -310,6 +298,18 @@ class CreateWorkout extends React.Component {
                     onChange={this.changeHandler}
                     min="0"
                   />
+                  <label htmlFor={weightId}> Weight in lbs (optional) </label>
+                  <input
+                    type="number"
+                    name={weightId}
+                    data-id={idx}
+                    id={weightId}
+                    value={exercises[idx].weight}
+                    className="weight"
+                    onChange={this.changeHandler}
+                    min="0"
+                  />
+
                   <button class="deleteExercise" onClick={this.deleteExercise}>
                     X
                   </button>
