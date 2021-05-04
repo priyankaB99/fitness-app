@@ -13,7 +13,6 @@ class UserProfile extends React.Component {
       username: "",
       firstName: "",
       lastName: "",
-      bday: "",
       location: "",
       pic: "",
       favorites: [],
@@ -40,7 +39,6 @@ class UserProfile extends React.Component {
             username: info.Username,
             firstName: info.firstName,
             lastName: info.lastName,
-            bday: info.bday,
             pic: info.pic,
           });
           console.log(info);
@@ -124,7 +122,6 @@ class UserProfile extends React.Component {
           <p>
             Name: {this.state.firstName} {this.state.lastName}
           </p>
-          <p> Birthday: {this.state.bday}</p>
           <p> Username: {this.state.username}</p>
         </div>
         <div id="goals">

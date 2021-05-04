@@ -83,7 +83,7 @@ class FriendsList extends React.Component {
           });
       } else {
         // No user is signed in
-        currentComponent.props.history.push('/login');
+        currentComponent.props.history.push("/login");
       }
     });
   }
@@ -317,13 +317,10 @@ class FriendsList extends React.Component {
     let currentUserRef = fire
       .database()
       .ref(
-        "FriendList/" +
-          currentComponent.state.uid +
-          "/Friends/" +
-          friendKey
+        "FriendList/" + currentComponent.state.uid + "/Friends/" + friendKey
       );
     console.log(friendId);
-    console.log(friendKey)
+    console.log(friendKey);
     currentUserRef
       .remove()
       .then(() => {
@@ -370,7 +367,7 @@ class FriendsList extends React.Component {
     console.log("renderagain");
     return (
       <div>
-        <h2>My Friends</h2>
+        <h2>Friends</h2>
         <div className="row">
           <div className="pl-0 col-8-lg">
             <div className="friends-box workout">
@@ -379,9 +376,7 @@ class FriendsList extends React.Component {
               )}
               {this.state.friendList.map((data, index) => (
                 <div className="listItemBox" data-index={index}>
-                  <strong key={data.key}>
-                    {data.friendUsername}
-                  </strong>
+                  <strong key={data.key}>{data.friendUsername}</strong>
                   <br></br>
                   <button
                     className="btn btn-secondary mr-2"
@@ -416,9 +411,7 @@ class FriendsList extends React.Component {
               <h5>Requests</h5>
               {this.state.friendRequests.map((data, index) => (
                 <div className="listItemBox" key={data.key} data-index={index}>
-                  <strong>
-                    {data.requestorUsername}
-                  </strong>
+                  <strong>{data.requestorUsername}</strong>
                   <br></br>
                   <button
                     className="btn btn-secondary displayButtons"

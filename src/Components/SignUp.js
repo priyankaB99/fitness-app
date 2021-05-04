@@ -16,7 +16,6 @@ class SignUp extends React.Component {
     this.state = {
       firstName: "",
       lastName: "",
-      bday: "",
       email: "",
       profpic: "",
       username: "",
@@ -24,12 +23,23 @@ class SignUp extends React.Component {
       password2: "",
       warning: "",
       error: null,
+      match: true,
     };
     this.submitForm = this.submitForm.bind(this);
   }
 
   onChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({ [event.target.name]: event.target.value }, () => {
+      if (event.target.name === "password2") {
+        if (this.state.password1 === this.state.password2) {
+          this.setState({ match: true });
+        } else if (this.state.password2 === "") {
+          this.setState({ match: true });
+        } else {
+          this.setState({ match: false });
+        }
+      }
+    });
   };
 
   profpicChange = (event) => {
@@ -100,7 +110,6 @@ class SignUp extends React.Component {
                 Email: this.state.email,
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
-                bday: this.state.bday,
                 pic: url,
               });
             });
@@ -129,7 +138,6 @@ class SignUp extends React.Component {
       error,
       firstName,
       lastName,
-      bday,
     } = this.state;
 
     let isInvalid = password1 === "" || email === "" || username === "";
@@ -192,15 +200,7 @@ class SignUp extends React.Component {
             type="password"
             className="input-box"
           />
-          <label htmlFor="bday"> Date of Birth:</label>
-          <input
-            id="bday"
-            name="bday"
-            value={bday}
-            onChange={this.onChange}
-            type="date"
-            className="input-box text-left"
-          />
+          {this.state.match ? null : <p> Passwords do not match.</p>}
           <button
             className="btn btn-secondary"
             disabled={isInvalid}

@@ -10,14 +10,12 @@ class ViewEditProfile extends React.Component {
     super(props);
     this.state = {
       username: this.props.username,
-      bday: this.props.bday,
       pic: this.props.pic,
       showEditUser: false,
-      showEditBday: false,
       showEditProfPic: false,
       newUsername: "",
-      newBday: "",
       newPic: "",
+      warning: "",
     };
 
     this.toggle = this.toggle.bind(this);
@@ -27,8 +25,6 @@ class ViewEditProfile extends React.Component {
     let changeItem = event.target.parentNode.id;
     if (changeItem === "editUsername") {
       this.setState({ showEditUser: !this.state.showEditUser });
-    } else if (changeItem === "editBday") {
-      this.setState({ showEditBday: !this.state.showEditBday });
     } else if (changeItem === "editProfPic") {
       this.setState({ showEditProfPic: !this.state.showEditProfPic });
     }
@@ -45,26 +41,38 @@ class ViewEditProfile extends React.Component {
 
   submitHandler = (event) => {
     event.preventDefault();
+    let currentComponent = this;
     const currentUser = fire.auth().currentUser;
     const currentUserId = fire.auth().currentUser.uid;
     let changeItem = event.target.parentNode.id;
-    let newBday = this.state.newBday;
     let username = this.state.newUsername;
 
     if (changeItem === "editUsername") {
-      const userRef = fire.database().ref("Users/" + currentUserId);
-      userRef.update({ Username: this.state.newUsername });
-      currentUser
-        .updateProfile({ displayName: this.state.newUsername })
-        .then(() => {
-          console.log("Sucessfully changed.");
-          this.setState({ newUsername: "", username: username });
-        });
-    } else if (changeItem === "editBday") {
-      const userRef = fire.database().ref("Users/" + currentUserId);
-      userRef.update({ bday: this.state.newBday }).then(() => {
-        console.log("Successfully changed");
-        this.setState({ newBday: "", bday: newBday });
+      //check if username already exists
+      const usernamesRef = fire.database().ref("Users/");
+      let usernames = [];
+      usernamesRef.once("value", function (data) {
+        let info = data.val();
+        for (const key in info) {
+          usernames.push(info[key].Username);
+        }
+        if (usernames.includes(currentComponent.state.newUsername)) {
+          currentComponent.setState({ warning: "Username taken" });
+        } else {
+          const userRef = fire.database().ref("Users/" + currentUserId);
+          userRef.update({ Username: currentComponent.state.newUsername });
+          currentUser
+            .updateProfile({ displayName: currentComponent.state.newUsername })
+            .then(() => {
+              console.log("Sucessfully changed.");
+              currentComponent.setState({
+                newUsername: "",
+                username: username,
+                warning: "",
+                showEditUser: false,
+              });
+            });
+        }
       });
     } else if (changeItem === "editProfPic") {
       let file = this.state.newPic;
@@ -86,7 +94,7 @@ class ViewEditProfile extends React.Component {
             const userRef = fire.database().ref("Users/" + currentUserId);
             userRef.update({ pic: url });
 
-            this.setState({ newPic: "", pic: url });
+            this.setState({ newPic: "", pic: url, showEditProfPic: false });
           })
           .catch((error) => {
             //error in retrieving url
@@ -116,8 +124,10 @@ class ViewEditProfile extends React.Component {
                 type="file"
                 name="newProfPic"
                 accept="image/*"
+                required
               />
-              <input type="submit" value="Upload New Profile Picture" />
+              <input type="submit" value="Upload" />
+              {this.state.warning !== "" && this.state.warning}
             </form>
           ) : null}
           <button
@@ -139,15 +149,17 @@ class ViewEditProfile extends React.Component {
                 name="newUsername"
                 value={this.state.newUsername}
                 placeholder="Enter New Username"
+                required
               />
               <input type="submit" value="Change Username" />
+              {this.state.warning !== "" && this.state.warning}
             </form>
           ) : null}
           <button onClick={this.toggle} className="btn btn-secondary">
             Edit
           </button>
         </div>
-        <div id="editBday" class="editBox">
+        {/* <div id="editBday" class="editBox">
           <p>Birthday: {this.state.bday}</p>
           {this.state.showEditBday ? (
             <form onSubmit={this.submitHandler}>
@@ -163,7 +175,7 @@ class ViewEditProfile extends React.Component {
           <button onClick={this.toggle} className="btn btn-secondary">
             Edit
           </button>
-        </div>
+        </div> */}
       </div>
     );
   }
