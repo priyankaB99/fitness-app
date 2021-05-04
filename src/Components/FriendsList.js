@@ -408,7 +408,7 @@ class FriendsList extends React.Component {
           </div>
           <div className="px-3 col">
             <div id="friendRequestsList" className="workout">
-              <h5>Requests</h5>
+              <h5>Friend Requests</h5>
               {this.state.friendRequests.map((data, index) => (
                 <div className="listItemBox" key={data.key} data-index={index}>
                   <strong>{data.requestorUsername}</strong>

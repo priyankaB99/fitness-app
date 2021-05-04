@@ -401,7 +401,7 @@ class CreateWorkout extends React.Component {
             className="btn btn-secondary"
             type="submit"
             onClick={this.state.popup ? this.submitEdits : this.submitHandler}
-            value={this.state.popup ? "Edit Workout" : "Create New Workout"}
+            value={this.state.popup ? "Save" : "Create New Workout"}
           />
         </div>
       </div>
