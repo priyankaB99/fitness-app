@@ -210,7 +210,11 @@ class DisplayWorkouts extends React.Component {
 
   //Create pop up for filtering options
   showFilter(event) {
-    this.setState({ showFilter: !this.state.showFilter });
+    this.setState({ showFilter: !this.state.showFilter }, () => {
+      if (this.state.showFilter === false) {
+        this.setState({ filterBy: "" });
+      }
+    });
   }
 
   //CAN MAKE THIS MORE EFFICIENT with "shared" attribute (see createWorkoutDiv function)
