@@ -3,6 +3,7 @@ import fire from "../Firebase/fire";
 import "firebase/auth";
 import "firebase/database";
 import "../CSS/ShareWorkout.css";
+import { Redirect } from "react-router-dom";
 import { keyframes } from "styled-components";
 
 //Code Resources
@@ -22,6 +23,7 @@ class ShareWorkout extends React.Component {
       toShareWith: "", //user ID of friend that has been selected to share with
       eventKey: this.props.selectedWorkout.eventKey,
       warning: false,
+      redirect: false,
     };
     this.parseWorkoutData = this.parseWorkoutData.bind(this);
     this.parseFriends = this.parseFriends.bind(this);
@@ -30,6 +32,7 @@ class ShareWorkout extends React.Component {
     this.toShareList = this.toShareList.bind(this);
     this.changeHandler = this.changeHandler.bind(this);
     this.shareHandler = this.shareHandler.bind(this);
+    this.redirectFriends = this.redirectFriends.bind(this);
   }
 
   componentDidMount() {
@@ -113,27 +116,19 @@ class ShareWorkout extends React.Component {
   toShareList() {
     return (
       <div>
-        {this.state.friends.length > 0 ? (
-          <div>
-            <select name="toShare" onChange={this.changeHandler}>
-              {this.state.friends.map((friend, index) => (
-                <option value={friend.id} key={index}>
-                  {friend.username}
-                </option>
-              ))}
-            </select>
-            <input
-              type="button"
-              value="Share"
-              onClick={this.shareHandler}
-            ></input>
-          </div>
-        ) : (
-          <strong>
-            {" "}
-            You currently have no friends. Add some friends to begin sharing!{" "}
-          </strong>
-        )}
+        <p>Share with:</p>
+        <select name="toShare" onChange={this.changeHandler}>
+          {this.state.friends.map((friend, index) => (
+            <option value={friend.id} key={index}>
+              {friend.username}
+            </option>
+          ))}
+        </select>
+        <input
+          type="button"
+          value="Share"
+          onClick={this.shareHandler}
+        ></input>
       </div>
     );
   }
@@ -142,6 +137,7 @@ class ShareWorkout extends React.Component {
   sharedList() {
     return (
       <div>
+        <p>Shared with:</p>
         <ul>
           {this.state.sharedFriends.map((friend, index) => (
             <li key={index}>{friend}</li>
@@ -179,23 +175,36 @@ class ShareWorkout extends React.Component {
         .ref("Workouts/" + this.state.workout + "/tags");
       shareTagRef.once("value", function (data) {
         let tags = data.val();
-        for (let i = 0; i < tags.length; i++) {
-          //make sure tags from shared workouts are set in database
-          let newTagRef = fire
-            .database()
-            .ref("Tags/" + tags[i] + "/" + currentComponent.state.toShareWith)
-            .push();
-          newTagRef.set({
-            workoutId: currentComponent.state.workout,
-            workoutName: currentComponent.state.workoutName,
-          });
+        if(tags.length > 0){
+          for (let i = 0; i < tags.length; i++) {
+            //make sure tags from shared workouts are set in database
+            let newTagRef = fire
+              .database()
+              .ref("Tags/" + tags[i] + "/" + currentComponent.state.toShareWith)
+              .push();
+            newTagRef.set({
+              workoutId: currentComponent.state.workout,
+              workoutName: currentComponent.state.workoutName,
+            });
+          }
         }
       });
       this.parseWorkoutData();
     }
   }
 
+  redirectFriends(){
+    this.setState({
+      redirect: true
+    })
+  }
+
   render() {
+    //if "Add Friends" button clicked
+    if (this.state.redirect === true) {
+      return <Redirect to="/myfriends" />;
+    }
+
     return (
       <div className="popup">
         <div>
@@ -205,12 +214,19 @@ class ShareWorkout extends React.Component {
         </div>
 
         <h2>Share "{this.state.workoutName}"</h2>
-        <p>Shared with:</p>
 
-        {this.sharedList()}
+        {this.state.friends.length !== 0 ? 
+          (<div>
+            {this.sharedList()}
+            {this.toShareList()}
+          </div>) : 
+          (<div>
+            <p>You currently have no friends. Add some friends to begin sharing!</p>
+            <button onClick={this.redirectFriends}>Add Friends</button>
+          </div>)
+        }
 
-        <p>Share with:</p>
-        {this.toShareList()}
+
 
         <br></br>
 
