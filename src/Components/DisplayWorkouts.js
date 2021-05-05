@@ -12,6 +12,7 @@ import {
   BsPencilSquare,
   BsFillTrashFill,
   BsFillPersonPlusFill,
+  BsPlusCircle
 } from "react-icons/bs";
 
 import CreateWorkout from "./CreateWorkout";
@@ -25,6 +26,7 @@ class DisplayWorkouts extends React.Component {
       selectedWorkout: "", //workout ID
       showEditPopup: false,
       showSharePopup: false,
+      showCreatePopup: false,
       showFilter: false,
       showConfirmDelete: false,
       filterBy: "",
@@ -52,6 +54,7 @@ class DisplayWorkouts extends React.Component {
     this.removeShared = this.removeShared.bind(this);
     this.retrieveTags = this.retrieveTags.bind(this);
     this.checkStringEmpty = this.checkStringEmpty.bind(this);
+    this.toggleCreateWorkout = this.toggleCreateWorkout.bind(this);
   }
 
   componentDidMount() {
@@ -218,6 +221,12 @@ class DisplayWorkouts extends React.Component {
     this.setState({
       showSharePopup: !this.state.showSharePopup,
       selectedWorkout: workoutId,
+    });
+  }
+
+  toggleCreateWorkout(){
+    this.setState({
+      showCreatePopup: !this.state.showCreatePopup,
     });
   }
 
@@ -674,6 +683,12 @@ class DisplayWorkouts extends React.Component {
           />
         ) : null}
 
+        {this.state.showCreatePopup ? (
+          <CreateWorkout
+            closePopup={this.toggleCreateWorkout}
+          />
+        ) : null}
+
         {this.state.showSharePopup ? (
           <ShareWorkout
             closePopup={this.toggleShareWorkout}
@@ -692,34 +707,44 @@ class DisplayWorkouts extends React.Component {
           />
         ) : null}
 
-        <div id="filter-box">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            id="filterBtn"
-            onClick={this.showFilter}
-          >
-            Filter
-          </button>
+        <div className="headerBox">
+          <div id="filter-box">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              id="filterBtn"
+              onClick={this.showFilter}
+            >
+              Filter
+            </button>
 
-          {this.state.showFilter ? (
-            <div className="py-3">
-              <strong> Filter by:</strong>
-              <select
-                type="select"
-                name="filterBy"
-                onChange={this.onFilterChange}
-              >
-                <option value="" hidden>
-                  Select a filter
-                </option>
-                <option value="byUser"> Creator </option>
-                <option value="byTag"> Tags </option>
-              </select>
-              {this.renderFilter()}
+            {this.state.showFilter ? (
+              <div className="py-3">
+                <strong> Filter by:</strong>
+                <select
+                  type="select"
+                  name="filterBy"
+                  onChange={this.onFilterChange}
+                >
+                  <option value="" hidden>
+                    Select a filter
+                  </option>
+                  <option value="byUser"> Creator </option>
+                  <option value="byTag"> Tags </option>
+                </select>
+                {this.renderFilter()}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="createWorkout" onClick={this.toggleCreateWorkout}>
+            <div>
+              <BsPlusCircle size={36} className="icon"/>
             </div>
-          ) : null}
+            <p>Create</p>
+          </div>
         </div>
+        
 
         {this.state.myWorkouts.map((data, index) =>
           this.displayMyWorkout(data, index)
