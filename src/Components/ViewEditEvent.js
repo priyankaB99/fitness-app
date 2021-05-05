@@ -132,9 +132,9 @@ class ViewEditEvent extends React.Component {
   displayNonEdit() {
     return (
       <div>
-        <p>{this.formatDate() + " | " + this.formatTime()}</p>
+        <p><strong>{this.formatDate() + " | " + this.formatTime()}</strong></p>
         {this.state.workoutNotes && (
-          <div className="notes"> Notes: {this.state.workoutNotes}</div>
+          <div className="notes"> <strong>Notes:</strong> {this.state.workoutNotes}</div>
         )}
         {this.props.deleteEvent ? (
           <div className="actions">
@@ -168,10 +168,11 @@ class ViewEditEvent extends React.Component {
   //view when edit is clicked
   displayEdit() {
     return (
-      <div>
+      <div className="workoutInfo">
         <label htmlFor="workoutDate"> Date: </label>
         <input
           type="date"
+          className="input-box-nflex"
           name="workoutDate"
           value={this.state.workoutDate}
           onChange={this.changeHandler}
@@ -181,6 +182,7 @@ class ViewEditEvent extends React.Component {
         <label htmlFor="startTime"> Start Time: </label>
         <input
           type="time"
+          className="input-box-nflex mr-2"
           name="workoutStart"
           value={this.state.workoutStart}
           onChange={this.changeHandler}
@@ -189,6 +191,7 @@ class ViewEditEvent extends React.Component {
         <label htmlFor="workoutEnd"> End Time: </label>
         <input
           type="time"
+          className="input-box-nflex"
           name="workoutEnd"
           value={this.state.workoutEnd}
           onChange={this.changeHandler}
@@ -197,7 +200,9 @@ class ViewEditEvent extends React.Component {
         {this.state.timeValid !== "" && (
           <p className="warning">{this.state.timeValid}</p>
         )}
+        <br></br>
         <button
+          className="btn btn-secondary mt-2 mr-2"
           onClick={() => {
             this.submitHandler();
           }}
@@ -205,6 +210,7 @@ class ViewEditEvent extends React.Component {
           Save
         </button>
         <button
+          className="btn btn-secondary mt-2 mr-2"
           onClick={() => {
             this.toggleEditEvent();
           }}
@@ -240,7 +246,7 @@ class ViewEditEvent extends React.Component {
 
   displayMyWorkout() {
     return (
-      <div className="workoutInfo owner" id={this.state.eventKey}>
+      <div className="owner" id={this.state.eventKey}>
         <div className="name">
           <h2>{this.state.workoutName}</h2>
         </div>
@@ -255,9 +261,9 @@ class ViewEditEvent extends React.Component {
         <div className="name">
           <h2>{this.state.workoutName}</h2>
         </div>
-        <p>{this.formatDate() + " | " + this.formatTime()}</p>
+        <p><strong>{this.formatDate() + " | " + this.formatTime()}</strong></p>
         {this.state.workoutNotes && (
-          <div className="notes"> Notes: {this.state.workoutNotes}</div>
+          <div className="notes"> <strong>Notes:</strong> {this.state.workoutNotes}</div>
         )}
       </div>
     );
@@ -357,14 +363,14 @@ class ViewEditEvent extends React.Component {
           <div className="viewExerciseName">
             <b>{index + 1 + ". " + exercise.exerciseName}</b>
           </div>
-          <div className="sets">
+          <div className="printSets">
             {exercise.sets}
             {this.checkStringEmpty(exercise.sets) ? null : <p>sets</p>}
           </div>
-          <div className="qty">
+          <div className="printQty">
             {exercise.qty} {exercise.unit}
           </div>
-          <div className="weight">
+          <div className="printWeight">
             {exercise.weight}
             {this.checkStringEmpty(exercise.weight) ? null : <p>lbs </p>}
           </div>

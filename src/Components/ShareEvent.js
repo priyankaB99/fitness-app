@@ -106,25 +106,30 @@ class ShareEvent extends React.Component {
   }
   //users who have already been shared with
   sharedList(){
-    return(
-      <div>
-        <p>Shared with: </p>
-        <ul>
-          {this.state.sharedFriends.map( (friend, index) =>
-            <li key={index}>{friend}</li>
-          )}
-        </ul>
-      </div>
-    );
+    if (this.state.sharedFriends.length > 0) {
+      return(
+      <div className="mb-3">
+          <div> 
+            <p><strong>Shared with: </strong></p>
+            <ul>
+              {this.state.sharedFriends.map( (friend, index) =>
+                <li key={index}>{friend}</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      );
+    }
+    
   }
 
   //allows user to select which friend to share with and option to submit
   toShareList(){
   
     return(
-      <div>
-        <p>Share with:</p>       
-        <select name="toShare" onChange={this.changeHandler}>
+      <div className="mb-3">
+        <p><strong>Share with:</strong></p>      
+        <select className="input-box" name="toShare" onChange={this.changeHandler}>
           {this.state.friends.map((friend, index) => 
             <option  value={friend.id} key={index}>{friend.username}</option>
           )}
@@ -182,7 +187,7 @@ class ShareEvent extends React.Component {
         (<div> 
           {this.sharedList()} 
           {this.toShareList()}
-          <input type="button" value="Share" onClick={this.shareHandler}></input>
+          <input type="button" className="btn btn-secondary" value="Share" onClick={this.shareHandler}></input>
         </div>) : 
         (<div>
           <p>You currently have no friends. Add some friends to begin sharing!</p>
@@ -190,8 +195,6 @@ class ShareEvent extends React.Component {
         </div>)
         }
         
- 
-
         <br></br>
 
         {/* <input type="button" value="Share" onClick={this.shareHandler}></input> */}

@@ -14,3 +14,9 @@
 ol {
     padding: 0 18px;
 }
+.close:hover {
+    cursor: pointer;
+}
+label {
+    margin-right: 10px;
+}

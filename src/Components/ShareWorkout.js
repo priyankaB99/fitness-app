@@ -116,31 +116,33 @@ class ShareWorkout extends React.Component {
   toShareList() {
     return (
       <div>
-        <p>Share with:</p>
-        <select name="toShare" onChange={this.changeHandler}>
+        <p><strong>Share with:</strong></p>
+        <select className="input-box mb-3" name="toShare" onChange={this.changeHandler}>
           {this.state.friends.map((friend, index) => (
             <option value={friend.id} key={index}>
               {friend.username}
             </option>
           ))}
         </select>
-        <input type="button" value="Share" onClick={this.shareHandler}></input>
+        <input type="button" className="btn btn-secondary" value="Share" onClick={this.shareHandler}></input>
       </div>
     );
   }
 
   //users who have already been shared with
   sharedList() {
-    return (
-      <div>
-        <p>Shared with:</p>
-        <ul>
-          {this.state.sharedFriends.map((friend, index) => (
-            <li key={index}>{friend}</li>
-          ))}
-        </ul>
-      </div>
-    );
+    if (this.state.sharedFriends.length > 0) {
+      return (
+        <div>
+          <p><strong>Shared with:</strong></p>
+          <ul>
+            {this.state.sharedFriends.map((friend, index) => (
+              <li key={index}>{friend}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
   }
 
   //sets state whenever dropdown option is selected

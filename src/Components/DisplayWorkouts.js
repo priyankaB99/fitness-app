@@ -320,8 +320,8 @@ class DisplayWorkouts extends React.Component {
           <h3 className="name">{data.name}</h3>
           {this.renderFavoriteFunctions(data.workoutId)}
         </div>
-        <p className="length">Workout Length: {data.timeLength} min</p>
-        <p className="owner">Owner: {data.owner} </p>
+        <p className="length"><strong>Workout Length:</strong> {data.timeLength} min</p>
+        <p className="owner"><strong>Owner:</strong> {data.owner} </p>
       </div>
     );
   }

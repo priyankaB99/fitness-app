@@ -171,6 +171,7 @@ class CreateEvent extends React.Component {
           <label htmlFor="date"> Date: </label>
           <input
             type="date"
+            className="input-box"
             name="date"
             value={this.state.date}
             onChange={this.changeHandler}
@@ -181,6 +182,7 @@ class CreateEvent extends React.Component {
           <label htmlFor="startTime"> Start Time: </label>
           <input
             type="time"
+            className="input-box"
             name="startTime"
             value={this.state.startTime}
             onChange={this.changeHandler}
@@ -189,6 +191,7 @@ class CreateEvent extends React.Component {
           <label htmlFor="endTime"> End Time: </label>
           <input
             type="time"
+            className="input-box"
             name="endTime"
             value={this.state.endTime}
             onChange={this.changeHandler}
@@ -199,6 +202,7 @@ class CreateEvent extends React.Component {
           </label>
           <select
             name="workout"
+            className="input-box"
             value={this.state.workout}
             onChange={this.changeHandler}
             required
