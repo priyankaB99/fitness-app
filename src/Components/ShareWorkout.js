@@ -124,11 +124,7 @@ class ShareWorkout extends React.Component {
             </option>
           ))}
         </select>
-        <input
-          type="button"
-          value="Share"
-          onClick={this.shareHandler}
-        ></input>
+        <input type="button" value="Share" onClick={this.shareHandler}></input>
       </div>
     );
   }
@@ -175,17 +171,34 @@ class ShareWorkout extends React.Component {
         .ref("Workouts/" + this.state.workout + "/tags");
       shareTagRef.once("value", function (data) {
         let tags = data.val();
-        if(tags){
+        if (tags) {
+          // for (let i = 0; i < tags.length; i++) {
+          //   //make sure tags from shared workouts are set in database
+          //   let newTagRef = fire
+          //     .database()
+          //     .ref("Tags/" + tags[i] + "/" + currentComponent.state.toShareWith)
+          //     .push();
+          //   newTagRef.set({
+          //     workoutId: currentComponent.state.workout,
+          //     workoutName: currentComponent.state.workoutName,
+          //   });
+          // }
+
           for (let i = 0; i < tags.length; i++) {
-            //make sure tags from shared workouts are set in database
             let newTagRef = fire
               .database()
-              .ref("Tags/" + tags[i] + "/" + currentComponent.state.toShareWith)
-              .push();
+              .ref(
+                "Tags/" +
+                  tags[i] +
+                  "/" +
+                  currentComponent.state.toShareWith +
+                  "/" +
+                  currentComponent.state.workout
+              );
             newTagRef.set({
-              workoutId: currentComponent.state.workout,
               workoutName: currentComponent.state.workoutName,
             });
+            console.log("should have added tag");
           }
         }
       });
@@ -193,10 +206,10 @@ class ShareWorkout extends React.Component {
     }
   }
 
-  redirectFriends(){
+  redirectFriends() {
     this.setState({
-      redirect: true
-    })
+      redirect: true,
+    });
   }
 
   render() {
@@ -215,18 +228,19 @@ class ShareWorkout extends React.Component {
 
         <h2>Share "{this.state.workoutName}"</h2>
 
-        {this.state.friends.length !== 0 ? 
-          (<div>
+        {this.state.friends.length !== 0 ? (
+          <div>
             {this.sharedList()}
             {this.toShareList()}
-          </div>) : 
-          (<div>
-            <p>You currently have no friends. Add some friends to begin sharing!</p>
+          </div>
+        ) : (
+          <div>
+            <p>
+              You currently have no friends. Add some friends to begin sharing!
+            </p>
             <button onClick={this.redirectFriends}>Add Friends</button>
-          </div>)
-        }
-
-
+          </div>
+        )}
 
         <br></br>
 

@@ -461,6 +461,7 @@ class DisplayWorkouts extends React.Component {
 
   onFilterChange = (event) => {
     this.setState({ filterBy: event.target.value });
+    this.retrieveWorkouts();
   };
 
   renderFilter = () => {
