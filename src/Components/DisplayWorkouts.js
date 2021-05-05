@@ -603,7 +603,7 @@ class DisplayWorkouts extends React.Component {
                 let workout = this.createWorkoutDiv(
                   workoutsFromDatabase,
                   key,
-                  false
+                  true
                 );
                 //iterate through each workout's tags
                 for (let i in workoutsFromDatabase[key].tags) {
