@@ -320,8 +320,12 @@ class DisplayWorkouts extends React.Component {
           <h3 className="name">{data.name}</h3>
           {this.renderFavoriteFunctions(data.workoutId)}
         </div>
-        <p className="length"><strong>Workout Length:</strong> {data.timeLength} min</p>
-        <p className="owner"><strong>Owner:</strong> {data.owner} </p>
+        <p className="length">
+          <strong>Workout Length:</strong> {data.timeLength} min
+        </p>
+        <p className="owner">
+          <strong>Owner:</strong> {data.owner}{" "}
+        </p>
       </div>
     );
   }
@@ -692,6 +696,7 @@ class DisplayWorkouts extends React.Component {
           <CreateWorkout
             closePopup={this.toggleCreateWorkout}
             retrieveWorkouts={this.retrieveWorkouts}
+            path="display"
           />
         ) : null}
 

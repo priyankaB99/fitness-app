@@ -147,6 +147,7 @@ class CreateWorkout extends React.Component {
     }
 
     this.props.retrieveWorkouts();
+
     this.props.closePopup();
 
     console.log("successfully edited workout in database");
@@ -200,7 +201,9 @@ class CreateWorkout extends React.Component {
     });
 
     //retrieve
-    this.props.retrieveWorkouts();
+    if (this.props.path === "display") {
+      this.props.retrieveWorkouts();
+    }
     this.props.closePopup();
   }
 
@@ -280,8 +283,8 @@ class CreateWorkout extends React.Component {
                   <button class="deleteExercise" onClick={this.deleteExercise}>
                     X
                   </button>
-                    <p> {`Exercise #${idx + 1}`}</p>
-                    <div className="workoutData">
+                  <p> {`Exercise #${idx + 1}`}</p>
+                  <div className="workoutData">
                     <label htmlFor={exerciseId}>Name:</label>
                     <input
                       type="text"
@@ -343,7 +346,7 @@ class CreateWorkout extends React.Component {
                       onChange={this.changeHandler}
                       min="0"
                     />
-                    </div>
+                  </div>
                 </div>
               </div>
             );
@@ -358,10 +361,7 @@ class CreateWorkout extends React.Component {
           </button>
 
           {/* "Tags" Source: https://dev.to/prvnbist/create-a-tags-input-component-in-reactjs-ki */}
-          <label htmlFor="tags">
-            {" "}
-            Add Tags to your Workout:{" "}
-          </label>
+          <label htmlFor="tags"> Add Tags to your Workout: </label>
           <div className="tags-input">
             <ul id="tags">
               {this.state.tags &&

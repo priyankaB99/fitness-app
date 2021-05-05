@@ -141,16 +141,15 @@ class CreateEvent extends React.Component {
     }
   }
 
-  toggleCreateWorkout(){
+  toggleCreateWorkout() {
     console.log("CreateWorkoutToggle");
     this.setState({
       showCreatePopup: !this.state.showCreatePopup,
-      workout: ""
+      workout: "",
     });
   }
 
   render() {
-
     return (
       <div className="popup">
         <div>
@@ -159,11 +158,9 @@ class CreateEvent extends React.Component {
           </p>
         </div>
 
-        {this.state.workout==="create" ? (
-          <CreateWorkout
-            closePopup={this.toggleCreateWorkout}
-          />
-        ): null}
+        {this.state.workout === "create" ? (
+          <CreateWorkout closePopup={this.toggleCreateWorkout} path="event" />
+        ) : null}
 
         <form id="createEventForm" onSubmit={this.submitHandler}>
           <h3> Add a Workout Event to Your Calendar </h3>
@@ -215,7 +212,9 @@ class CreateEvent extends React.Component {
                 {data.name}
               </option>
             ))}
-            <option value="create" onClick={this.toggleCreateWorkout}>Click to Create a New Workout!</option>
+            <option value="create" onClick={this.toggleCreateWorkout}>
+              Click to Create a New Workout!
+            </option>
           </select>
           <br></br>
           {this.state.warning !== "" && (
