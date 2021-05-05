@@ -275,73 +275,75 @@ class CreateWorkout extends React.Component {
             let weightId = `weight-${idx}`;
             let setsId = `sets-${idx}`;
             return (
-              <div key={idx} class="exercise-list">
+              <div key={idx} className="exercise-list">
                 <div className="eachExercise" data-arrayidx={idx}>
-                  <p> {`Exercise #${idx + 1}`}</p>
-                  <label htmlFor={exerciseId}>Name:</label>
-                  <input
-                    type="text"
-                    name={exerciseId}
-                    data-id={idx}
-                    id={exerciseId}
-                    value={exercises[idx].exerciseName}
-                    className="exerciseName"
-                    onChange={this.changeHandler}
-                    required
-                  />
-                  <label htmlFor={qtyId}> Quantity: </label>
-                  <input
-                    type="number"
-                    name={qtyId}
-                    data-id={idx}
-                    id={qtyId}
-                    value={exercises[idx].qty}
-                    className="qty"
-                    onChange={this.changeHandler}
-                    min="0"
-                    required
-                  />
-                  <select
-                    name={unitId}
-                    data-id={idx}
-                    id={unitId}
-                    className="unit"
-                    onChange={this.changeHandler}
-                    required
-                    value={exercises[idx].unit}
-                  >
-                    <option value="reps"> reps </option>
-                    <option value="secs"> seconds</option>
-                    <option value="min"> minutes </option>
-                    <option value="miles"> miles </option>
-                    <option value="km"> km </option>
-                  </select>
-                  <label htmlFor={setsId}> Sets (optional): </label>
-                  <input
-                    type="number"
-                    name={setsId}
-                    data-id={idx}
-                    id={setsId}
-                    value={exercises[idx].sets}
-                    className="sets"
-                    onChange={this.changeHandler}
-                    min="0"
-                  />
-                  <label htmlFor={weightId}> Weight in lbs (optional) </label>
-                  <input
-                    type="number"
-                    name={weightId}
-                    data-id={idx}
-                    id={weightId}
-                    value={exercises[idx].weight}
-                    className="weight"
-                    onChange={this.changeHandler}
-                    min="0"
-                  />
-
                   <button class="deleteExercise" onClick={this.deleteExercise}>
                     X
                   </button>
+                    <p> {`Exercise #${idx + 1}`}</p>
+                    <div className="workoutData">
+                    <label htmlFor={exerciseId}>Name:</label>
+                    <input
+                      type="text"
+                      name={exerciseId}
+                      data-id={idx}
+                      id={exerciseId}
+                      value={exercises[idx].exerciseName}
+                      className="exerciseName"
+                      onChange={this.changeHandler}
+                      required
+                    />
+                    <label htmlFor={qtyId}> Quantity: </label>
+                    <input
+                      type="number"
+                      name={qtyId}
+                      data-id={idx}
+                      id={qtyId}
+                      value={exercises[idx].qty}
+                      className="qty"
+                      onChange={this.changeHandler}
+                      min="0"
+                      required
+                    />
+                    <select
+                      name={unitId}
+                      data-id={idx}
+                      id={unitId}
+                      className="unit"
+                      onChange={this.changeHandler}
+                      required
+                      value={exercises[idx].unit}
+                    >
+                      <option value="reps"> reps </option>
+                      <option value="secs"> seconds</option>
+                      <option value="min"> minutes </option>
+                      <option value="miles"> miles </option>
+                      <option value="km"> km </option>
+                    </select>
+                    <br></br>
+                    <label htmlFor={setsId}> Sets (optional): </label>
+                    <input
+                      type="number"
+                      name={setsId}
+                      data-id={idx}
+                      id={setsId}
+                      value={exercises[idx].sets}
+                      className="sets"
+                      onChange={this.changeHandler}
+                      min="0"
+                    />
+                    <label htmlFor={weightId}> Weight in lbs (optional) </label>
+                    <input
+                      type="number"
+                      name={weightId}
+                      data-id={idx}
+                      id={weightId}
+                      value={exercises[idx].weight}
+                      className="weight"
+                      onChange={this.changeHandler}
+                      min="0"
+                    />
+                    </div>
                 </div>
               </div>
             );
@@ -358,7 +360,7 @@ class CreateWorkout extends React.Component {
           {/* "Tags" Source: https://dev.to/prvnbist/create-a-tags-input-component-in-reactjs-ki */}
           <label htmlFor="tags">
             {" "}
-            Group each workout using tags (ex. easy, abs, cardio):{" "}
+            Add Tags to your Workout:{" "}
           </label>
           <div className="tags-input">
             <ul id="tags">
@@ -380,7 +382,7 @@ class CreateWorkout extends React.Component {
               name="tags"
               className="tags"
               onKeyUp={this.changeHandler}
-              placeholder="Double click for tag options or type in your own. Hit the spacebar to add."
+              placeholder="Type in or select your tag, then hit the spacebar to add it!"
               list="tag-options"
             />
             <datalist id="tag-options">

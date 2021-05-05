@@ -107,14 +107,27 @@
   margin-left: 0px;
 }
 
+.exercise-list {
+  margin: 15px 0 !important;
+}
+
 .eachExercise {
-  display: flex;
-  flex-direction: row;
-  height: 30px;
-  margin: 10px;
+  /* display: flex;
+  flex-direction: row; */
+  /* height: 30px; */
+  /* margin: 10px; */
+  max-width: 800px;
 }
 .eachExercise > * {
   margin-right: 15px;
+  display: inline-block;
+}
+.workoutData {
+  display: block;
+}
+.workoutData > * {
+  margin-right: 15px;
+  display: inline-block !important;
 }
 
 #createBtn,
@@ -154,6 +167,9 @@ input[type="number"] {
   border: 1px solid rgb(214, 216, 218);
   border-radius: 6px;
   min-height: 32px;
+}
+.unit {
+  vertical-align: top;
 }
 .printSets, .printQty, .printWeight {
   display: flex;
@@ -226,7 +242,6 @@ input[type="number"] {
   .eachExercise {
     height: unset;
     display: unset;
-    margin-left: 20px;
   }
   .exerciseName,
   .qty,
