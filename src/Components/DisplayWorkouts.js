@@ -12,7 +12,7 @@ import {
   BsPencilSquare,
   BsFillTrashFill,
   BsFillPersonPlusFill,
-  BsPlusCircle
+  BsPlusCircle,
 } from "react-icons/bs";
 
 import CreateWorkout from "./CreateWorkout";
@@ -208,12 +208,16 @@ class DisplayWorkouts extends React.Component {
   //Should be able to edit times, workout, etc.
   //https://codepen.io/bastianalbers/pen/PWBYvz?editors=0010
   toggleEditWorkout(event) {
-    let workoutId = event.currentTarget.parentNode.parentNode.parentNode.id;
-    console.log(workoutId);
-    this.setState({
-      showEditPopup: !this.state.showEditPopup,
-      selectedWorkout: workoutId,
-    });
+    if (event) {
+      let workoutId = event.currentTarget.parentNode.parentNode.parentNode.id;
+      console.log(workoutId);
+      this.setState({
+        showEditPopup: !this.state.showEditPopup,
+        selectedWorkout: workoutId,
+      });
+    } else {
+      this.setState({ showEditPopup: !this.state.showEditPopup });
+    }
   }
 
   toggleShareWorkout(event) {
@@ -224,7 +228,7 @@ class DisplayWorkouts extends React.Component {
     });
   }
 
-  toggleCreateWorkout(){
+  toggleCreateWorkout() {
     this.setState({
       showCreatePopup: !this.state.showCreatePopup,
     });
@@ -687,6 +691,7 @@ class DisplayWorkouts extends React.Component {
         {this.state.showCreatePopup ? (
           <CreateWorkout
             closePopup={this.toggleCreateWorkout}
+            retrieveWorkouts={this.retrieveWorkouts}
           />
         ) : null}
 
@@ -740,12 +745,11 @@ class DisplayWorkouts extends React.Component {
 
           <div className="createWorkout" onClick={this.toggleCreateWorkout}>
             <div>
-              <BsPlusCircle size={36} className="icon"/>
+              <BsPlusCircle size={36} className="icon" />
             </div>
             <p>Create</p>
           </div>
         </div>
-        
 
         {this.state.myWorkouts.map((data, index) =>
           this.displayMyWorkout(data, index)
