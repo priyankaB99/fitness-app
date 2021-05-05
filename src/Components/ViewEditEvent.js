@@ -6,8 +6,11 @@ import "../CSS/ViewEditEvent.css";
 import { format, parse } from "date-fns";
 import ShareEvent from "./ShareEvent";
 import { Redirect } from "react-router-dom";
-import { BsPencilSquare, BsFillTrashFill, BsFillPersonPlusFill } from 'react-icons/bs';
-
+import {
+  BsPencilSquare,
+  BsFillTrashFill,
+  BsFillPersonPlusFill,
+} from "react-icons/bs";
 
 //Code Resources
 // -https://codepen.io/bastianalbers/pen/PWBYvz?editors=0110
@@ -29,6 +32,7 @@ class ViewEditEvent extends React.Component {
       workoutEnd: this.props.selectedWorkout.end,
       eventKey: this.props.selectedWorkout.eventKey,
       warning: "",
+      timeValid: "",
       editToggled: false, //if edit button has been clicked
       isShared: this.props.selectedWorkout.shared, //is this user's event or someone else's?
       showSharePopup: false,
@@ -135,13 +139,25 @@ class ViewEditEvent extends React.Component {
         {this.props.deleteEvent ? (
           <div className="actions">
             <div className="iconBox">
-              <BsPencilSquare size={25} onClick={this.toggleEditEvent} className="icon"/>
+              <BsPencilSquare
+                size={25}
+                onClick={this.toggleEditEvent}
+                className="icon"
+              />
             </div>
             <div className="iconBox">
-              <BsFillTrashFill size={25} className="icon"  onClick={this.deleteEvent}/>
+              <BsFillTrashFill
+                size={25}
+                className="icon"
+                onClick={this.deleteEvent}
+              />
             </div>
             <div className="iconBox">
-              <BsFillPersonPlusFill size={25} onClick={this.toggleShareEvent} className="icon"/>
+              <BsFillPersonPlusFill
+                size={25}
+                onClick={this.toggleShareEvent}
+                className="icon"
+              />
             </div>
           </div>
         ) : null}
@@ -178,7 +194,9 @@ class ViewEditEvent extends React.Component {
           onChange={this.changeHandler}
           required
         />
-
+        {this.state.timeValid !== "" && (
+          <p className="warning">{this.state.timeValid}</p>
+        )}
         <button
           onClick={() => {
             this.submitHandler();
@@ -278,18 +296,28 @@ class ViewEditEvent extends React.Component {
 
   //submit edits to FireBase
   submitHandler() {
-    //reference to existing workout
-    console.log(this.state.eventKey);
-    let eventRef = fire.database().ref("Events/" + this.state.eventKey);
+    let start = parse(this.state.workoutStart, "HH:mm", new Date());
+    let end = parse(this.state.workoutEnd, "HH:mm", new Date());
+    let startTime = start.getTime();
+    let endTime = end.getTime();
+    if (startTime > endTime) {
+      this.setState({
+        timeValid: "You must pick an end time that is later your start time.",
+      });
+    } else {
+      console.log(this.state.eventKey);
+      let eventRef = fire.database().ref("Events/" + this.state.eventKey);
 
-    eventRef.update({
-      date: this.state.workoutDate,
-      endTime: this.state.workoutEnd,
-      startTime: this.state.workoutStart,
-    });
-    this.toggleEditEvent();
-    this.props.reloadCal();
-    console.log("Your event has been edited!");
+      eventRef.update({
+        date: this.state.workoutDate,
+        endTime: this.state.workoutEnd,
+        startTime: this.state.workoutStart,
+      });
+      this.toggleEditEvent();
+      this.props.reloadCal();
+      console.log("Your event has been edited!");
+    }
+    //reference to existing workout
   }
 
   checkStringEmpty(string) {
@@ -300,22 +328,24 @@ class ViewEditEvent extends React.Component {
     }
   }
 
-  findOwnerUsername(){
+  findOwnerUsername() {
     //if is shared workout
-    if(this.state.workout.creatorId !== this.state.scheduleId){
-      let ownerRef = fire.database().ref('Users/' + this.state.workout.creatorId + '/Username');
+    if (this.state.workout.creatorId !== this.state.scheduleId) {
+      let ownerRef = fire
+        .database()
+        .ref("Users/" + this.state.workout.creatorId + "/Username");
       ownerRef.get().then((username) => {
         this.setState({
-          ownerUsername: username.val()
-        })
+          ownerUsername: username.val(),
+        });
       });
     }
   }
 
-  redirectFriends(){
+  redirectFriends() {
     this.setState({
-      redirect: true
-    })
+      redirect: true,
+    });
   }
 
   formatExercises() {
@@ -378,13 +408,13 @@ class ViewEditEvent extends React.Component {
         ) : null}
 
         {this.displayWorkout()}
-        
-        {this.state.ownerUsername ? 
+
+        {this.state.ownerUsername ? (
           <p>
-            Shared by <b onClick={this.redirectFriends}>{this.state.ownerUsername}</b>
-          </p> 
-        
-          : null}
+            Shared by{" "}
+            <b onClick={this.redirectFriends}>{this.state.ownerUsername}</b>
+          </p>
+        ) : null}
 
         {this.displayTags()}
 

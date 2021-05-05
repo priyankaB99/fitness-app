@@ -403,7 +403,7 @@ class CreateWorkout extends React.Component {
             id="createBtn"
             className="btn btn-secondary"
             type="submit"
-            value={this.state.popup ? "Edit Workout" : "Create New Workout"}
+            value={this.state.popup ? "Save" : "Create New Workout"}
           />
         </form>
       </div>

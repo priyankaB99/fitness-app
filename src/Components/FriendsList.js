@@ -16,6 +16,7 @@ class FriendsList extends React.Component {
     this.state = {
       uid: "",
       friendList: [],
+      pendingRequests: [],
       friendRequests: [],
       requestedUsername: "",
     };
@@ -38,6 +39,7 @@ class FriendsList extends React.Component {
     let currentComponent = this;
     fire.auth().onAuthStateChanged(function (user) {
       if (user) {
+        let currentUser = fire.auth().currentUser.uid;
         // User is signed in
         console.log(user.email);
         console.log(user.displayName);
@@ -50,12 +52,15 @@ class FriendsList extends React.Component {
           .once("value", function (data) {
             let friendsFromDatabase = data.val();
             for (const key in friendsFromDatabase) {
-              friendsData.push({
-                key: key,
-                friendId: friendsFromDatabase[key].friendId,
-                friendUsername: friendsFromDatabase[key].friendUsername,
-                calendarOpen: false,
-                profileOpen: false,
+              let getUsername = fire.database().ref("Users/" + friendsFromDatabase[key].friendId);
+              getUsername.once("value", function (data) {
+                  friendsData.push({
+                    key: key,
+                    friendId: friendsFromDatabase[key].friendId,
+                    friendUsername: data.val().Username,
+                    calendarOpen: false,
+                    profileOpen: false,
+                  });
               });
             }
           })
@@ -64,14 +69,16 @@ class FriendsList extends React.Component {
               .database()
               .ref("FriendList/" + user.uid + "/ReceivedRequests");
             let requestsData = [];
-            requestsRef.once("value", function (data) {
+            requestsRef.on("value", function (data) {
               let requestsFromDatabase = data.val();
               for (const key in requestsFromDatabase) {
-                requestsData.push({
-                  key: key,
-                  requestorId: requestsFromDatabase[key].requestorId,
-                  requestorUsername:
-                    requestsFromDatabase[key].requestorUsername,
+                let getUsername2 = fire.database().ref("Users/" + requestsFromDatabase[key].requestorId);
+                getUsername2.once("value", function (data) {
+                    requestsData.push({
+                      key: key,
+                      requestorId: requestsFromDatabase[key].requestorId,
+                      requestorUsername: data.val().Username,
+                    });
                 });
               }
               currentComponent.setState({
@@ -79,6 +86,26 @@ class FriendsList extends React.Component {
                 friendList: friendsData,
                 friendRequests: requestsData,
               });
+            });
+
+            let pendingRequestsRef = fire
+              .database()
+              .ref("FriendList/" + currentUser + "/SentRequests");
+            let pendingRequestsData = [];
+            pendingRequestsRef.on("value", function (data) {
+              let pendingReqFromDatabase = data.val();
+              console.log(data.val());
+              for (const key in pendingReqFromDatabase) {
+                pendingRequestsData.push({
+                  key: key,
+                  requestedId: pendingReqFromDatabase[key].requestedId,
+                  requestedUsername:
+                    pendingReqFromDatabase[key].requestedUsername,
+                });
+                currentComponent.setState({
+                  pendingRequests: pendingRequestsData,
+                });
+              }
             });
           });
       } else {
@@ -192,7 +219,6 @@ class FriendsList extends React.Component {
               // let friendRequestRef = currentUserRef2.push();
               currentUserRef2.set({
                 requestedId: requestedUserId,
-                requestedUsername: currentComponent.state.requestedUsername,
                 dateRequested: format(new Date(), "MM/dd/yyyy"),
               });
               //finally, pushes the friend request to the database under requested user
@@ -207,7 +233,6 @@ class FriendsList extends React.Component {
               // friendRequestRef = otherUserRef.push();
               otherUserRef.set({
                 requestorId: currentComponent.state.uid,
-                requestorUsername: fire.auth().currentUser.displayName,
                 dateRequestReceived: format(new Date(), "MM/dd/yyyy"),
               });
               console.log("sent request");
@@ -238,7 +263,6 @@ class FriendsList extends React.Component {
     currentUserRef
       .remove()
       .then(() => {
-        console.log("should be removed");
         let otherUserRef = fire
           .database()
           .ref("FriendList/" + requestorId + "/SentRequests/" + requestKey);
@@ -254,7 +278,6 @@ class FriendsList extends React.Component {
             );
           currentUserRef2.set({
             friendId: requestorId,
-            friendUsername: requestorUsername,
             friendSinceDate: format(new Date(), "MM/dd/yyyy"),
           });
           let otherUserRef2 = fire
@@ -262,7 +285,6 @@ class FriendsList extends React.Component {
             .ref("FriendList/" + requestorId + "/Friends/" + requestKey);
           otherUserRef2.set({
             friendId: currentComponent.state.uid,
-            friendUsername: fire.auth().currentUser.displayName,
             friendSinceDate: format(new Date(), "MM/dd/yyyy"),
           });
           alert("Friend has been added!");
@@ -408,7 +430,7 @@ class FriendsList extends React.Component {
           </div>
           <div className="px-3 col">
             <div id="friendRequestsList" className="workout">
-              <h5>Requests</h5>
+              <h5>Friend Requests</h5>
               {this.state.friendRequests.map((data, index) => (
                 <div className="listItemBox" key={data.key} data-index={index}>
                   <strong>{data.requestorUsername}</strong>
@@ -425,6 +447,15 @@ class FriendsList extends React.Component {
                   >
                     Reject
                   </button>
+                </div>
+              ))}
+            </div>
+            <div id="sentRequestsList" className="workout">
+              <h5>Pending Friend Requests</h5>
+              {this.state.pendingRequests.map((data, index) => (
+                <div className="listItemBox" key={data.key} data-index={index}>
+                  <strong>{data.requestedUsername}</strong>
+                  <br></br>
                 </div>
               ))}
             </div>

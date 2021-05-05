@@ -4,6 +4,7 @@ import "firebase/auth";
 import "firebase/database";
 import { withRouter, Redirect } from "react-router-dom";
 import "../CSS/ViewEditEvent.css";
+import { format, parse } from "date-fns";
 
 class CreateEvent extends React.Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class CreateEvent extends React.Component {
       workoutName: "",
       workoutNames: [],
       reloadCal: this.props.reloadCal,
+      warning: "",
       // showComponent: false,
     };
     this.changeHandler = this.changeHandler.bind(this);
@@ -86,42 +88,55 @@ class CreateEvent extends React.Component {
   submitHandler(event) {
     event.preventDefault();
     let currentUserId = fire.auth().currentUser.uid;
-    
-    //first pushes the event to the database
-    // let eventRef = fire.database().ref("Schedules/" + currentUserId);
-    let eventRef = fire.database().ref("Events/");
+    //validate
+    let start = parse(this.state.startTime, "HH:mm", new Date());
+    let end = parse(this.state.endTime, "HH:mm", new Date());
+    let startTime = start.getTime();
+    let endTime = end.getTime();
 
-    let newEventRef = eventRef.push();
-    newEventRef.set(
-      {
-        date: this.state.date,
-        creatorId: currentUserId,
-        startTime: this.state.startTime,
-        endTime: this.state.endTime,
-        workoutId: this.state.workout,
-        workoutName: this.state.workoutName,
-        users: [currentUserId]
-      },
-      (error) => {
-        if (error) {
-          console.log("error");
-        } else {
-          console.log("successfully added event to database");
+    if (startTime > endTime) {
+      this.setState({
+        warning:
+          "You must pick an end time that is later than your start time.",
+      });
+    } else {
+      //first pushes the event to the database
+      // let eventRef = fire.database().ref("Schedules/" + currentUserId);
+      let eventRef = fire.database().ref("Events/");
+
+      let newEventRef = eventRef.push();
+      newEventRef.set(
+        {
+          date: this.state.date,
+          creatorId: currentUserId,
+          startTime: this.state.startTime,
+          endTime: this.state.endTime,
+          workoutId: this.state.workout,
+          workoutName: this.state.workoutName,
+          users: [currentUserId],
+        },
+        (error) => {
+          if (error) {
+            console.log("error");
+          } else {
+            console.log("successfully added event to database");
+          }
         }
-      }
-    );
+      );
 
-    //refresh form
-    this.setState({
-      currentUserId: "",
-      date: "",
-      startTime: "",
-      endTime: "",
-      workout: "",
-      workoutName: "",
-    });
-    this.state.reloadCal();
-    this.props.closePopup();
+      //refresh form
+      this.setState({
+        currentUserId: "",
+        date: "",
+        startTime: "",
+        endTime: "",
+        workout: "",
+        workoutName: "",
+        warning: "",
+      });
+      this.state.reloadCal();
+      this.props.closePopup();
+    }
   }
 
   render() {
@@ -152,7 +167,7 @@ class CreateEvent extends React.Component {
           />
           <label htmlFor="startTime"> Start Time: </label>
           <input
-            type="time" 
+            type="time"
             name="startTime"
             value={this.state.startTime}
             onChange={this.changeHandler}
@@ -186,6 +201,9 @@ class CreateEvent extends React.Component {
             <option value="create">Click to Create a New Workout!</option>
           </select>
           <br></br>
+          {this.state.warning !== "" && (
+            <p className="warning">{this.state.warning}</p>
+          )}
           <input
             type="submit"
             className="btn btn-secondary"

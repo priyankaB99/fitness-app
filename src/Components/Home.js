@@ -21,6 +21,7 @@ import {
   parseISO,
   isAfter,
   isBefore,
+  parse,
 } from "date-fns";
 import CreateEvent from "./CreateEvent";
 import ViewEditEvent from "./ViewEditEvent";
@@ -114,7 +115,8 @@ class Home extends React.Component {
   deleteWorkoutEvent(event) {
     let workoutsRef = fire.database().ref("Events/");
     workoutsRef.off("value");
-    let eventId = event.currentTarget.parentNode.parentNode.parentNode.parentNode.id;
+    let eventId =
+      event.currentTarget.parentNode.parentNode.parentNode.parentNode.id;
     let deleteEventRef = fire.database().ref("Events/" + eventId);
     deleteEventRef.remove();
     this.findThisMonthEvents();
@@ -174,12 +176,23 @@ class Home extends React.Component {
           <div className="eventName"> {eventData.workoutName} </div>
           <div className="eventTime">
             {" "}
-            {eventData.start} - {eventData.end}{" "}
+            {/* {eventData.start} - {eventData.end}{" "} */}
+            {this.formatTime(eventData.start, eventData.end)}
           </div>
         </div>
       </div>
     );
   }
+
+  formatTime = (startTime, endTime) => {
+    if (startTime !== "" && endTime !== "") {
+      let start = parse(startTime, "HH:mm", new Date());
+      let end = parse(endTime, "HH:mm", new Date());
+      let formattedStart = format(start, "h:mm b");
+      let formattedEnd = format(end, "h:mm b");
+      return formattedStart + " - " + formattedEnd;
+    }
+  };
 
   displaySharedEvent(eventData) {
     return (
@@ -243,8 +256,7 @@ class Home extends React.Component {
           if (!event.shared) {
             //if user is owner of event
             todayEvents.push(this.displayMyEvent(event));
-          } 
-          else if (event.shared) {
+          } else if (event.shared) {
             todayEvents.push(this.displaySharedEvent(event));
           }
         }
@@ -309,9 +321,8 @@ class Home extends React.Component {
               if (eventsFromDatabase[key].creatorId === currentUser) {
                 let event = this.createEvent(eventsFromDatabase, key, false);
                 events.push(event);
-              //shared event
-              } 
-              else if (eventsFromDatabase[key].users.includes(currentUser)) {
+                //shared event
+              } else if (eventsFromDatabase[key].users.includes(currentUser)) {
                 let event = this.createEvent(eventsFromDatabase, key, true);
                 events.push(event);
               }
@@ -348,10 +359,13 @@ class Home extends React.Component {
     let today = new Date();
     events.map((data, index) => {
       let isToday = false;
-      let cellDivClass = "eventListBox"
+      let cellDivClass = "eventListBox";
       if (
         isSameDay(today, new Date(format(parseISO(data.date), "MM/dd/yyyy"))) &&
-        isSameWeek(today, new Date(format(parseISO(data.date), "MM/dd/yyyy"))) &&
+        isSameWeek(
+          today,
+          new Date(format(parseISO(data.date), "MM/dd/yyyy"))
+        ) &&
         isSameYear(today, new Date(format(parseISO(data.date), "MM/dd/yyyy")))
       ) {
         cellDivClass += " today";
@@ -361,13 +375,16 @@ class Home extends React.Component {
       if (data.shared) {
         cellDivClass += " shared";
       }
-  
+
       eventsRender.push(
         <div class={cellDivClass} key={index}>
-          <strong>{format(parseISO(data.date), "MM/dd/yyyy")} {isToday && <span>- Today</span>}</strong>
+          <strong>
+            {format(parseISO(data.date), "MM/dd/yyyy")}{" "}
+            {isToday && <span>- Today</span>}
+          </strong>
           {this.displayMyEvent(data)}
         </div>
-      )
+      );
     });
     return eventsRender;
   }
@@ -379,10 +396,14 @@ class Home extends React.Component {
           <h1 className="mb-4">Welcome Home</h1>
         </div>
         <h5 className="home-banner">
-          Create a workout event by clicking on a date in your
-          calendar or here
+          Create a workout event by clicking on a date in your calendar or here
           <br className="responsive"></br>
-          <button type="button" id="addEventBtn" className="btn btn-secondary" onClick={this.toggleAddEvent}>
+          <button
+            type="button"
+            id="addEventBtn"
+            className="btn btn-secondary"
+            onClick={this.toggleAddEvent}
+          >
             Add Event
           </button>
         </h5>
@@ -438,7 +459,6 @@ class Home extends React.Component {
             <h5 className="text-center">Workout Events for this Month</h5>
             {this.createListOfEvents()}
           </div>
-
         </div>
       </div>
     );
