@@ -121,12 +121,13 @@ class ViewEditProfile extends React.Component {
             <form onSubmit={this.submitHandler}>
               <input
                 onChange={this.profpicChange}
+                className="input-box"
                 type="file"
                 name="newProfPic"
                 accept="image/*"
                 required
               />
-              <input type="submit" value="Upload" />
+              <input className="input-box" type="submit" value="Upload" />
               {this.state.warning !== "" && this.state.warning}
             </form>
           ) : null}
@@ -145,13 +146,14 @@ class ViewEditProfile extends React.Component {
             <form onSubmit={this.submitHandler}>
               <input
                 onChange={this.changeHandler}
+                className="input-box"
                 type="text"
                 name="newUsername"
                 value={this.state.newUsername}
                 placeholder="Enter New Username"
                 required
               />
-              <input type="submit" value="Change Username" />
+              <input className="input-box" type="submit" value="Change Username" />
               {this.state.warning !== "" && this.state.warning}
             </form>
           ) : null}
