@@ -52,15 +52,12 @@ class FriendsList extends React.Component {
           .once("value", function (data) {
             let friendsFromDatabase = data.val();
             for (const key in friendsFromDatabase) {
-              let getUsername = fire.database().ref("Users/" + friendsFromDatabase[key].friendId);
-              getUsername.once("value", function (data) {
-                  friendsData.push({
-                    key: key,
-                    friendId: friendsFromDatabase[key].friendId,
-                    friendUsername: data.val().Username,
-                    calendarOpen: false,
-                    profileOpen: false,
-                  });
+              friendsData.push({
+                key: key,
+                friendId: friendsFromDatabase[key].friendId,
+                friendUsername: friendsFromDatabase[key].friendUsername,
+                calendarOpen: false,
+                profileOpen: false,
               });
             }
           })
@@ -72,13 +69,11 @@ class FriendsList extends React.Component {
             requestsRef.on("value", function (data) {
               let requestsFromDatabase = data.val();
               for (const key in requestsFromDatabase) {
-                let getUsername2 = fire.database().ref("Users/" + requestsFromDatabase[key].requestorId);
-                getUsername2.once("value", function (data) {
-                    requestsData.push({
-                      key: key,
-                      requestorId: requestsFromDatabase[key].requestorId,
-                      requestorUsername: data.val().Username,
-                    });
+                requestsData.push({
+                  key: key,
+                  requestorId: requestsFromDatabase[key].requestorId,
+                  requestorUsername:
+                    requestsFromDatabase[key].requestorUsername,
                 });
               }
               currentComponent.setState({
@@ -219,6 +214,8 @@ class FriendsList extends React.Component {
               // let friendRequestRef = currentUserRef2.push();
               currentUserRef2.set({
                 requestedId: requestedUserId,
+                requestedUsername: currentComponent.state.requestedUsername,
+
                 dateRequested: format(new Date(), "MM/dd/yyyy"),
               });
               //finally, pushes the friend request to the database under requested user
@@ -233,6 +230,7 @@ class FriendsList extends React.Component {
               // friendRequestRef = otherUserRef.push();
               otherUserRef.set({
                 requestorId: currentComponent.state.uid,
+                requestorUsername: fire.auth().currentUser.displayName,
                 dateRequestReceived: format(new Date(), "MM/dd/yyyy"),
               });
               console.log("sent request");
@@ -278,6 +276,7 @@ class FriendsList extends React.Component {
             );
           currentUserRef2.set({
             friendId: requestorId,
+            friendUsername: requestorUsername,
             friendSinceDate: format(new Date(), "MM/dd/yyyy"),
           });
           let otherUserRef2 = fire
@@ -285,6 +284,7 @@ class FriendsList extends React.Component {
             .ref("FriendList/" + requestorId + "/Friends/" + requestKey);
           otherUserRef2.set({
             friendId: currentComponent.state.uid,
+            friendUsername: fire.auth().currentUser.displayName,
             friendSinceDate: format(new Date(), "MM/dd/yyyy"),
           });
           alert("Friend has been added!");
