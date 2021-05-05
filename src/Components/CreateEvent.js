@@ -5,6 +5,7 @@ import "firebase/database";
 import { withRouter, Redirect } from "react-router-dom";
 import "../CSS/ViewEditEvent.css";
 import { format, parse } from "date-fns";
+import CreateWorkout from "./CreateWorkout";
 
 class CreateEvent extends React.Component {
   constructor(props) {
@@ -19,12 +20,13 @@ class CreateEvent extends React.Component {
       workoutNames: [],
       reloadCal: this.props.reloadCal,
       warning: "",
+      showCreatePopup: false,
       // showComponent: false,
     };
     this.changeHandler = this.changeHandler.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.retrieveWorkouts = this.retrieveWorkouts.bind(this);
-    // this.showComponent = this.showComponent.bind(this);
+    this.toggleCreateWorkout = this.toggleCreateWorkout.bind(this);
   }
 
   //query workotus database for names of all the workouts to display
@@ -139,10 +141,16 @@ class CreateEvent extends React.Component {
     }
   }
 
+  toggleCreateWorkout(){
+    console.log("CreateWorkoutToggle");
+    this.setState({
+      showCreatePopup: !this.state.showCreatePopup,
+      workout: ""
+    });
+  }
+
   render() {
-    if (this.state.workout === "create") {
-      return <Redirect to="/createworkout" />;
-    }
+
     return (
       <div className="popup">
         <div>
@@ -150,8 +158,13 @@ class CreateEvent extends React.Component {
             x
           </p>
         </div>
-        {/* <h5 onClick={this.props.popUp}> Add to Your Workout Schedule</h5> */}
-        {/* {this.state.showComponent ? ( */}
+
+        {this.state.workout==="create" ? (
+          <CreateWorkout
+            closePopup={this.toggleCreateWorkout}
+          />
+        ): null}
+
         <form id="createEventForm" onSubmit={this.submitHandler}>
           <h3> Add a Workout Event to Your Calendar </h3>
 
@@ -198,7 +211,7 @@ class CreateEvent extends React.Component {
                 {data.name}
               </option>
             ))}
-            <option value="create">Click to Create a New Workout!</option>
+            <option value="create" onClick={this.toggleCreateWorkout}>Click to Create a New Workout!</option>
           </select>
           <br></br>
           {this.state.warning !== "" && (

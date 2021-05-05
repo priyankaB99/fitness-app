@@ -1,7 +1,4 @@
 /* display workout page */
-#filter-box {
-  margin: 20px 0;
-}
 #filter-box > form {
   padding: 20px;
   background-color: #e1edf2;
@@ -10,6 +7,35 @@
 #filter-box label {
   margin: 0.25rem 10px;
 }
+
+.headerBox{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 20px 0;
+  margin-right: 5px;
+}
+  .createWorkout{
+    width: 130px;
+    padding-left: 12px;
+    padding-top: 10px;
+    border: 0px solid white;
+    background-color: #e1edf2;
+    border-radius: 28px;
+    
+    line-height: 36px;
+    display: flex;
+    flex-direction: row;
+  }
+    .createWorkout p{
+      font-size: 20px;
+      text-align: center;
+      margin-left: 10px;
+    }
+    .createWorkout:hover{
+      background-color: lightblue;
+      cursor: pointer;
+    }
 
 .workout {
   /* display: flex;

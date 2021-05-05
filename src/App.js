@@ -32,9 +32,9 @@ function App() {
               <Route path="/myprofile" exact>
                 <MyProfile />
               </Route>
-              <Route path="/createworkout" exact>
+              {/* <Route path="/createworkout" exact>
                 <CreateWorkout />
-              </Route>
+              </Route> */}
               <Route path="/displayworkouts" exact>
                 <DisplayWorkouts />
               </Route>

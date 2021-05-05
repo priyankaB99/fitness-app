@@ -232,16 +232,14 @@ class CreateWorkout extends React.Component {
 
   render() {
     let { name, timeLength, exercises, notes } = this.state;
-    console.log("exercises", exercises);
+
     return (
-      <div className={this.state.popup ? "popup" : ""}>
-        {this.state.popup && (
+      <div className="popup">
           <div>
             <p className="close" onClick={this.props.closePopup}>
               x
             </p>
           </div>
-        )}
         <form
           id="createForm"
           onSubmit={this.state.popup ? this.submitEdits : this.submitHandler}

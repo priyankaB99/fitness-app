@@ -58,12 +58,12 @@ class Sidebar extends React.Component {
           css: "fa fa-fw fa-home",
           key: 1 /* Key is required, else console throws error. Does this please you Mr. Browser?! */,
         },
-        {
-          path: "/createworkout",
-          name: "Create Workout",
-          css: "fa fa-fw fa-clock",
-          key: 2,
-        },
+        // {
+        //   path: "/createworkout",
+        //   name: "Create Workout",
+        //   css: "fa fa-fw fa-clock",
+        //   key: 2,
+        // },
         {
           path: "/displayworkouts",
           name: "My Workouts",
