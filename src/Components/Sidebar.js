@@ -140,7 +140,7 @@ class Sidebar extends React.Component {
     return (
       <div>
         <div className="sidebar">
-          <h3>Fitness App</h3>
+          <h3>FitConnect</h3>
           {this.state.loggedIn && (
             <div>
               <div className="sidebar-box">
