@@ -7,6 +7,7 @@ import "../CSS/profile.css";
 import ViewEditProfile from "./ViewEditProfile";
 import ShowFavorite from "./ShowFavorite";
 import ListGoal from "./ListGoal";
+import { BsPencilSquare } from 'react-icons/bs';
 
 class MyProfile extends React.Component {
   constructor(props) {
@@ -178,6 +179,7 @@ class MyProfile extends React.Component {
       <div id="myProfile">
         <h2> My Profile</h2>
         <div id="profileBox" class="workout">
+
           {this.state.editInfoOpen ? (
             <ViewEditProfile
               username={this.state.username}
@@ -185,30 +187,27 @@ class MyProfile extends React.Component {
               closePopup={this.showEditInfo}
             />
           ) : null}
-          <img
-            id="profPic"
-            src={this.state.pic}
-            alt={this.state.username}
-          ></img>
-          <div className="align-middle mx-4 d-inline-block">
-            <p className="profileLabel">Name: </p>
-            <p>
-              {this.state.firstName} {this.state.lastName}
-            </p>
-          </div>
-          <div className="align-middle mx-4 d-inline-block">
-            <p className="profileLabel"> Username: </p>
-            <p>{this.state.username}</p>
+
+          <div className="iconBox">
+            <BsPencilSquare size={30} id="editProfile" onClick={this.showEditInfo}/>
           </div>
 
-          <button
-            onClick={this.showEditInfo}
-            type="button"
-            id="editProfile"
-            className="btn btn-secondary mx-4"
-          >
-            Edit Info
-          </button>
+          <div className="profileContent">
+            <img
+              id="profPic"
+              src={this.state.pic}
+              alt={this.state.username}
+            ></img>
+            <div className="align-middle mx-4 d-inline-block">
+              <p className="profileLabel"><b>Name:</b> {this.state.firstName} {this.state.lastName}</p>
+            </div>
+            <div className="align-middle mx-4 d-inline-block">
+              <p className="profileLabel"><b>Username:</b> {this.state.username}</p>
+            </div>
+          </div>
+          
+
+ 
         </div>
         <div id="goals" class="workout">
           <h3 className="mb-3"> Fitness Goals </h3>
