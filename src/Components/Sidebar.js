@@ -78,8 +78,8 @@ class Sidebar extends React.Component {
         {
           path: "/myfriends",
           name: "Friends",
-          key: 5
-        }
+          key: 5,
+        },
       ],
     };
     this.logout = this.logout.bind(this);
@@ -93,9 +93,10 @@ class Sidebar extends React.Component {
 
   componentDidMount() {
     fire.auth().onAuthStateChanged((user) => {
-      if (user 
+      if (
+        user
         // && fire.auth().currentUser.emailVerified
-        ) {
+      ) {
         // User is signed in
         console.log(user.email);
         console.log(user.displayName);
@@ -106,7 +107,7 @@ class Sidebar extends React.Component {
           email: user.email,
           username: user.displayName,
           activePath: this.props.location.pathname,
-          isVerified: isVerified
+          isVerified: isVerified,
         });
       } else {
         // No user is signed in
@@ -143,7 +144,9 @@ class Sidebar extends React.Component {
           {this.state.loggedIn && (
             <div>
               <div className="sidebar-box">
-                <p>Welcome{this.state.username ? " " + this.state.username: ""}!</p>
+                <p>
+                  Welcome{this.state.username ? " " + this.state.username : ""}!
+                </p>
                 <button
                   type="button"
                   className="btn btn-light btn-sm"
@@ -167,7 +170,7 @@ class Sidebar extends React.Component {
               })}
             </div>
           )}
-          {(this.state.loggedIn && !this.state.isVerified) && (
+          {this.state.loggedIn && !this.state.isVerified && (
             <div id="verify-reminder-box">
               Verify your email to finish setting up your account.
             </div>
@@ -176,44 +179,46 @@ class Sidebar extends React.Component {
 
         <div id="hamburgerMenu">
           <div class="topnav">
-          <h4 className="m-2">Fitness App</h4>
-          {this.state.loggedIn &&
-            <div>
-              {(this.state.showLinks) ? 
-                <div>
+            <h4 className="m-2">FitConnect</h4>
+            {this.state.loggedIn && (
+              <div>
+                {this.state.showLinks ? (
+                  <div>
                     <button
                       type="button"
                       className="btn btn-light mx-2"
                       onClick={this.logout}
-                      >{" "}
+                    >
+                      {" "}
                       Sign Out{" "}
                     </button>
-                  <div id="myLinks">
-                  {items.map((item) => {
-                    return (
-                      <NavItem
-                        path={item.path}
-                        name={item.name}
-                        css={item.css}
-                        onItemClick={this.onItemClick}
-                        active={item.path === activePath}
-                        key={item.key}
-                      />
-                    );
-                  })}
+                    <div id="myLinks">
+                      {items.map((item) => {
+                        return (
+                          <NavItem
+                            path={item.path}
+                            name={item.name}
+                            css={item.css}
+                            onItemClick={this.onItemClick}
+                            active={item.path === activePath}
+                            key={item.key}
+                          />
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-                : 
-                null 
-              }
-              <a href="javascript:void(0);" class="icon" onClick={this.toggleHamburgerLinks}>
-                MENU
-              </a>
-            </div>
-          }
+                ) : null}
+                <a
+                  href="javascript:void(0);"
+                  class="icon"
+                  onClick={this.toggleHamburgerLinks}
+                >
+                  MENU
+                </a>
+              </div>
+            )}
           </div>
         </div>
-
       </div>
     );
   }
