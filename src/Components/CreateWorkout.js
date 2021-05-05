@@ -61,7 +61,7 @@ class CreateWorkout extends React.Component {
       //using arrow function => instead of function (data) preserves use of 'this' inside function
       let workoutData = data.val();
       if (workoutData) {
-        let tags = []
+        let tags = [];
         if (workoutData.tags) {
           tags = workoutData.tags;
         }
@@ -130,12 +130,12 @@ class CreateWorkout extends React.Component {
 
     if (this.state.tags) {
       for (let i = 0; i < this.state.tags.length; i++) {
-      let newTagRef = fire
-        .database()
-        .ref(
-          "Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + workoutId
-        );
-      newTagRef.once("value", (data) => {
+        let newTagRef = fire
+          .database()
+          .ref(
+            "Tags/" + this.state.tags[i] + "/" + currentUserId + "/" + workoutId
+          );
+        newTagRef.once("value", (data) => {
           if (!data.val()) {
             newTagRef.set({
               workoutName: workoutName,
@@ -145,9 +145,10 @@ class CreateWorkout extends React.Component {
         });
       }
     }
-    
 
     this.props.retrieveWorkouts();
+    this.props.closePopup();
+
     console.log("successfully edited workout in database");
     alert("Your workout has been edited!");
   }
@@ -197,6 +198,10 @@ class CreateWorkout extends React.Component {
       notes: "",
       tags: [],
     });
+
+    //retrieve
+    this.props.retrieveWorkouts();
+    this.props.closePopup();
   }
 
   changeHandler(event) {
@@ -235,11 +240,11 @@ class CreateWorkout extends React.Component {
 
     return (
       <div className="popup">
-          <div>
-            <p className="close" onClick={this.props.closePopup}>
-              x
-            </p>
-          </div>
+        <div>
+          <p className="close" onClick={this.props.closePopup}>
+            x
+          </p>
+        </div>
         <form
           id="createForm"
           onSubmit={this.state.popup ? this.submitEdits : this.submitHandler}
