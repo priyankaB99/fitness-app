@@ -13,6 +13,7 @@ class DeleteWorkout extends React.Component {
       workout: this.props.selectedWorkout,
       uid: "",
       tags: this.props.tags,
+      allEvents: [],
     };
     this.deleteWorkout = this.deleteWorkout.bind(this);
   }
@@ -26,7 +27,9 @@ class DeleteWorkout extends React.Component {
       }
     });
   }
+
   deleteWorkout() {
+    let currentComponent = this;
     let workoutsRef = fire.database().ref("Workouts/");
     workoutsRef.off("value");
     let deleteWorkoutRef = fire
@@ -52,6 +55,22 @@ class DeleteWorkout extends React.Component {
         });
       }
     }
+
+    //delete from events
+    let eventsRef = fire.database().ref("Events/");
+    let events = [];
+    eventsRef.once("value", function (data) {
+      let info = data.val();
+      for (let key in info) {
+        if (info[key].workoutId === currentComponent.state.workout) {
+          events.push(key);
+        }
+      }
+      for (let i in events) {
+        let deleteAllEventsRef = fire.database().ref("Events/" + events[i]);
+        deleteAllEventsRef.remove();
+      }
+    });
 
     // let changedWorkouts = this.state.myWorkouts;
     // let deletedWorkoutIndex = "";
