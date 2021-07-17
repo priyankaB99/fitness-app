@@ -1,4 +1,7 @@
 **FitConnect App**
+
+App: https://fitness-app-db861.web.app/
+
 Stack: React, Firebase
 
 Fitness tracker and scheduling app where you can create and save workouts, schedule workout events with friends, and manage your fitness goals!
